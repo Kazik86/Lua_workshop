@@ -1,0 +1,6 @@
+Zależności:
+
+    lua 5.2.3      http://www.lua.org/ftp/lua-5.2.3.tar.gz
+    UnitTest++     https://github.com/unittest-cpp/unittest-cpp
+
+Makefile zakłada, że powyższe biblioteki zainstalowane są w katalogu 'system'.
