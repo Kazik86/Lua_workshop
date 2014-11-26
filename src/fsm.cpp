@@ -83,24 +83,6 @@ void eFsm::doScript()
     iModule = luaL_ref(iLuaState, LUA_REGISTRYINDEX);
 }
 
-// [-0, +0]
-const void* eFsm::getModuleAsPtr() const
-{
-    lua_rawgeti(iLuaState, LUA_REGISTRYINDEX, iModule);
-    const void* result = lua_topointer(iLuaState, -1);
-    lua_pop(iLuaState, 1);
-    
-    return result;
-}
-
-// [-0, +3]
-void eFsm::callLuaFunct(const char* aFunctName)
-{
-    lua_rawgeti(iLuaState, LUA_REGISTRYINDEX, iModule);
-    lua_getfield(iLuaState, -1, aFunctName);
-    lua_pcall(iLuaState, 0, 1, 0);
-}
-
 void eFsm::update()
 {
 

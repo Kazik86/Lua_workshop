@@ -7,7 +7,6 @@ function Actor.foo()
 end
 
 function Actor.onlyInDerivedLvl1()
-    print "Hello from Derived Lvl1"
 end
 
 return Actor

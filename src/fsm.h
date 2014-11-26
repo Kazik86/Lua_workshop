@@ -24,8 +24,7 @@ public:
 
     void doScript();
     void update();
-    const void* getModuleAsPtr() const;
-    void callLuaFunct(const char* aFunctName);
+    int getModuleRef() const { return iModule; }
 
 private:
     eFsm(const eFsm& aOther);
