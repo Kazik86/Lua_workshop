@@ -11,7 +11,7 @@ namespace ActorMgr
     void init();
     void cleanup();
     void update();
-    eActor& add(eLuaState& aLuaState, const std::string& aScript);
+    eActor& add(eLuaState& aLua, const std::string& aScript);
     void doScript();
 }
 

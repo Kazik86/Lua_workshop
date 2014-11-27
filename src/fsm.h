@@ -6,39 +6,24 @@
 
 class eLuaState;
 
-class eFsmState
-{
-public:
-    eFsmState();
-
-private:
-    eFsmState(const eFsmState& aOther);
-    eFsmState& operator=(const eFsmState& aOther);
-};
-
 class eFsm
 {
 public:
-    eFsm(eLuaState& aLuaState, const std::string& aScript);
+    eFsm(eLuaState& aLua, const std::string& aScript);
     ~eFsm();
 
     void doScript();
     void update();
-    int getModuleRef() const { return iModule; }
 
 private:
     eFsm(const eFsm& aOther);
     eFsm& operator=(const eFsm& aOther);
 
-    void loadModule(const char* aPath);
-    void deriveModule(const char* aPath);
-    void setClass(const char* aPath);
-
 private:
-    lua_State* iLuaState;
+    eLuaState& iLua;
     std::string iScript;
-    int iEnv;
     int iModule;
+    int iEnv;
 };
 
 #endif // FSM_H

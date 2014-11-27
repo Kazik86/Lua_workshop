@@ -26,9 +26,9 @@ void ActorMgr::update()
 
 }
 
-eActor& ActorMgr::add(eLuaState& aLuaState, const std::string& aScript)
+eActor& ActorMgr::add(eLuaState& aLua, const std::string& aScript)
 {
-    iActors.push_front(new eActor(aLuaState, aScript));
+    iActors.push_front(new eActor(aLua, aScript));
     return *iActors.front();
 }
 

@@ -1,7 +1,7 @@
 #include "actor.h"
 
-eActor::eActor(eLuaState& aLuaState, const std::string& aScript):
-    iFsm(aLuaState, aScript)
+eActor::eActor(eLuaState& aLua, const std::string& aScript):
+    iFsm(aLua, aScript)
 {
 }
 

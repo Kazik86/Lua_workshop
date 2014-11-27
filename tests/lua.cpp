@@ -1,6 +1,7 @@
 #include <UnitTest++/UnitTest++.h>
 
 #include "fsm.h"
+#include "luaModule.h"
 #include "luaState.h"
 
 #include <stdexcept>
@@ -9,16 +10,16 @@ namespace
 {
     struct sFixture
     {
+	~sFixture() { LuaModuleMgr::clear(); }
 	eLuaState iLua;
     };
 
     // [-0, +0]
-    void callLuaFun(eLuaState& aLua, eFsm& aFsm, const char* aName, int aArgsNum, int aResultsNum)
+    void callLuaFun(eLuaState& aLua, int aModuleRef, const char* aName, int aArgsNum, int aResultsNum)
     {
 	lua_State* lua = aLua.getRaw();
-	int moduleRef = aFsm.getModuleRef();
 
-	lua_rawgeti(lua, LUA_REGISTRYINDEX, moduleRef);
+	lua_rawgeti(lua, LUA_REGISTRYINDEX, aModuleRef);
 	lua_getfield(lua, -1, aName);
 	lua_pcall(lua, aArgsNum, aResultsNum, 0);
 
@@ -30,65 +31,60 @@ namespace
 
 TEST_FIXTURE(sFixture, NonExistentScript)
 {
-    eFsm fsm (iLua, "tests.scripts.nonexistent");
-    CHECK_THROW(fsm.doScript(), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.nonexistent"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, NoTableReturned)
 {
-    eFsm fsm(iLua, "tests.scripts.noTableReturned");
-    CHECK_THROW(fsm.doScript(), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.noTableReturned"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, SameScript)
 {
-    eFsm fsm1(iLua, "tests.scripts.base");
-    eFsm fsm2(iLua, "tests.scripts.base");
+    int ref1 = LuaModuleMgr::load(iLua, "tests.scripts.base");
+    int ref2 = LuaModuleMgr::load(iLua, "tests.scripts.base");
     
-    fsm1.doScript();
-    fsm2.doScript();
-
-    lua_State* lua = iLua.getRaw();
-
-    lua_rawgeti(lua, LUA_REGISTRYINDEX, fsm1.getModuleRef());
-    const void* fsm1Module = lua_topointer(lua, -1);
-    lua_pop(lua, 1);
-
-    lua_rawgeti(lua, LUA_REGISTRYINDEX, fsm2.getModuleRef());
-    const void* fsm2Module = lua_topointer(lua, -1);
-    lua_pop(lua, 1);
-
-    CHECK(fsm1Module == fsm2Module);
+    CHECK(ref1 == ref2);
 }
 
 TEST_FIXTURE(sFixture, InvalidClassField1)
 {
-    eFsm fsm(iLua, "tests.scripts.invalidClass1");
-    CHECK_THROW(fsm.doScript(), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.invalidClass1"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, InvalidClassField2)
 {
-    eFsm fsm(iLua, "tests.scripts.invalidClass2");
-    CHECK_THROW(fsm.doScript(), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.invalidClass2"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, InvalidClassField3)
 {
-    eFsm fsm(iLua, "tests.scripts.invalidClass3");
-    CHECK_THROW(fsm.doScript(), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.invalidClass3"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, Metatable)
 {
-    eFsm fsm(iLua, "tests.scripts.base");
-    fsm.doScript();
-    callLuaFun(iLua, fsm, "testMetatable", 0, 1);
+    int ref = LuaModuleMgr::load(iLua, "tests.scripts.base");
+    callLuaFun(iLua, ref, "testMetatable", 0, 1);
 }
 
 TEST_FIXTURE(sFixture, Inheritance)
 {
-    eFsm fsm(iLua, "tests.scripts.base");
-    fsm.doScript();
-    callLuaFun(iLua, fsm, "testInheritance", 0, 1);
+    int ref = LuaModuleMgr::load(iLua, "tests.scripts.base");
+    callLuaFun(iLua, ref, "testInheritance", 0, 1);
+}
+
+TEST_FIXTURE(sFixture, ClassUniqueness1)
+{
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.classUniqueness1.base"), std::runtime_error);
+}
+
+TEST_FIXTURE(sFixture, ClassUniqueness2)
+{
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.classUniqueness2.base"), std::runtime_error);
+}
+
+TEST_FIXTURE(sFixture, ClassUniqueness3)
+{
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.classUniqueness3.base"), std::runtime_error);
 }

@@ -8,7 +8,7 @@ class eLuaState;
 class eActor
 {
 public:
-    eActor(eLuaState& aLuaState, const std::string& aScript);
+    eActor(eLuaState& aLua, const std::string& aScript);
 
     void doScript();
     void update();
