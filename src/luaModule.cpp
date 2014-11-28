@@ -152,7 +152,6 @@ namespace
 
 int LuaModuleMgr::load(eLuaState& aLua, const std::string& aName)
 {
-
     return add(aLua.getRaw(), aName).iRef;
 }
 

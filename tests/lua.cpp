@@ -25,7 +25,7 @@ namespace
 
 	CHECK(lua_toboolean(lua, -1));
 
-	lua_pop(lua, 3);
+	lua_pop(lua, 1 + aResultsNum);
     }
 }
 
