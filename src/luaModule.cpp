@@ -47,8 +47,14 @@ namespace
     }
 
     // [-0, +1]
-    void require(lua_State* aLua, const char* aPath)
+    bool require(lua_State* aLua, const char* aPath)
     {
+	lua_getfield(aLua, LUA_REGISTRYINDEX, "_LOADED");
+	lua_getfield(aLua, -1, aPath);
+	bool alreadyLoaded = lua_toboolean(aLua, -1);
+
+	lua_pop(aLua, 2);
+
 	lua_getglobal(aLua, "require");
 	lua_pushstring(aLua, aPath);
 
@@ -57,6 +63,8 @@ namespace
 
 	if(! lua_istable(aLua, -1))
 	    throw std::runtime_error("Actor's script must return a table.");
+
+	return alreadyLoaded;
     }
 
     // [-0, +0]
@@ -120,7 +128,10 @@ namespace
 	    sModule& m = iModules[aName];
 
 	    if (m.iRef == LUA_NOREF) {
-		require(aLua, aName.c_str());
+		if (require(aLua, aName.c_str()))
+		    // gdy skrypt A dziedziczy po skrypcie, który znów dziedziczy po A
+		    throw std::runtime_error("Circular inheritance detected!");
+
 		setClass(aLua);
 		m.iInheritanceHierarchy = derive(aLua);
 		m.iRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
@@ -141,6 +152,7 @@ namespace
 
 int LuaModuleMgr::load(eLuaState& aLua, const std::string& aName)
 {
+
     return add(aLua.getRaw(), aName).iRef;
 }
 
