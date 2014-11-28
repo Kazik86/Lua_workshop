@@ -1,10 +1,10 @@
-app_NAME := lua_test
+app_NAME := lua_test.exe
 app_SRC  := $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
 app_OBJ  := $(app_SRC:.cpp=.o)
 app_DEP  := $(app_SRC:.cpp=.d)
 
 test_DIR      := tests
-test_NAME     := unit_test
+test_NAME     := unit_test.exe
 test_SRC      := $(wildcard $(test_DIR)/*.cpp) $(filter-out src/main.cpp, $(app_SRC))
 test_OBJ      := $(test_SRC:.cpp=.o)
 test_DEP      := $(test_SRC:.cpp=.d)
