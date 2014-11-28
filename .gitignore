@@ -1,0 +1,8 @@
+system/*
+tmp/*
+src/*.d
+src/*.o
+tests/*.o
+tests/*.d
+lua_test
+unit_test
