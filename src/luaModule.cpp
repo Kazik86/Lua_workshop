@@ -55,6 +55,9 @@ namespace
 
 	lua_pop(aLua, 2);
 
+	if (alreadyLoaded)
+	    return true;
+
 	lua_getglobal(aLua, "require");
 	lua_pushstring(aLua, aPath);
 
@@ -64,7 +67,7 @@ namespace
 	if(! lua_istable(aLua, -1))
 	    throw std::runtime_error("Actor's script must return a table.");
 
-	return alreadyLoaded;
+	return false;
     }
 
     // [-0, +0]
