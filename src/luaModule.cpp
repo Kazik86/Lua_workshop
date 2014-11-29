@@ -42,6 +42,16 @@ namespace
 	if (! lua_isstring(aLua, -1))
 	    throw std::runtime_error("Non-existent, empty or wrong type in field 'Class'.");
 
+	/* spr. czy nazwa klasy nie jest użyta jako identyfikator np.
+	 * Class = "Foo"
+	 * Foo = 1
+	 */
+	lua_pushvalue(aLua, -1);
+	lua_gettable(aLua, -3);
+	if (! lua_isnil(aLua, -1))
+	    throw std::runtime_error("Class name is used as an identifier.");
+
+	lua_pop(aLua, 1);
 	lua_pushvalue(aLua, -2);
 	lua_settable(aLua, -3);
     }

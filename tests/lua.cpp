@@ -103,3 +103,8 @@ TEST_FIXTURE(sFixture, CircularInheritance3)
 {
     CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.circularInheritance3.base"), std::runtime_error);
 }
+
+TEST_FIXTURE(sFixture, ClassNameUsedAsIdentifier)
+{
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.classNameUsedAsIdentifier"), std::runtime_error);
+}
