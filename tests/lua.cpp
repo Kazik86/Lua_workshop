@@ -41,8 +41,8 @@ TEST_FIXTURE(sFixture, NoTableReturned)
 
 TEST_FIXTURE(sFixture, SameScript)
 {
-    int ref1 = LuaModuleMgr::load(iLua, "tests.scripts.base");
-    int ref2 = LuaModuleMgr::load(iLua, "tests.scripts.base");
+    int ref1 = LuaModuleMgr::load(iLua, "tests.scripts.base").iRef;
+    int ref2 = LuaModuleMgr::load(iLua, "tests.scripts.base").iRef;
     
     CHECK(ref1 == ref2);
 }
@@ -64,13 +64,13 @@ TEST_FIXTURE(sFixture, InvalidClassField3)
 
 TEST_FIXTURE(sFixture, Metatable)
 {
-    int ref = LuaModuleMgr::load(iLua, "tests.scripts.base");
+    int ref = LuaModuleMgr::load(iLua, "tests.scripts.base").iRef;
     callLuaFun(iLua, ref, "testMetatable", 0, 1);
 }
 
 TEST_FIXTURE(sFixture, Inheritance)
 {
-    int ref = LuaModuleMgr::load(iLua, "tests.scripts.base");
+    int ref = LuaModuleMgr::load(iLua, "tests.scripts.base").iRef;
     callLuaFun(iLua, ref, "testInheritance", 0, 1);
 }
 
@@ -107,4 +107,25 @@ TEST_FIXTURE(sFixture, CircularInheritance3)
 TEST_FIXTURE(sFixture, ClassNameUsedAsIdentifier)
 {
     CHECK_THROW(LuaModuleMgr::load(iLua, "tests.scripts.classNameUsedAsIdentifier"), std::runtime_error);
+}
+
+TEST_FIXTURE(sFixture, MeTable)
+{
+    eFsm fsm1(iLua, "tests.scripts.meTable");
+    eFsm fsm2(iLua, "tests.scripts.meTable");
+
+    fsm1.doScript();
+    fsm2.doScript();
+
+    fsm1.callLuaFunc("setAttribs1");
+    fsm2.callLuaFunc("setAttribs1");
+
+    fsm1.callLuaFunc("checkAttribs1");
+    fsm2.callLuaFunc("checkAttribs1");
+
+    fsm1.callLuaFunc("setAttribs2");
+    fsm1.callLuaFunc("checkAttribs2");
+    fsm2.callLuaFunc("checkAttribs1");
+
+    CHECK(true);
 }

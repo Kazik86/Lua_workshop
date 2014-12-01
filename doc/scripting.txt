@@ -1,1 +1,16 @@
 Nazwy zastrzeżone w skryptach: Class, Derives, Script
+
+w funkcjach OnInit i OnRestart nie działają wywołania wirtualne tzn.
+foo() będzie szukało funkcji 'foo' w górę hierarchii ale począwszy od modułu 
+w którym jest zadeklarowana aktualnie przetwarzana funkcja OnInit lub 
+OnRestart.
+Funkcje inne niż OnInit i OnRestart szukają funkcji począwszy od głównego modułu 
+Aktora.
+
+TODO:
+obecnie mam pojedynczą, globalną listę modułów. W przypadku gdy będę chciał 
+załadować ten sam moduł do kilku stanów Lua będzie problem, bo funkcja 'load' 
+zwróci mi moduł o zadanej nazwie ale pochodzący z innego stanu Luy - nie 
+utworzy kolejnego. Ale może nie będzie to potrzebne. W takim wypadku trzeba by 
+wyjebać atrybut lua_State* z definicji modułu i machnąć jakiś globalny do 
+namespace'a.

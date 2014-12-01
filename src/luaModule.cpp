@@ -3,30 +3,11 @@
 #include "luaState.h"
 
 #include <cassert>
-#include <list>
 #include <stdexcept>
 #include <unordered_map>
 
 namespace
 {
-    struct sModule
-    {
-	sModule():
-	    iRef(LUA_NOREF),
-	    iLua(0)
-	{}
-
-	~sModule()
-	{
-	    luaL_unref(iLua, LUA_REGISTRYINDEX, iRef);
-	}
-
-	int iRef;
-	lua_State* iLua;
-	std::string iScript;
-	std::list<sModule*> iInheritanceHierarchy;
-    };
-
     std::unordered_map<std::string, sModule> iModules;
 
     // functions //////////////////////////////////////////////////////
@@ -163,9 +144,19 @@ namespace
     }
 }
 
-int LuaModuleMgr::load(eLuaState& aLua, const std::string& aName)
+sModule::sModule():
+    iRef(LUA_NOREF),
+    iLua(0)
+{}
+
+sModule::~sModule()
 {
-    return add(aLua.getRaw(), aName).iRef;
+    luaL_unref(iLua, LUA_REGISTRYINDEX, iRef);
+}
+
+const sModule& LuaModuleMgr::load(eLuaState& aLua, const std::string& aName)
+{
+    return add(aLua.getRaw(), aName);
 }
 
 int LuaModuleMgr::getModule(const std::string& aName)

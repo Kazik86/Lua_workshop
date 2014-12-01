@@ -1,14 +1,26 @@
 #ifndef LUA_MODULE_H
 #define LUA_MODULE_H
 
+#include <list>
 #include <lua.hpp>
 #include <string>
 
 class eLuaState;
 
+struct sModule
+{
+    sModule();
+    ~sModule();
+
+    int iRef;
+    lua_State* iLua;
+    std::string iScript;
+    std::list<sModule*> iInheritanceHierarchy;
+};
+
 namespace LuaModuleMgr
 {
-    int load(eLuaState& aLua, const std::string& aName);
+    const sModule& load(eLuaState& aLua, const std::string& aName);
     int getModule(const std::string& aName);
     void clear();
 }
