@@ -71,10 +71,13 @@ void eFsm::callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionN
 	if (upvalueName == 0)
 	    break;
 	else if(strcmp(upvalueName, "_ENV") == 0) {
-	    lua_pushvalue(lua, -2);
-	    lua_setupvalue(lua, -2, 1);
+	    lua_pushvalue(lua, -3);
+	    lua_setupvalue(lua, -3, i);
+	    lua_pop(lua, 1);
 	    break;
 	}
+
+	lua_pop(lua, 1);
     }
 
     lua_rawgeti(lua, LUA_REGISTRYINDEX, aMeRef);

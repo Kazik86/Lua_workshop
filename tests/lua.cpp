@@ -129,3 +129,11 @@ TEST_FIXTURE(sFixture, MeTable)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, VirtualFunctions)
+{
+    eFsm fsm(iLua, "tests.scripts.virtualFunctions.derivedLvl1");
+    fsm.doScript();
+    fsm.callLuaFunc("Bar");
+    CHECK(true);
+}
