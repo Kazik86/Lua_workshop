@@ -1,7 +1,7 @@
 Class = "A"
 
 function Foo(me)
-    error("Wrong function in virtual call.")
+    _G.error("Wrong function in virtual call.")
 end
 
 function Bar(me)
