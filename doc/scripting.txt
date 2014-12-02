@@ -1,4 +1,4 @@
-Nazwy zastrzeżone w skryptach: Class, Derives, Script
+Nazwy zastrzeżone w skryptach: Class, Derives, Script, _G
 
 w funkcjach OnInit i OnRestart nie działają wywołania wirtualne tzn.
 foo() będzie szukało funkcji 'foo' w górę hierarchii ale począwszy od modułu 
@@ -7,6 +7,7 @@ OnRestart.
 Funkcje inne niż OnInit i OnRestart szukają funkcji począwszy od głównego modułu 
 Aktora.
 
+
 TODO:
 obecnie mam pojedynczą, globalną listę modułów. W przypadku gdy będę chciał 
 załadować ten sam moduł do kilku stanów Lua będzie problem, bo funkcja 'load' 
@@ -14,3 +15,18 @@ zwróci mi moduł o zadanej nazwie ale pochodzący z innego stanu Luy - nie
 utworzy kolejnego. Ale może nie będzie to potrzebne. W takim wypadku trzeba by 
 wyjebać atrybut lua_State* z definicji modułu i machnąć jakiś globalny do 
 namespace'a.
+
+
+'callLuaFuncWithEnv' zmienia _ENV _każdej_ wywoływanej funkcji. Może by tu 
+zapodać jakąś optymalizację bo nie jest to konieczne. _ENV powinno sie zmieniać 
+tylko tym funkcjom, które odnalezione zostały wyżej w hierarchii (czyli dzieki 
+metatablicom). Czyli cos w rodzaju:
+    lua_rawget(lua, "nazwaFunkcji");
+    if (lua_isnil(lua, -1)) // funkcji nie ma w głównym module, szukamy wyżej
+        lua_pop(lua, 1)
+	lua_getfield(lua, "nazwaFunkcji");
+	// i tutaj kod ustawiający _ENV
+
+Tylko czy to na pewno opłacalne? Przy odpowiednio częstym szukaniu wyżej 
+w hierarchii zysk bedzie dyskusyjny, bo lua_getfield() ponownie przeszukuje 
+główny moduł (szukało tam juz lua_rawget).
