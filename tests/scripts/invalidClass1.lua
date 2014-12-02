@@ -1,2 +1,0 @@
-local Actor = {}
-return Actor

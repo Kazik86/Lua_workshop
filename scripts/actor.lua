@@ -1,11 +1,7 @@
-local Actor = {}
-
-function Actor.new(base)
+function new(base)
     super = require(base)
 end
 
-function Actor.introduce()
+function introduce()
     print "I'm actor!"
 end
-
-return Actor

@@ -1,12 +1,8 @@
-local Actor = {}
+Class = "Derived1"
+Derives = "tests/scripts/derivedLvl2.lua"
 
-Actor.Class = "Derived1"
-Actor.Derives = "tests.scripts.derivedLvl2"
-
-function Actor.foo()
+function foo()
 end
 
-function Actor.onlyInDerivedLvl1()
+function onlyInDerivedLvl1()
 end
-
-return Actor

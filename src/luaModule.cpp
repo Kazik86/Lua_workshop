@@ -37,28 +37,10 @@ namespace
 	lua_settable(aLua, -3);
     }
 
-    // [-0, +1]
-    bool require(lua_State* aLua, const char* aPath)
+    void setGlobal(lua_State* aLua)
     {
-	lua_getfield(aLua, LUA_REGISTRYINDEX, "_LOADED");
-	lua_getfield(aLua, -1, aPath);
-	bool alreadyLoaded = lua_toboolean(aLua, -1);
-
-	lua_pop(aLua, 2);
-
-	if (alreadyLoaded)
-	    return true;
-
-	lua_getglobal(aLua, "require");
-	lua_pushstring(aLua, aPath);
-
-	if (lua_pcall(aLua, 1, 1, 0) != LUA_OK)
-	    throw std::runtime_error(lua_tostring(aLua, -1));
-
-	if(! lua_istable(aLua, -1))
-	    throw std::runtime_error("Actor's script must return a table.");
-
-	return false;
+	lua_pushglobaltable(aLua);
+	lua_setfield(aLua, -2, "_G");
     }
 
     // [-0, +0]
@@ -122,14 +104,30 @@ namespace
 	    sModule& m = iModules[aName];
 
 	    if (m.iRef == LUA_NOREF) {
-		if (require(aLua, aName.c_str()))
-		    // gdy skrypt A dziedziczy po skrypcie, który znów dziedziczy po A
+		if (m.iLua != 0) {
+		    // m.iLua pełni rolę strażnika zapętlonego dziedziczenia
+		    // tzn. gdy skrypt A dziedziczy po skrypcie, który znów
+		    // dziedziczy po A
 		    throw std::runtime_error("Circular inheritance detected!");
+		}
+
+		m.iLua = aLua;
+
+		lua_newtable(aLua);
+
+		if (luaL_loadfile(aLua, aName.c_str()) != LUA_OK)
+		    throw std::runtime_error(lua_tostring(aLua, -1));
+
+		lua_pushvalue(aLua, -2);
+		lua_setupvalue(aLua, -2, 1);
+
+		if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
+		    throw std::runtime_error(lua_tostring(aLua, -1));
 
 		setClass(aLua);
+		setGlobal(aLua);
 		m.iInheritanceHierarchy = derive(aLua);
 		m.iRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
-		m.iLua = aLua;
 		m.iScript = aName;
 
 		if (sModule* redef = checkClassUniqueness(aLua, m))

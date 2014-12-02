@@ -1,13 +1,9 @@
-local Actor = {}
+Class = "Derived1"
 
-Actor.Class = "Derived1"
-
-function Actor.Foo(me)
-    print "Foo from Derived1"
+function Foo(me)
+    error("Wrong function in virtual call.")
 end
 
-function Actor.Bar(me)
-    Actor.Foo(me)
+function Bar(me)
+    Foo(me)
 end
-
-return Actor

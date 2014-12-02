@@ -1,10 +1,5 @@
-local Actor = {}
+Class = "Base"
+Derives = "tests/scripts/virtualFunctions/derivedLvl1.lua"
 
-Actor.Class = "Base"
-Actor.Derives = "tests.scripts.virtualFunctions.derivedLvl1"
-
-function Actor.Foo(me)
-    print "Foo from Base"
+function Foo(me)
 end
-
-return Actor

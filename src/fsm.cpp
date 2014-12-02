@@ -62,8 +62,9 @@ void eFsm::callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionN
     lua_getfield(lua, -1, aFunctionName);
 
     /* nie każda funkcja musi posiadać jako upvalue swoje _ENV. Z tego co widzę
-     * z eksperymentów, _ENV dołączane jest tylko do funkcji mających 'free
-     * variables'. W dodatku nawet jeśli mamy _ENV to niekoniecznie jako
+     * z eksperymentów, _ENV nie mają np. funkcje, które operują tylko na
+     * przesłanych jej argumentach (brak odwołań do jakichkolwiek danych spoza
+     * zakresu funkcji). W dodatku nawet jeśli mamy _ENV to niekoniecznie jako
      * upvalue na pozycji 1.
      */
     for (int i = 1; ; ++i) {

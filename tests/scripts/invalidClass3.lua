@@ -1,3 +1,1 @@
-local Actor = {}
-Actor.Class = nil
-return Actor
+Class = nil

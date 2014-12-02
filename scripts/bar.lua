@@ -1,6 +1,2 @@
-local Actor = {}
-
-Actor.Class = "Bar"
-Actor.Derives = "scripts.baz"
-
-return Actor
+Class = "Bar"
+Derives = "scripts/baz.lua"

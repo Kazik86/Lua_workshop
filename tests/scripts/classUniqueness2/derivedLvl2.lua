@@ -1,5 +1,1 @@
-local Actor = {}
-
-Actor.Class = "Derived1"
-
-return Actor
+Class = "Derived1"

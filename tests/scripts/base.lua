@@ -1,56 +1,54 @@
-local Actor = {}
+Class = "Base"
+Derives = "tests/scripts/derivedLvl1.lua"
 
-Actor.Class = "Base"
-Actor.Derives = "tests.scripts.derivedLvl1"
-
-function Actor.foo()
+function foo()
 end
 
-Actor.MetatableTests = {
+MetatableTests = {
     [1] = function ()
-	      return Actor.onlyInDerivedLvl1 ~= nil
+	      return onlyInDerivedLvl1 ~= nil
 	  end,
 
     [2] = function ()
-	      return Actor.onlyInDerivedLvl2 ~= nil
+	      return onlyInDerivedLvl2 ~= nil
 	  end
 }
 
-Actor.InheritanceTests = {
+InheritanceTests = {
     [1] = function ()
-	      return Actor.Derived1 ~= nil
+	      return Derived1 ~= nil
 	  end,
 
     [2] = function ()
-	      return Actor.Derived1.foo ~= nil
+	      return Derived1.foo ~= nil
 	  end,
 
     [3] = function ()
-	      return Actor.Derived1 == require(Actor.Derives)
+	      return Derived1 == require(Derives)
 	  end,
 
     [4] = function ()
-	      return Actor.foo ~= Actor.Derived1.foo
+	      return foo ~= Derived1.foo
 	  end,
 
     [5] = function ()
-	      return Actor.Derived2 ~= nil
+	      return Derived2 ~= nil
 	  end,
 
     [6] = function ()
-	      return Actor.Derived2.foo ~= nil
+	      return Derived2.foo ~= nil
 	  end,
 
     [7] = function ()
-	      return Actor.Derived1.foo ~= Actor.Derived2.foo
+	      return Derived1.foo ~= Derived2.foo
 	  end,
 
     [8] = function ()
-	      return Actor.Derived2.onlyInDerivedLvl2 ~= nil
+	      return Derived2.onlyInDerivedLvl2 ~= nil
 	  end
 }
 
-function Actor.doTests(t)
+function doTests(t)
     for i = 1, #t do
 	if not t[i]() then
 	    print("\tTest " .. i .. " failed.")
@@ -61,14 +59,12 @@ function Actor.doTests(t)
     return true
 end
 
-function Actor.testMetatable()
+function testMetatable()
     print "Testing metatable..."
-    return Actor.doTests(Actor.MetatableTests)
+    return doTests(MetatableTests)
 end
 
-function Actor.testInheritance()
+function testInheritance()
     print "Testing inheritance..."
-    return Actor.doTests(Actor.InheritanceTests)
+    return doTests(InheritanceTests)
 end
-
-return Actor

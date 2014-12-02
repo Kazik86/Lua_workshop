@@ -1,11 +1,7 @@
-local Actor = {}
+Class = "Derived2"
 
-Actor.Class = "Derived2"
-
-function Actor.foo()
+function foo()
 end
 
-function Actor.onlyInDerivedLvl2()
+function onlyInDerivedLvl2()
 end
-
-return Actor
