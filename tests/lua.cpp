@@ -36,8 +36,8 @@ TEST_FIXTURE(sFixture, NonExistentScript)
 
 TEST_FIXTURE(sFixture, SameScript)
 {
-    int ref1 = LuaModuleMgr::load(iLua, "tests/scripts/base.lua").iRef;
-    int ref2 = LuaModuleMgr::load(iLua, "tests/scripts/base.lua").iRef;
+    int ref1 = LuaModuleMgr::load(iLua, "tests/scripts/C.lua").iRef;
+    int ref2 = LuaModuleMgr::load(iLua, "tests/scripts/C.lua").iRef;
     
     CHECK(ref1 == ref2);
 }
@@ -59,44 +59,44 @@ TEST_FIXTURE(sFixture, InvalidClassField3)
 
 TEST_FIXTURE(sFixture, Metatable)
 {
-    int ref = LuaModuleMgr::load(iLua, "tests/scripts/base.lua").iRef;
+    int ref = LuaModuleMgr::load(iLua, "tests/scripts/C.lua").iRef;
     callLuaFun(iLua, ref, "testMetatable", 0, 1);
 }
 
 TEST_FIXTURE(sFixture, Inheritance)
 {
-    int ref = LuaModuleMgr::load(iLua, "tests/scripts/base.lua").iRef;
+    int ref = LuaModuleMgr::load(iLua, "tests/scripts/C.lua").iRef;
     callLuaFun(iLua, ref, "testInheritance", 0, 1);
 }
 
 TEST_FIXTURE(sFixture, ClassUniqueness1)
 {
-    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/classUniqueness1/base.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/classUniqueness1/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, ClassUniqueness2)
 {
-    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/classUniqueness2/base.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/classUniqueness2/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, ClassUniqueness3)
 {
-    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/classUniqueness3/base.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/classUniqueness3/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, CircularInheritance1)
 {
-    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/circularInheritance1/base.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/circularInheritance1/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, CircularInheritance2)
 {
-    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/circularInheritance2/base.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/circularInheritance2/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, CircularInheritance3)
 {
-    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/circularInheritance3/base.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/circularInheritance3/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, ClassNameUsedAsIdentifier)
@@ -127,7 +127,7 @@ TEST_FIXTURE(sFixture, MeTable)
 
 TEST_FIXTURE(sFixture, VirtualFunctions)
 {
-    eFsm fsm(iLua, "tests/scripts/virtualFunctions/base.lua");
+    eFsm fsm(iLua, "tests/scripts/virtualFunctions/B.lua");
     fsm.doScript();
     fsm.callLuaFunc("Bar");
     CHECK(true);

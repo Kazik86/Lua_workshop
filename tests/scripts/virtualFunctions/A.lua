@@ -1,4 +1,4 @@
-Class = "Derived1"
+Class = "A"
 
 function Foo(me)
     error("Wrong function in virtual call.")

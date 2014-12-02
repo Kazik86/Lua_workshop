@@ -1,50 +1,50 @@
-Class = "Base"
-Derives = "tests/scripts/derivedLvl1.lua"
+Class = "C"
+Derives = "tests/scripts/B.lua"
 
 function foo()
 end
 
 MetatableTests = {
     [1] = function ()
-	      return onlyInDerivedLvl1 ~= nil
+	      return onlyInB ~= nil
 	  end,
 
     [2] = function ()
-	      return onlyInDerivedLvl2 ~= nil
+	      return onlyInC ~= nil
 	  end
 }
 
 InheritanceTests = {
     [1] = function ()
-	      return Derived1 ~= nil
+	      return B ~= nil
 	  end,
 
     [2] = function ()
-	      return Derived1.foo ~= nil
+	      return B.foo ~= nil
 	  end,
 
     [3] = function ()
-	      return Derived1 == require(Derives)
+	      return B == require(Derives)
 	  end,
 
     [4] = function ()
-	      return foo ~= Derived1.foo
+	      return foo ~= B.foo
 	  end,
 
     [5] = function ()
-	      return Derived2 ~= nil
+	      return A ~= nil
 	  end,
 
     [6] = function ()
-	      return Derived2.foo ~= nil
+	      return A.foo ~= nil
 	  end,
 
     [7] = function ()
-	      return Derived1.foo ~= Derived2.foo
+	      return B.foo ~= A.foo
 	  end,
 
     [8] = function ()
-	      return Derived2.onlyInDerivedLvl2 ~= nil
+	      return A.onlyInA ~= nil
 	  end
 }
 
