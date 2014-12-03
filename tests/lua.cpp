@@ -57,6 +57,12 @@ TEST_FIXTURE(sFixture, InvalidClassField3)
     CHECK_THROW(LuaModuleMgr::load(iLua, "tests/scripts/invalidClass3.lua"), std::runtime_error);
 }
 
+TEST_FIXTURE(sFixture, ClassNameSavedInModule)
+{
+    const sModule& m = LuaModuleMgr::load(iLua, "tests/scripts/A.lua");
+    CHECK(m.iClass == "A");
+}
+
 TEST_FIXTURE(sFixture, Metatable)
 {
     int ref = LuaModuleMgr::load(iLua, "tests/scripts/C.lua").iRef;
@@ -130,5 +136,16 @@ TEST_FIXTURE(sFixture, VirtualFunctions)
     eFsm fsm(iLua, "tests/scripts/virtualFunctions/B.lua");
     fsm.doScript();
     fsm.callLuaFunc("Bar");
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, MeTableInheritance)
+{
+    eFsm fsm(iLua, "tests/scripts/meTableInheritance/C.lua");
+    fsm.doScript();
+    fsm.callOnInit();
+    fsm.callLuaFunc("test1");
+    fsm.callLuaFunc("test2");
+    fsm.callLuaFunc("test3");
     CHECK(true);
 }

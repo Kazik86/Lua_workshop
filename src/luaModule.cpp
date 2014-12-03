@@ -16,7 +16,7 @@ namespace
     sModule& add(lua_State* aLua, const std::string& aName);
 
     // [-0, +0]
-    void setClass(lua_State* aLua)
+    void setClass(lua_State* aLua, sModule& aModule)
     {
 	lua_getfield(aLua, -1, "Class");
 
@@ -33,6 +33,9 @@ namespace
 	    throw std::runtime_error("Class name is used as an identifier.");
 
 	lua_pop(aLua, 1);
+
+	aModule.iClass = lua_tostring(aLua, -1);
+
 	lua_pushvalue(aLua, -2);
 	lua_settable(aLua, -3);
     }
@@ -124,7 +127,7 @@ namespace
 		if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
 		    throw std::runtime_error(lua_tostring(aLua, -1));
 
-		setClass(aLua);
+		setClass(aLua, m);
 		setGlobal(aLua);
 		m.iInheritanceHierarchy = derive(aLua);
 		m.iRef = luaL_ref(aLua, LUA_REGISTRYINDEX);

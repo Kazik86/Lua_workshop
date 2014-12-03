@@ -15,6 +15,7 @@ struct sModule
     int iRef;
     lua_State* iLua;
     std::string iScript;
+    std::string iClass;
     std::list<sModule*> iInheritanceHierarchy;
 };
 

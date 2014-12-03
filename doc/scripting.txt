@@ -1,12 +1,48 @@
 Nazwy zastrzeżone w skryptach: Class, Derives, Script, _G
 
-w funkcjach OnInit i OnRestart nie działają wywołania wirtualne tzn.
-foo() będzie szukało funkcji 'foo' w górę hierarchii ale począwszy od modułu 
+W funkcjach OnInit i OnRestart nie działają wywołania wirtualne tzn.
+foo() będzie szukało funkcji 'foo' w górę hierarchii ale począwszy od modułu,
 w którym jest zadeklarowana aktualnie przetwarzana funkcja OnInit lub 
 OnRestart.
 Funkcje inne niż OnInit i OnRestart szukają funkcji począwszy od głównego modułu 
-Aktora.
+Aktora (czyli klasy stojącej najniżej w hierarchii dziedziczenia)
 
+Przy wywoływaniu metody z klasy bazowej trzeba pamiętać o tym, że dostęp do 
+atrybutów, podobnie jak wywołania funkcji, jest wirtualny. Tzn. mając dwie 
+klasy:
+
+    -- A.lua
+
+    Class = "A"
+
+    function OnInit(me)
+	me.foo = 1
+    end
+
+    function onlyInA(me)
+	_G.print(me.foo)
+    end
+
+    -- B.lua
+
+    Class = "B"
+    Derives = "A.lua"
+
+    function OnInit(me)
+	me.foo = 2
+    end
+
+gdy ze skryptu B.lua wywołamy 'onlyInA' to na wyjściu dostaniemy 2. Jest to 
+sprzeczne z doświadczeniem wyniesionym z choćby C++ ale konieczne aby 
+poprawnie działały wirtualne wywołania funkcji. Przyczyną tego jest fakt, że 
+do 'onlyInA' wysyłam całą tablicę 'Me', a należałoby tylko część "przyciętą" 
+zgodnie z tym, które miejsce w hierarchii dziedziczenia zajmuje klasa "A". 
+Niestety wówczas, gdyby z ciała 'onlyInA' zaszła potrzeba wywołania 
+wirtualnego (czyli powrotu do klasy B) to tam również trafiłaby ta okrojona 
+wersja (nieposiadająca atrybutów używanych w "B"). W razie gdyby był to 
+problem można zmienić nazwy zmiennych (w klasie bazowej lub pochodnej) 
+albo w klasie "A" użyć zmiennej 'foo' precyzyjnie określając, że chodzi nam 
+o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 obecnie mam pojedynczą, globalną listę modułów. W przypadku gdy będę chciał 

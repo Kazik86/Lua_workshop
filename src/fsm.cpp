@@ -38,15 +38,29 @@ void eFsm::createMeTables()
 
     // me
     lua_newtable(lua);
-    iMeRef.push_front(luaL_ref(lua, LUA_REGISTRYINDEX));
+    lua_pushvalue(lua, -1);
+    lua_setfield(lua, -1, iModule->iClass.c_str()); // me.MyClass = me
+    lua_pushvalue(lua, -1);
 
     // from inheritance
-    const std::list<sModule*>& ih = iModule->iInheritanceHierarchy;
-
-    for (decltype(ih.size()) i = 0; i < ih.size(); ++i) {
+    for (const sModule* m : iModule->iInheritanceHierarchy) {
 	lua_newtable(lua);
+	lua_pushvalue(lua, -1);
+	lua_setfield(lua, 1, m->iClass.c_str()); // me.DerivedClass = DerivedMe
+
+	lua_newtable(lua);
+	lua_pushvalue(lua, -2);
+	lua_setfield(lua, -2, "__index");
+	lua_setmetatable(lua, -3);
+	lua_remove(lua, -2);
+	
+	lua_pushvalue(lua, -1);
+
 	iMeRef.push_back(luaL_ref(lua, LUA_REGISTRYINDEX));
     }
+
+    lua_pop(lua, 1);
+    iMeRef.push_front(luaL_ref(lua, LUA_REGISTRYINDEX));
 }
 
 void eFsm::callLuaFunc(const char* aFunctionName)
@@ -103,7 +117,9 @@ void eFsm::callLuaFuncThroughInheritanceHierarchyBackward(const char* aFunctionN
 	callLuaFuncWithEnv(m->iRef, *envIt, aFunctionName);
     }
 
-    assert(envIt == iMeRef.crend());
+    callLuaFuncWithEnv(iModule->iRef, *envIt, aFunctionName);
+
+    assert(++envIt == iMeRef.crend());
 }
 
 void eFsm::callOnInit()
