@@ -4,7 +4,6 @@
 #include "luaState.h"
 
 #include <cassert>
-#include <cstring>
 #include <stdexcept>
 
 eFsm::eFsm(eLuaState& aLua, const std::string& aScript):
@@ -74,26 +73,6 @@ void eFsm::callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionN
     
     lua_rawgeti(lua, LUA_REGISTRYINDEX, aModuleRef);
     lua_getfield(lua, -1, aFunctionName);
-
-    /* nie każda funkcja musi posiadać jako upvalue swoje _ENV. Z tego co widzę
-     * z eksperymentów, _ENV nie mają np. funkcje, które operują tylko na
-     * przesłanych jej argumentach (brak odwołań do jakichkolwiek danych spoza
-     * zakresu funkcji). W dodatku nawet jeśli mamy _ENV to niekoniecznie jako
-     * upvalue na pozycji 1.
-     */
-    for (int i = 1; ; ++i) {
-	const char* upvalueName = lua_getupvalue(lua, -1, i);
-	if (upvalueName == 0)
-	    break;
-	else if(strcmp(upvalueName, "_ENV") == 0) {
-	    lua_pushvalue(lua, -3);
-	    lua_setupvalue(lua, -3, i);
-	    lua_pop(lua, 1);
-	    break;
-	}
-
-	lua_pop(lua, 1);
-    }
 
     lua_rawgeti(lua, LUA_REGISTRYINDEX, aMeRef);
 

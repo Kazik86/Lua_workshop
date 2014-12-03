@@ -1,9 +1,12 @@
 Class = "A"
 
-function Foo(me)
-    _G.error("Wrong function in virtual call.")
+function OnInit(me)
 end
 
-function Bar(me)
-    Foo(me)
+function callVirtuallFun(me)
+    return virtualFun(me)
+end
+
+function virtualFun(me)
+    return nil
 end

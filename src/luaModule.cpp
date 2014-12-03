@@ -3,6 +3,7 @@
 #include "luaState.h"
 
 #include <cassert>
+#include <cstring>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -46,6 +47,42 @@ namespace
 	lua_setfield(aLua, -2, "_G");
     }
 
+    int replaceEnv(lua_State* aLua)
+    {
+	if (lua_getmetatable(aLua, 1)) {
+	    lua_getfield(aLua, -1, "super");
+	    if (! lua_isnil(aLua, -1)) {
+		lua_pushvalue(aLua, 2);
+		lua_gettable(aLua, -2);
+
+		if (lua_isfunction(aLua, -1)) {
+		    /* nie każda funkcja musi posiadać jako upvalue swoje _ENV. Z tego co widzę
+		     * z eksperymentów, _ENV nie mają np. funkcje, które operują tylko na
+		     * przesłanych jej argumentach (brak odwołań do jakichkolwiek danych spoza
+		     * zakresu funkcji). W dodatku nawet jeśli mamy _ENV to niekoniecznie jako
+		     * upvalue na pozycji 1.
+		     */
+		    for (int i = 1; ; ++i) {
+			const char* upvalueName = lua_getupvalue(aLua, -1, i);
+			if (upvalueName == 0)
+			    break;
+			else if(strcmp(upvalueName, "_ENV") == 0) {
+			    lua_pushvalue(aLua, 1);
+			    lua_setupvalue(aLua, -3, i);
+			    lua_pop(aLua, 1);
+			    break;
+			}
+
+			lua_pop(aLua, 1);
+		    }
+		}
+	    }
+	} else
+	    lua_pushnil(aLua);
+
+	return 1;
+    }
+
     // [-0, +0]
     std::list<sModule*> derive(lua_State* aLua)
     {
@@ -56,6 +93,8 @@ namespace
 	    lua_newtable(aLua);
 	    sModule& super = add(aLua, lua_tostring(aLua, -2));
 	    lua_rawgeti(aLua, LUA_REGISTRYINDEX, super.iRef);
+	    lua_setfield(aLua, -2, "super");
+	    lua_pushcfunction(aLua, replaceEnv);
 	    lua_setfield(aLua, -2, "__index");
 	    lua_setmetatable(aLua, -3);
 

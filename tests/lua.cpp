@@ -135,7 +135,7 @@ TEST_FIXTURE(sFixture, VirtualFunctions)
 {
     eFsm fsm(iLua, "tests/scripts/virtualFunctions/B.lua");
     fsm.doScript();
-    fsm.callLuaFunc("Bar");
+    fsm.callLuaFunc("test");
     CHECK(true);
 }
 
@@ -146,6 +146,5 @@ TEST_FIXTURE(sFixture, MeTableInheritance)
     fsm.callOnInit();
     fsm.callLuaFunc("test1");
     fsm.callLuaFunc("test2");
-    fsm.callLuaFunc("test3");
     CHECK(true);
 }
