@@ -1,11 +1,15 @@
 Nazwy zastrzeżone w skryptach: Class, Derives, Script, _G
 
+				     ***
+
 W funkcjach OnInit i OnRestart nie działają wywołania wirtualne tzn.
 foo() będzie szukało funkcji 'foo' w górę hierarchii ale począwszy od modułu,
 w którym jest zadeklarowana aktualnie przetwarzana funkcja OnInit lub 
 OnRestart.
 Funkcje inne niż OnInit i OnRestart szukają funkcji począwszy od głównego modułu 
 Aktora (czyli klasy stojącej najniżej w hierarchii dziedziczenia)
+
+				     ***
 
 Przy wywoływaniu metody z klasy bazowej trzeba pamiętać o tym, że dostęp do 
 atrybutów, podobnie jak wywołania funkcji, jest wirtualny. Tzn. mając dwie 
@@ -44,7 +48,10 @@ problem można zmienić nazwy zmiennych (w klasie bazowej lub pochodnej)
 albo w klasie "A" użyć zmiennej 'foo' precyzyjnie określając, że chodzi nam 
 o 'foo' z klasy "A": me.A.foo = 1
 
+				     ***
+
 TODO:
+
 obecnie mam pojedynczą, globalną listę modułów. W przypadku gdy będę chciał 
 załadować ten sam moduł do kilku stanów Lua będzie problem, bo funkcja 'load' 
 zwróci mi moduł o zadanej nazwie ale pochodzący z innego stanu Luy - nie 
@@ -52,8 +59,9 @@ utworzy kolejnego. Ale może nie będzie to potrzebne. W takim wypadku trzeba by
 wyjebać atrybut lua_State* z definicji modułu i machnąć jakiś globalny do 
 namespace'a.
 
+				     ***
 
-'callLuaFuncWithEnv' zmienia _ENV _każdej_ wywoływanej funkcji. Może by tu 
+'replaceEnv' zmienia _ENV _każdej_ wywoływanej funkcji. Może by tu 
 zapodać jakąś optymalizację bo nie jest to konieczne. _ENV powinno sie zmieniać 
 tylko tym funkcjom, które odnalezione zostały wyżej w hierarchii (czyli dzieki 
 metatablicom). Czyli cos w rodzaju:
@@ -66,3 +74,46 @@ metatablicom). Czyli cos w rodzaju:
 Tylko czy to na pewno opłacalne? Przy odpowiednio częstym szukaniu wyżej 
 w hierarchii zysk bedzie dyskusyjny, bo lua_getfield() ponownie przeszukuje 
 główny moduł (szukało tam juz lua_rawget).
+
+				     ***
+
+Atrybuty aktora zapisywane są w kilku tablicach połączonych metatablicami, 
+zgodnie z hierarchią dziedziczenia modułu Aktora:
+    A -> B -> C
+    A.foo != B.foo
+    A.B.foo == B.foo
+
+Celem takiej architektury było odtworzenie funkcjonalności przełączania _ENV 
+dla funkcji ale tym razem na poziomie atrybutów. Czyli: wywołując funkcje 
+z klasy bazowej z parametrem 'me' miało nastąpić "przycięcie" tej tablicy do 
+poziomu hierarchii tej klasy, aby używane w ciele funkcji identyfikatory 
+szukane były od poziomu tablicy 'me' odpowiadającej poziomowi klasy bazowej w górę, 
+z pominięciem tablicy, której poziom odpowiada poziomowi klasy pochodnej. 
+Niestety nie znalazłem prostego sposobu na implementację tego. Tzn. 
+identyfikatory będę szukane we wszystkich tablicach, włącznie z tablicą klasy 
+pochodnej, co daje efekt taki jak wywołanie funkcji wirtualnej ale na poziomie 
+atrybutów:
+
+    -- A.lua
+    function OnInit(me)
+	me.foo = 1
+    end
+
+    function bar(me)
+	foo(me)
+    end
+
+    -- B.lua
+    function OnInit(me)
+	me.foo = 2
+    end
+
+    function foo(me)
+	me.foo = 3 -- NADPISANY będzie 'foo' z 'A', nie z 'B' !!!
+    end
+
+Na razie nie wiem czy jest to zachowanie szkodliwe, czy może wręcz przeciwnie, 
+przez przypadek udało się osiągnąć coś bardzo pozytecznego. Jesli będzie to 
+nieprzydatne to może by uprościć architekture i zastapic ją pojedynczą 
+tablicą, bez żadnych metatablic. Tzn. 'foo' będzie tylko jedno, dla całej 
+hierarchii klas.
