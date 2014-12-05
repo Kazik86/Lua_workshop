@@ -1,6 +1,7 @@
 #include <UnitTest++/UnitTest++.h>
 
 #include "fsm.h"
+#include "gadget.h"
 #include "luaModule.h"
 #include "luaState.h"
 
@@ -146,5 +147,13 @@ TEST_FIXTURE(sFixture, MeTableInheritance)
     fsm.callOnInit();
     fsm.callLuaFunc("test1");
     fsm.callLuaFunc("test2");
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ScriptSupport)
+{
+    eFsm fsm(iLua, "tests/scripts/scriptSupport.lua");
+    fsm.doScript();
+    fsm.callLuaFunc("test");
     CHECK(true);
 }

@@ -2,6 +2,7 @@
 #define LUA_LIBS_H
 
 #include "luaState.h"
+#include "../tests/funFromC.h"
 
 #include <lua.hpp>
 
@@ -20,6 +21,7 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 };
 
 const luaL_Reg eLuaState::iGadgetLibs[] = {
+    {"eFunFromC", eFunFromC::luaOpen},
     {NULL, NULL}
 };
 

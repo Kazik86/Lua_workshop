@@ -10,6 +10,7 @@ eLuaState::eLuaState():
 	throw std::runtime_error("eLuaState: luaL_newstate failed.");
 
     openBaseLibs();
+    openGadgetLibs();
 }
 
 eLuaState::~eLuaState()
