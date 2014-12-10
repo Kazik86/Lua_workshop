@@ -1,8 +1,8 @@
 #ifndef LUA_LIBS_H
 #define LUA_LIBS_H
 
+#include "actor.h"
 #include "luaState.h"
-#include "../tests/funFromC.h"
 
 #include <lua.hpp>
 
@@ -21,7 +21,7 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 };
 
 const luaL_Reg eLuaState::iGadgetLibs[] = {
-    {"eFunFromC", eFunFromC::luaOpen},
+    {"eActor", eActor::luaOpen},
     {NULL, NULL}
 };
 

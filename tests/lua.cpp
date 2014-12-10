@@ -1,6 +1,6 @@
 #include <UnitTest++/UnitTest++.h>
 
-#include "fsm.h"
+#include "actor.h"
 #include "gadget.h"
 #include "luaModule.h"
 #include "luaState.h"
@@ -113,47 +113,55 @@ TEST_FIXTURE(sFixture, ClassNameUsedAsIdentifier)
 
 TEST_FIXTURE(sFixture, MeTable)
 {
-    eFsm fsm1(iLua, "tests/scripts/meTable.lua");
-    eFsm fsm2(iLua, "tests/scripts/meTable.lua");
+    eActor a1(iLua, "tests/scripts/meTable.lua");
+    eActor a2(iLua, "tests/scripts/meTable.lua");
 
-    fsm1.doScript();
-    fsm2.doScript();
+    a1.doScript();
+    a2.doScript();
 
-    fsm1.callLuaFunc("setAttribs1");
-    fsm2.callLuaFunc("setAttribs1");
+    a1.callLuaFunc("setAttribs1");
+    a2.callLuaFunc("setAttribs1");
 
-    fsm1.callLuaFunc("checkAttribs1");
-    fsm2.callLuaFunc("checkAttribs1");
+    a1.callLuaFunc("checkAttribs1");
+    a2.callLuaFunc("checkAttribs1");
 
-    fsm1.callLuaFunc("setAttribs2");
-    fsm1.callLuaFunc("checkAttribs2");
-    fsm2.callLuaFunc("checkAttribs1");
+    a1.callLuaFunc("setAttribs2");
+    a1.callLuaFunc("checkAttribs2");
+    a2.callLuaFunc("checkAttribs1");
 
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, VirtualFunctions)
 {
-    eFsm fsm(iLua, "tests/scripts/virtualFunctions/B.lua");
-    fsm.doScript();
-    fsm.callLuaFunc("test");
+    eActor a(iLua, "tests/scripts/virtualFunctions/B.lua");
+    a.doScript();
+    a.callLuaFunc("test");
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, MeTableInheritance)
 {
-    eFsm fsm(iLua, "tests/scripts/meTableInheritance/C.lua");
-    fsm.doScript();
-    fsm.callOnInit();
-    fsm.callLuaFunc("test1");
-    fsm.callLuaFunc("test2");
+    eActor a(iLua, "tests/scripts/meTableInheritance/C.lua");
+    a.doScript();
+    a.callOnInit();
+    a.callLuaFunc("test1");
+    a.callLuaFunc("test2");
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, ScriptSupport)
 {
-    eFsm fsm(iLua, "tests/scripts/scriptSupport.lua");
-    fsm.doScript();
-    fsm.callLuaFunc("test");
+    eActor a(iLua, "tests/scripts/scriptSupport.lua");
+    eActor b(iLua, "tests/scripts/scriptSupport.lua");
+
+    a.doScript();
+    b.doScript();
+
+    a.callLuaFunc("setActorFoo");
+    b.callLuaFunc("setActorBar");
+
+    a.callLuaFunc("test");
+
     CHECK(true);
 }
