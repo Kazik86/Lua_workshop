@@ -22,14 +22,42 @@
     const struct luaL_Reg aClass::iFunctions[] =
 
 
-#define DEFINE_GADGET_METHODS(aClass)             \
-    const struct luaL_Reg aClass::iMethods[] =
+namespace Script
+{
 
 template <typename T>
-T* getMe(lua_State* aLua)
+inline T* getMe(lua_State* aLua)
 {
     luaL_checktype(aLua, 1, LUA_TLIGHTUSERDATA);
     return static_cast<T*>(lua_touserdata(aLua, 1));
 }
 
+template <typename T>
+inline T* getUdata(lua_State* aLua)
+{
+    return static_cast<T*>(luaL_checkudata(aLua, 1, T::iClassName));
+}
+
+template <typename T>
+inline T* getUdata(lua_State* aLua, int aIdx)
+{
+    return static_cast<T*>(luaL_checkudata(aLua, aIdx, T::iClassName));
+}
+
+inline int getInt(lua_State* aLua, int aIdx)
+{
+    return luaL_checkint(aLua, aIdx);
+}
+
+inline float getNumber(lua_State* aLua, int aIdx)
+{
+    return static_cast<float>(luaL_checknumber(aLua, aIdx));
+}
+
+inline const char* getString(lua_State* aLua, int aIdx)
+{
+    return luaL_checkstring(aLua, aIdx);
+}
+
+}
 #endif // SCRIPTING_H

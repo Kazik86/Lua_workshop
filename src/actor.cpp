@@ -11,7 +11,7 @@ namespace
 {
     int scriptName(lua_State* aLua)
     {
-	const eActor* me = getMe<eActor>(aLua);
+	const eActor* me = Script::getMe<eActor>(aLua);
 	lua_pushstring(aLua, me->getScript().c_str());
 	return 1;
     }
