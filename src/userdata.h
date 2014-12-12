@@ -3,107 +3,146 @@
 
 #include <lua.hpp>
 
-template <typename T>
-class eUserdata
+#define DECLARE_USERDATA_SUPPORT()                \
+    public:                                       \
+        static int luaOpen(lua_State* aLua);      \
+                                                  \
+    private:                                      \
+        static const struct luaL_Reg iFunctions[];
+
+
+#define DEFINE_USERDATA_SUPPORT(aClass)             \
+    int aClass::luaOpen(lua_State* aLua)          \
+    {                                             \
+	luaL_newlib(aLua, iFunctions);            \
+	return 1;                                 \
+    }
+
+
+#define DEFINE_USERDATA_API(aClass)               \
+    const struct luaL_Reg aClass::iFunctions[] =
+
+
+#define DECLARE_USERDATA_PROPERTY(aName, aType)                       \
+    public:                                                           \
+	void set##aName(aType aVal) { i##aName = aVal; }              \
+        aType get##aName() const { return i##aName; }                 \
+								      \
+    private:                                                          \
+        aType i##aName;
+
+
+#define DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aType, aGetFun)      \
+    int set##aName(lua_State* aLua)                                         \
+    {                                                                       \
+        aClass* me = Script::aGetFun<aClass>(aLua);                         \
+        me->set##aName(Script::getVal<aType>(aLua, 2));                     \
+	return 0;                                                           \
+    }                                                                       \
+    								            \
+    int get##aName(lua_State* aLua)                                         \
+    {                                                                       \
+        aClass* me = Script::aGetFun<aClass>(aLua);                         \
+        Script::pushVal<aType>(aLua, me->get##aName());                     \
+        return 1;                                                           \
+    }
+
+
+#define DEFINE_USERDATA_PROPERTY(aClass, aName, aType)         \
+    DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aType, getUdata)
+
+
+#define STRINGIZE(aParam) #aParam
+
+
+#define REGISTER_USERDATA_PROPERTY(aName)    \
+    { STRINGIZE(set##aName), ::set##aName }, \
+    { STRINGIZE(get##aName), ::get##aName }
+
+namespace Script
 {
-private:                                       
-    eUserdata();
-    eUserdata(const eUserdata&);
-    eUserdata& operator=(const eUserdata&);                                                   
-
-public:
-    ~eUserdata();
-
-private:
-    static int create(lua_State* aLua);
-    static int cleanup(lua_State* aLua);
-    static int setProperty(lua_State* aLua);
-
-    static int luaOpen (lua_State* aLua);
-
-private:
-    static const struct luaL_Reg iFunctions[];
-    static const struct luaL_Reg iMethods[];
-    static const sPropertyInfo iProperties[];
-};
 
 template <typename T>
-int eUserdata<T>::create(lua_State* aLua)
+inline T* getUdata(lua_State* aLua)
 {
-    size_t classSize = sizeof(T);
-    T* g = (T*)lua_newuserdata(aLua, classSize);
-
-    /* musze wywolac ctor m.in po to aby zainicjalizowac wskaznik VPTR */
-    new((void*)g) T;
-    g->bind();
-
-    luaL_getmetatable(aLua, T::iClassName);
-    lua_setmetatable(aLua, -2);
-
-    if(lua_istable(aLua, 1))
-	g->loadPropertiesFromTable(aLua, 1, T::iProperties);
-
-    g->saveDefaultPropValues(aLua);
-    g->begin(aLua);
-
-    return 1;
+    luaL_checktype(aLua, 1, LUA_TLIGHTUSERDATA);
+    return static_cast<T*>(lua_touserdata(aLua, 1));
 }
 
 template <typename T>
-int eUserdata<T>::setProperty(lua_State* aLua)
+inline T* getGadget(lua_State* aLua)
 {
-    T* me = KPR_LUA_GET_USERDATA(aLua, 1, T);
-    ASSERT(me != 0);
-
-    int idx = me->checkOption(aLua, 2, T::iProperties);
-    me->getValue(aLua, 3, T::iProperties, idx);
-    me->iIsPropModified = true;
-    return 0;
+    return static_cast<T*>(luaL_checkudata(aLua, 1, T::iClassName));
 }
 
 template <typename T>
-int eUserdata<T>::cleanup(lua_State* aLua)
+inline T* getGadget(lua_State* aLua, int aIdx)
 {
-    T* me = KPR_LUA_GET_USERDATA(aLua, 1, T);
-    ASSERT(me != 0);
-
-    if(me->iIsEnabled)
-	me->disable();
-
-    me->~T();
-    return 0;
+    return static_cast<T*>(luaL_checkudata(aLua, aIdx, T::iClassName));
 }
 
 template <typename T>
-int eUserdata<T>::luaOpen(lua_State* aLua)
+inline T getVal(lua_State* aLua, int aIdx)
 {
-    luaL_newmetatable(aLua, T::iClassName);
-    lua_pushstring(aLua, "__index");
-    lua_pushvalue(aLua, -2);
-    lua_settable(aLua, -3);
+    // z tego szablonu nigdy nie powinienem korzystać. Wszystkie obsługiwane
+    // typy opędzane są za pomocą wersji specjalizowanych. Celowo pomijam
+    // 'return' aby w razie użycia typu, dla którego nie ma wersji
+    // specjalizowanej, kompilator zgłosił bład.
+}
 
-    lua_pushstring(aLua, "__gc");
-    lua_pushcfunction(aLua, eUserdata<T>::cleanup);
-    lua_settable(aLua, -3);
+template <>
+inline int getVal(lua_State* aLua, int aIdx)
+{
+    return luaL_checkint(aLua, aIdx);
+}
 
-    lua_pushstring(aLua, "__newindex");
-    lua_pushcfunction(aLua, eUserdata<T>::setProperty);
-    lua_settable(aLua, -3);
+template <>
+inline float getVal(lua_State* aLua, int aIdx)
+{
+    return static_cast<float>(luaL_checknumber(aLua, aIdx));
+}
 
-    luaL_register(aLua, NULL, eUserdata<T>::iMethods);
-    luaL_register(aLua, NULL, eUserdata<T>::iCommonMethods);
-    luaL_register(aLua, T::iClassName, eUserdata<T>::iFunctions);
+template <>
+inline const char* getVal(lua_State* aLua, int aIdx)
+{
+    return luaL_checkstring(aLua, aIdx);
+}
 
-    lua_pop(aLua, 2);
-
-    return 0;
+template <>
+inline bool getVal(lua_State* aLua, int aIdx)
+{
+    return lua_toboolean(aLua, aIdx);
 }
 
 template <typename T>
-const struct luaL_Reg eUserdata<T>::iFunctions[] =
+inline void pushVal(lua_State* aLua, T aVal)
 {
-    {"create", eUserdata<T>::create},
-    {NULL, NULL}
-};
+    // patrz uwagi w 'getVal'
+}
 
+template <>
+inline void pushVal(lua_State* aLua, int aVal)
+{
+    lua_pushinteger(aLua, aVal);
+}
+
+template <>
+inline void pushVal(lua_State* aLua, float aVal)
+{
+    lua_pushnumber(aLua, aVal);
+}
+
+template <>
+inline void pushVal(lua_State* aLua, const char* aVal)
+{
+    lua_pushstring(aLua, aVal);
+}
+
+template <>
+inline void pushVal(lua_State* aLua, bool aVal)
+{
+    lua_toboolean(aLua, aVal);
+}
+
+}
 #endif // USERDATA_H

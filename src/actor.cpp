@@ -11,19 +11,19 @@ namespace
 {
     int scriptName(lua_State* aLua)
     {
-	const eActor* me = Script::getMe<eActor>(aLua);
+	const eActor* me = Script::getUdata<eActor>(aLua);
 	lua_pushstring(aLua, me->getScript().c_str());
 	return 1;
     }
 }
 
-DEFINE_USERDATA_FUNCTIONS(eActor)
+DEFINE_USERDATA_API(eActor)
 {
     {"getScript", scriptName},
     {0, 0}
 };
 
-DEFINE_SCRIPT_SUPPORT(eActor)
+DEFINE_USERDATA_SUPPORT(eActor)
 
 eActor::eActor(eLuaState& aLua, const std::string& aScript):
     iLua(aLua),

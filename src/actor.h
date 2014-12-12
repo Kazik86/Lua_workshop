@@ -21,7 +21,7 @@ struct sActorSharedInternal
 
 class eActor
 {
-    DECLARE_SCRIPT_SUPPORT()
+    DECLARE_USERDATA_SUPPORT()
 
 public:
     eActor(eLuaState& aLua, const std::string& aScript);

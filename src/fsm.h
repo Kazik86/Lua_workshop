@@ -1,7 +1,7 @@
 #ifndef FSM_H
 #define FSM_H
 
-#include "scripting.h"
+#include "userdata.h"
 
 class eLuaState;
 
