@@ -117,3 +117,35 @@ przez przypadek udało się osiągnąć coś bardzo pozytecznego. Jesli będzie 
 nieprzydatne to może by uprościć architekture i zastapic ją pojedynczą 
 tablicą, bez żadnych metatablic. Tzn. 'foo' będzie tylko jedno, dla całej 
 hierarchii klas.
+
+				     ***
+
+W DEFINE_USERDATA_CLASS i DEFINE_GADGET_CLASS, w metodzie 'luaOpen' do 
+rejestracji funkcji używam 'luaL_newlib'. Ta funkcja to w istocie makro, które 
+w swoim wnętrzu wykorzystuje operator sizeof. Dzięki temu od razu tworzona jest 
+tablica o potrzebnym rozmiarze (w przeciwieństwie do 'lua_newtable', która 
+powiększa się dynamicznie). W przypadku dużej ilości gadżetów oznacza to duży 
+przyrost wydajności.
+
+Niestety płaci się za to wysoką cenę: tablica w której listujemy api musi być 
+znana przed defnicją funkcji 'luaOpen'. To wymusza posługiwanie się makrami 
+a nie szablonem. Rozwiązaniem może być zapanowanie nad momentem generowania 
+funkcji z szablonu przy użyciu 'explicit instantition' dla szablonów. Ono 
+jednak z kolei wiąże się z zaśmiecaniem kodu deklaracjami 'extern' w każdym 
+przypadku użycia funkcji szablonowej.
+
+				     ***
+
+Przy tworzeniu hierarchii modułow i "meTablic" wykorzystuję schemat:
+
+tablicaC -> metatablica[__index] -> tablicaB -> metatablica[__index] -> tablicaA
+
+Metatablica jest tylko "wskaźnikiem" na tablicę klasy bazowej. Czy nie mozna 
+by tego zastąpić czymś w rodzaju:
+
+tablicaC -> tablicaB[__index] -> tablicaA
+
+tzn. 'tablicaB' zawiera wszystkie swoje dane ale jednocześnie jest metatablicą 
+dla 'tablicaA'. Analogicznie 'tablicaA' jest metatablicą dla 'tablicaB'.
+
+W chuj wydajniejsze by to było.
