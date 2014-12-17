@@ -2,13 +2,14 @@
 #define LUA_LIBS_H
 
 #include "actor.h"
+#include "../tests/gFoo.h"
 #include "luaState.h"
 
 #include <lua.hpp>
 
 const luaL_Reg eLuaState::iBaseLibs[] = {
     {"_G", luaopen_base},
-    {LUA_LOADLIBNAME, luaopen_package},
+    // {LUA_LOADLIBNAME, luaopen_package},
     // {LUA_COLIBNAME, luaopen_coroutine},
     // {LUA_TABLIBNAME, luaopen_table},
     // {LUA_IOLIBNAME, luaopen_io},
@@ -22,6 +23,7 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 
 const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActor", eActor::luaOpen},
+    {"gFoo", gFoo::luaOpen},
     {NULL, NULL}
 };
 

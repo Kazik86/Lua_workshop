@@ -165,3 +165,12 @@ TEST_FIXTURE(sFixture, ScriptSupport)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, GadgetTest)
+{
+    eActor a(iLua, "tests/scripts/gadgetTest.lua");
+    a.doScript();
+    a.callLuaFunc("test");
+
+    CHECK(true);
+}

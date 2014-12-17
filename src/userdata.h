@@ -8,19 +8,19 @@
         static int luaOpen(lua_State* aLua);      \
                                                   \
     private:                                      \
-        static const struct luaL_Reg iFunctions[];
+        static const struct luaL_Reg iMethods[];
 
 
-#define DEFINE_USERDATA_SUPPORT(aClass)             \
+#define DEFINE_USERDATA_SUPPORT(aClass)           \
     int aClass::luaOpen(lua_State* aLua)          \
     {                                             \
-	luaL_newlib(aLua, iFunctions);            \
+	luaL_newlib(aLua, iMethods);              \
 	return 1;                                 \
     }
 
 
 #define DEFINE_USERDATA_API(aClass)               \
-    const struct luaL_Reg aClass::iFunctions[] =
+    const struct luaL_Reg aClass::iMethods[] =
 
 
 #define DECLARE_USERDATA_PROPERTY(aName, aType)                       \
