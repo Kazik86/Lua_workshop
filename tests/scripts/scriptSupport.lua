@@ -1,5 +1,8 @@
 Class = "Foo"
 
+function OnInit(me)
+end
+
 function setActorFoo(me)
     ActorFooPtr = me.eActor
     ActorFooScript = _G.eActor.getScript(me.eActor)

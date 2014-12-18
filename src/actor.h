@@ -5,7 +5,9 @@
 
 #include <list>
 #include <string>
+#include <vector>
 
+class eGadget;
 class eLuaState;
 struct sModule;
 
@@ -33,6 +35,7 @@ public:
     void callOnRestart();
     void callLuaFunc(const char* aFunctionName);
     const std::string& getScript() const { return iScript; }
+    std::vector<eGadget*>::size_type getGadgetsNum() const { return iGadgets.size(); }
 
 private:
     eActor(const eActor& aOther);
@@ -42,6 +45,7 @@ private:
     void callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionName);
     void callLuaFuncThroughInheritanceHierarchyBackward(const char* aFunctionName);
     void shareInternalsWithScript();
+    void createGadgetsContainer();
 
 private:
     eLuaState& iLua;
@@ -49,6 +53,7 @@ private:
     std::list<int> iMeRef;
     std::string iScript;
     const sModule* iModule;
+    std::vector<eGadget*> iGadgets;
 };
 
 #endif // ACTOR_H
