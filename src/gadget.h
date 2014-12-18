@@ -87,6 +87,9 @@ int aClass::luaOpen(lua_State* aLua)                                    \
 
 class eGadget
 {
+public:
+    bool isEnabled() const { return iIsEnabled; }
+
 protected:
     eGadget();
     virtual ~eGadget() {}

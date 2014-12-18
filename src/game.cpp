@@ -65,3 +65,8 @@ void Game::mainLoop()
 	ActorMgr::update();
     }
 }
+
+eLuaState& Game::getLua()
+{
+    return iLua;
+}

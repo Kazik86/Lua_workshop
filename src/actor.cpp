@@ -35,7 +35,7 @@ DEFINE_USERDATA_SUPPORT(eActor)
 
 eActor::eActor(eLuaState& aLua, const std::string& aScript):
     iLua(aLua),
-    iFsm(aLua),
+    iFsm(),
     iScript(aScript)
 {
 }
@@ -57,7 +57,14 @@ void eActor::doScript()
 
 void eActor::update()
 {
-    iFsm.update();
+    lua_State* lua = iLua.getRaw();
+
+    for (eGadget* g : iGadgets) {
+	if (g->isEnabled())
+	    g->update(lua);
+    }
+
+    iFsm.update(lua);
 }
 
 void eActor::shareInternalsWithScript()

@@ -1,24 +1,28 @@
 #ifndef FSM_H
 #define FSM_H
 
-#include "userdata.h"
-
 class eLuaState;
 
 class eFsm
 {
 public:
-    eFsm(eLuaState& aLua);
+    eFsm();
     ~eFsm();
 
-    void update();
+    void update(lua_State* aLua);
 
 private:
     eFsm(const eFsm& aOther);
     eFsm& operator=(const eFsm& aOther);
 
+    void shift(lua_State* aLua);
+
+    void setFlag(unsigned int aFlag) { iFlags |= aFlag; }
+    void unsetFlag(unsigned int aFlag) { iFlags &= ~aFlag; }
+    bool checkFlag(unsigned int aFlag) const { return iFlags & aFlag; }
+
 private:
-    eLuaState& iLua;
+    unsigned int iFlags;
 };
 
 #endif // FSM_H

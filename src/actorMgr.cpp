@@ -23,7 +23,8 @@ void ActorMgr::cleanup()
 
 void ActorMgr::update()
 {
-
+    for (eActor* a : iActors)
+	a->update();
 }
 
 eActor& ActorMgr::add(eLuaState& aLua, const std::string& aScript)
