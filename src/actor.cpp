@@ -1,5 +1,6 @@
 #include "actor.h"
 
+#include "gadget.h"
 #include "luaModule.h"
 #include "luaState.h"
 
@@ -22,12 +23,20 @@ namespace
 	lua_pushunsigned(aLua, me->getGadgetsNum());
 	return 1;
     }
+
+    int shift(lua_State* aLua)
+    {
+	eActor* me = Script::getUdata<eActor>(aLua);
+	me->shift(aLua);
+	return 0;
+    }
 }
 
 DEFINE_USERDATA_API(eActor)
 {
-    {"getScript", scriptName},
-    {"getGadgetsNum", gadgetsNum},
+    {"getScript", ::scriptName},
+    {"getGadgetsNum", ::gadgetsNum},
+    {"shift", ::shift},
     {0, 0}
 };
 
@@ -35,7 +44,7 @@ DEFINE_USERDATA_SUPPORT(eActor)
 
 eActor::eActor(eLuaState& aLua, const std::string& aScript):
     iLua(aLua),
-    iFsm(),
+    iFsm(*this),
     iScript(aScript)
 {
 }
@@ -71,7 +80,8 @@ void eActor::shareInternalsWithScript()
 {
     std::vector<sActorSharedInternal> shares
     {
-	{"eActor", this}
+	{"eActor", this},
+	{"eFsm", &iFsm}
     };
 
     lua_State* lua = iLua.getRaw();

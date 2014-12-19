@@ -2,6 +2,7 @@
 #define ACTOR_H
 
 #include "fsm.h"
+#include "userdata.h"
 
 #include <list>
 #include <string>
@@ -36,6 +37,8 @@ public:
     void callLuaFunc(const char* aFunctionName);
     const std::string& getScript() const { return iScript; }
     std::vector<eGadget*>::size_type getGadgetsNum() const { return iGadgets.size(); }
+    void shift(lua_State* aLua) { iFsm.shift(aLua); }
+    int getMeRef() const { return iMeRef.front(); }
 
 private:
     eActor(const eActor& aOther);

@@ -89,6 +89,8 @@ class eGadget
 {
 public:
     bool isEnabled() const { return iIsEnabled; }
+    virtual void update(lua_State* /* aLua */) {}
+    virtual void restart() {}
 
 protected:
     eGadget();
@@ -104,8 +106,6 @@ private:
     static int disable(lua_State* aLua);
 
 protected:
-    virtual void update(lua_State* /* aLua */) {}
-    virtual void restart() {}
     virtual void begin(lua_State* /* aLua */) {}
     virtual void enable() {}
     virtual void disable() {}
