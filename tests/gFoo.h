@@ -6,7 +6,12 @@
 class gFoo: public eGadget
 {
     DECLARE_GADGET_CLASS()
-    DECLARE_GADGET_PROPERTY(Height, int)
+
+public:
+    void update(lua_State* aLua);
+
+    // props
+    DECLARE_GADGET_PROPERTY(Val, int)
 };
 
 #endif // G_FOO_H

@@ -185,3 +185,14 @@ TEST_FIXTURE(sFixture, StateShift)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, GadgetAndState)
+{
+    eActor a(iLua, "tests/scripts/gadgetAndState.lua");
+    a.doScript();
+    a.update();
+    a.update();
+    a.callLuaFunc("test");
+
+    CHECK(true);
+}
