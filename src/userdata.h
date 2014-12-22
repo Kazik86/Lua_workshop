@@ -144,5 +144,11 @@ inline void pushVal(lua_State* aLua, bool aVal)
     lua_toboolean(aLua, aVal);
 }
 
+template <>
+inline void pushVal(lua_State* aLua, void* aVal)
+{
+    lua_pushlightuserdata(aLua, aVal);
+}
+
 }
 #endif // USERDATA_H
