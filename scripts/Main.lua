@@ -1,4 +1,4 @@
-Class = "Bar"
+Class = "Main"
 Derives = "scripts/Actor.lua"
 
 function OnInit(me)
@@ -13,6 +13,6 @@ state_main = {
     end,
 
     update = function(me)
-	_G.print "Bar actor"
+	_G.print "main"
     end
 }

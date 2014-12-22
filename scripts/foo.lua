@@ -1,25 +1,18 @@
--- zrobić z poniższego szablon Aktora;
--- dodac szablon stanu
 Class = "Foo"
-Derives = "scripts/bar.lua"
+Derives = "scripts/Actor.lua"
 
-function properties(me)
-    me.lives = 5
+function OnInit(me)
+    shift(me, state_main)
 end
 
-function gadgets(me)
-    me.gFoo = gFoo.cretae()
-    me.button1 = eActor.new("scripts.button")
-end
+state_main = {
+    enter = function(me)
+    end,
 
-function init()
-    eFsm.setDefaultState("foo")
-    me.button1.set{ width = 10, height = 20 }
-end
+    leave = function(me)
+    end,
 
-function onSomeEvent(me)
-    -- do smth
-end
-
-state_foo = {
+    update = function(me)
+	_G.print "Foo actor"
+    end
 }

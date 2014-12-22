@@ -25,7 +25,7 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActor", eActor::luaOpen},
     {"eActorMgr", eActorMgr::luaOpen},
-    {"gFoo", gFoo::luaOpen},
+    //{"gFoo", gFoo::luaOpen},
     {NULL, NULL}
 };
 

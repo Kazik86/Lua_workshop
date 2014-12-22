@@ -1,7 +1,5 @@
 #include "actorMgr.h"
 
-#include "actor.h"
-
 #include <stdexcept>
 
 eActorMgr* eActorMgr::iMe = 0;
@@ -25,7 +23,8 @@ DEFINE_USERDATA_API(eActorMgr)
 
 DEFINE_USERDATA_CLASS(eActorMgr)
 
-eActorMgr::eActorMgr()
+eActorMgr::eActorMgr():
+    iMainActor("scripts/Main.lua")
 {
     if (iMe)
 	throw std::runtime_error("eActorMgr: multiple instances not allowed.");
@@ -44,6 +43,8 @@ eActorMgr::~eActorMgr()
 
 void eActorMgr::update(lua_State* aLua)
 {
+    iMainActor.update(aLua);
+
     for (eActor* a : iActors)
 	a->update(aLua);
 }
@@ -56,6 +57,8 @@ eActor* eActorMgr::add(const std::string& aScript)
 
 void eActorMgr::doScript(lua_State* aLua)
 {
+    iMainActor.doScript(aLua);
+
     for (eActor* a : iActors)
 	a->doScript(aLua);
 }

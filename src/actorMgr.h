@@ -1,6 +1,7 @@
 #ifndef ACTOR_MGR_H
 #define ACTOR_MGR_H
 
+#include "actor.h"
 #include "userdata.h"
 
 #include <list>
@@ -31,6 +32,7 @@ private:
 
 private:
     static eActorMgr* iMe;
+    eActor iMainActor;
     std::list<eActor*> iActors;
 };
 
