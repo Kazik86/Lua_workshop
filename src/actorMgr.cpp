@@ -23,20 +23,20 @@ eActorMgr::~eActorMgr()
     iMe = 0;
 }
 
-void eActorMgr::update()
+void eActorMgr::update(lua_State* aLua)
 {
     for (eActor* a : iActors)
-	a->update();
+	a->update(aLua);
 }
 
-eActor* eActorMgr::add(eLuaState* aLua, const std::string& aScript)
+eActor* eActorMgr::add(const std::string& aScript)
 {
-    iActors.push_front(new eActor(aLua, aScript));
+    iActors.push_front(new eActor(aScript));
     return iActors.front();
 }
 
-void eActorMgr::doScript()
+void eActorMgr::doScript(lua_State* aLua)
 {
     for (eActor* a : iActors)
-	a->doScript();
+	a->doScript(aLua);
 }

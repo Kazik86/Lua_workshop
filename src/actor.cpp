@@ -1,6 +1,7 @@
 #include "actor.h"
 
 #include "gadget.h"
+#include "game.h"
 #include "luaModule.h"
 #include "luaState.h"
 
@@ -42,8 +43,7 @@ DEFINE_USERDATA_API(eActor)
 
 DEFINE_USERDATA_CLASS(eActor)
 
-eActor::eActor(eLuaState* aLua, const std::string& aScript):
-    iLua(aLua),
+eActor::eActor(const std::string& aScript):
     iFsm(*this),
     iScript(aScript)
 {
@@ -51,31 +51,31 @@ eActor::eActor(eLuaState* aLua, const std::string& aScript):
 
 eActor::~eActor()
 {
-    lua_State* lua = iLua->getRaw();
+    lua_State* lua = eGame::getMe()->getLua()->getRaw();
     for (int ref : iMeRef)
 	luaL_unref(lua, LUA_REGISTRYINDEX, ref);
 }
 
-void eActor::doScript()
+void eActor::doScript(lua_State* aLua)
 {
-    iModule = &LuaModuleMgr::load(iLua, iScript);
-    createMeTables();
-    callOnInit();
+    iModule = &LuaModuleMgr::load(aLua, iScript);
+    createMeTables(aLua);
+    callOnInit(aLua);
+
     if (! iFsm.isEntryStateSet())
 	throw std::runtime_error(iScript + ": no entry state.");
-    createGadgetsContainer();
+
+    createGadgetsContainer(aLua);
 }
 
-void eActor::update()
+void eActor::update(lua_State* aLua)
 {
-    lua_State* lua = iLua->getRaw();
-
     for (eGadget* g : iGadgets) {
 	if (g->isEnabled())
-	    g->update(lua);
+	    g->update(aLua);
     }
 
-    iFsm.update(lua);
+    iFsm.update(aLua);
 }
 
 void eActor::shareInternalsWithScript(lua_State* aLua, int aRef)
@@ -96,63 +96,59 @@ void eActor::shareInternalsWithScript(lua_State* aLua, int aRef)
     lua_pop(aLua, 1);
 }
 
-void eActor::createMeTables()
+void eActor::createMeTables(lua_State* aLua)
 {
-    lua_State* lua = iLua->getRaw();
-
     // me
-    lua_newtable(lua);
-    lua_pushvalue(lua, -1);
-    lua_setfield(lua, -1, iModule->iClass.c_str()); // me.MyClass = me
-    lua_pushvalue(lua, -1);
+    lua_newtable(aLua);
+    lua_pushvalue(aLua, -1);
+    lua_setfield(aLua, -1, iModule->iClass.c_str()); // me.MyClass = me
+    lua_pushvalue(aLua, -1);
 
     // from inheritance
     for (const sModule* m : iModule->iInheritanceHierarchy) {
-	lua_newtable(lua);
-	lua_pushvalue(lua, -1);
-	lua_setfield(lua, 1, m->iClass.c_str()); // me.DerivedClass = DerivedMe
+	lua_newtable(aLua);
+	lua_pushvalue(aLua, -1);
+	lua_setfield(aLua, 1, m->iClass.c_str()); // me.DerivedClass = DerivedMe
 
-	lua_newtable(lua);
-	lua_pushvalue(lua, -2);
-	lua_setfield(lua, -2, "__index");
-	lua_setmetatable(lua, -3);
-	lua_remove(lua, -2);
+	lua_newtable(aLua);
+	lua_pushvalue(aLua, -2);
+	lua_setfield(aLua, -2, "__index");
+	lua_setmetatable(aLua, -3);
+	lua_remove(aLua, -2);
 	
-	lua_pushvalue(lua, -1);
+	lua_pushvalue(aLua, -1);
 
-	iMeRef.push_back(luaL_ref(lua, LUA_REGISTRYINDEX));
+	iMeRef.push_back(luaL_ref(aLua, LUA_REGISTRYINDEX));
     }
 
-    lua_pop(lua, 1);
-    iMeRef.push_front(luaL_ref(lua, LUA_REGISTRYINDEX));
+    lua_pop(aLua, 1);
+    iMeRef.push_front(luaL_ref(aLua, LUA_REGISTRYINDEX));
 
-    shareInternalsWithScript(lua, iMeRef.back());
+    shareInternalsWithScript(aLua, iMeRef.back());
 }
 
-void eActor::callLuaFunc(const char* aFunctionName)
+void eActor::callLuaFunc(lua_State* aLua, const char* aFunctionName)
 {
-    callLuaFuncWithEnv(iModule->iRef, iMeRef.front(), aFunctionName);
+    callLuaFuncWithEnv(aLua, iModule->iRef, iMeRef.front(), aFunctionName);
 }
 
-void eActor::callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionName)
+void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName)
 {
-    lua_State* lua = iLua->getRaw();
-    
-    lua_rawgeti(lua, LUA_REGISTRYINDEX, aModuleRef);
-    lua_getfield(lua, -1, aFunctionName);
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
+    lua_getfield(aLua, -1, aFunctionName);
 
-    if (! lua_isfunction(lua, -1))
+    if (! lua_isfunction(aLua, -1))
 	throw std::runtime_error(iScript + ": no function with name " + aFunctionName);
 
-    lua_rawgeti(lua, LUA_REGISTRYINDEX, aMeRef);
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
 
-    if(lua_pcall(lua, 1, 0, 0) != LUA_OK)
-	throw std::runtime_error(lua_tostring(lua, -1));
+    if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+	throw std::runtime_error(lua_tostring(aLua, -1));
 
-    lua_pop(lua, 1);
+    lua_pop(aLua, 1);
 }
 
-void eActor::callLuaFuncThroughInheritanceHierarchyBackward(const char* aFunctionName)
+void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName)
 {
     const std::list<sModule*>& ih = iModule->iInheritanceHierarchy;
 
@@ -163,42 +159,41 @@ void eActor::callLuaFuncThroughInheritanceHierarchyBackward(const char* aFunctio
 
     for (auto it = moduleItBeg; it != moduleItEnd; ++it, ++envIt) {
 	sModule* m = *it;
-	callLuaFuncWithEnv(m->iRef, *envIt, aFunctionName);
+	callLuaFuncWithEnv(aLua, m->iRef, *envIt, aFunctionName);
     }
 
-    callLuaFuncWithEnv(iModule->iRef, *envIt, aFunctionName);
+    callLuaFuncWithEnv(aLua, iModule->iRef, *envIt, aFunctionName);
 
     assert(++envIt == iMeRef.crend());
 }
 
-void eActor::callOnInit()
+void eActor::callOnInit(lua_State* aLua)
 {
-    callLuaFuncThroughInheritanceHierarchyBackward("OnInit");
+    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "OnInit");
 }
 
-void eActor::callOnRestart()
+void eActor::callOnRestart(lua_State* aLua)
 {
-    callLuaFuncThroughInheritanceHierarchyBackward("OnRestart");
+    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "OnRestart");
 }
 
-void eActor::createGadgetsContainer()
+void eActor::createGadgetsContainer(lua_State* aLua)
 {
-    lua_State* lua = iLua->getRaw();
     std::vector<eGadget*>::size_type gadgetsNum = 0;
 
     // najpierw policzmy ile aktor ma gadżetów
     for (int ref : iMeRef) {
-	lua_rawgeti(lua, LUA_REGISTRYINDEX, ref);
-	lua_pushnil(lua);
+	lua_rawgeti(aLua, LUA_REGISTRYINDEX, ref);
+	lua_pushnil(aLua);
 
-	while (lua_next(lua, -2) != 0) {
-	    if (lua_isuserdata(lua, -1) && !lua_islightuserdata(lua, -1))
+	while (lua_next(aLua, -2) != 0) {
+	    if (lua_isuserdata(aLua, -1) && !lua_islightuserdata(aLua, -1))
 		++gadgetsNum;
 
-	    lua_pop(lua, 1);
+	    lua_pop(aLua, 1);
 	}
 
-	lua_pop(lua, 1);
+	lua_pop(aLua, 1);
     }
 
     // miejsce na gadżety
@@ -209,16 +204,16 @@ void eActor::createGadgetsContainer()
     auto itEnd = iMeRef.crend();
 
     for (auto it = itBeg; it != itEnd; ++it) {
-	lua_rawgeti(lua, LUA_REGISTRYINDEX, *it);
-	lua_pushnil(lua);
+	lua_rawgeti(aLua, LUA_REGISTRYINDEX, *it);
+	lua_pushnil(aLua);
 
-	while (lua_next(lua, -2) != 0) {
-	    if (lua_isuserdata(lua, -1) && !lua_islightuserdata(lua, -1))
-		iGadgets.push_back(static_cast<eGadget*>(lua_touserdata(lua, -1)));
+	while (lua_next(aLua, -2) != 0) {
+	    if (lua_isuserdata(aLua, -1) && !lua_islightuserdata(aLua, -1))
+		iGadgets.push_back(static_cast<eGadget*>(lua_touserdata(aLua, -1)));
 
-	    lua_pop(lua, 1);
+	    lua_pop(aLua, 1);
 	}
 
-	lua_pop(lua, 1);
+	lua_pop(aLua, 1);
     }
 }

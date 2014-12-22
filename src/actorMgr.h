@@ -2,6 +2,7 @@
 #define ACTOR_MGR_H
 
 #include <list>
+#include <lua.hpp>
 #include <string>
 
 class eActor;
@@ -15,9 +16,9 @@ public:
 
     static eActorMgr* getMe() { return iMe; }
 
-    void update();
-    void doScript();
-    eActor* add(eLuaState* aLua, const std::string& aScript);
+    void update(lua_State* aLua);
+    void doScript(lua_State* aLua);
+    eActor* add(const std::string& aScript);
 
 private:
     eActorMgr(const eActorMgr& aOther);

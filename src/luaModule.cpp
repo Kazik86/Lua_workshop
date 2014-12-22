@@ -194,9 +194,9 @@ sModule::~sModule()
     luaL_unref(iLua, LUA_REGISTRYINDEX, iRef);
 }
 
-const sModule& LuaModuleMgr::load(eLuaState* aLua, const std::string& aName)
+const sModule& LuaModuleMgr::load(lua_State* aLua, const std::string& aName)
 {
-    return add(aLua->getRaw(), aName);
+    return add(aLua, aName);
 }
 
 int LuaModuleMgr::getModule(const std::string& aName)

@@ -27,14 +27,14 @@ class eActor
     DECLARE_USERDATA_CLASS()
 
 public:
-    eActor(eLuaState* aLua, const std::string& aScript);
+    eActor(const std::string& aScript);
     ~eActor();
 
-    void doScript();
-    void update();
-    void callOnInit();
-    void callOnRestart();
-    void callLuaFunc(const char* aFunctionName);
+    void doScript(lua_State* aLua);
+    void update(lua_State* aLua);
+    void callOnInit(lua_State* aLua);
+    void callOnRestart(lua_State* aLua);
+    void callLuaFunc(lua_State* aLua, const char* aFunctionName);
     const std::string& getScript() const { return iScript; }
     std::vector<eGadget*>::size_type getGadgetsNum() const { return iGadgets.size(); }
     void shift(lua_State* aLua) { iFsm.shift(aLua); }
@@ -44,14 +44,13 @@ private:
     eActor(const eActor& aOther);
     eActor& operator=(const eActor& aOther);
 
-    void createMeTables();
-    void callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionName);
-    void callLuaFuncThroughInheritanceHierarchyBackward(const char* aFunctionName);
+    void createMeTables(lua_State* aLua);
+    void callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName);
+    void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName);
     void shareInternalsWithScript(lua_State* aLua, int aRef);
-    void createGadgetsContainer();
+    void createGadgetsContainer(lua_State* aLua);
 
 private:
-    eLuaState* iLua;
     eFsm iFsm;
     std::list<int> iMeRef;
     std::string iScript;

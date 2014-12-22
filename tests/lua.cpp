@@ -17,183 +17,192 @@ namespace
     };
 
     // [-0, +0]
-    void callLuaFun(eLuaState* aLua, int aModuleRef, const char* aName, int aArgsNum, int aResultsNum)
+    void callLuaFun(lua_State* aLua, int aModuleRef, const char* aName, int aArgsNum, int aResultsNum)
     {
-	lua_State* lua = aLua->getRaw();
+	lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
+	lua_getfield(aLua, -1, aName);
+	lua_pcall(aLua, aArgsNum, aResultsNum, 0);
 
-	lua_rawgeti(lua, LUA_REGISTRYINDEX, aModuleRef);
-	lua_getfield(lua, -1, aName);
-	lua_pcall(lua, aArgsNum, aResultsNum, 0);
+	CHECK(lua_toboolean(aLua, -1));
 
-	CHECK(lua_toboolean(lua, -1));
-
-	lua_pop(lua, 1 + aResultsNum);
+	lua_pop(aLua, 1 + aResultsNum);
     }
 }
 
 TEST_FIXTURE(sFixture, NonExistentScript)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/nonexistent.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/nonexistent.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, SameScript)
 {
-    int ref1 = LuaModuleMgr::load(iGame.getLua(), "tests/scripts/C.lua").iRef;
-    int ref2 = LuaModuleMgr::load(iGame.getLua(), "tests/scripts/C.lua").iRef;
+    int ref1 = LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/C.lua").iRef;
+    int ref2 = LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/C.lua").iRef;
     
     CHECK(ref1 == ref2);
 }
 
 TEST_FIXTURE(sFixture, InvalidClassField1)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/invalidClass1.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/invalidClass1.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, InvalidClassField2)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/invalidClass2.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/invalidClass2.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, InvalidClassField3)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/invalidClass3.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/invalidClass3.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, ClassNameSavedInModule)
 {
-    const sModule& m = LuaModuleMgr::load(iGame.getLua(), "tests/scripts/A.lua");
+    const sModule& m = LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/A.lua");
     CHECK(m.iClass == "A");
 }
 
 TEST_FIXTURE(sFixture, Metatable)
 {
-    int ref = LuaModuleMgr::load(iGame.getLua(), "tests/scripts/C.lua").iRef;
-    callLuaFun(iGame.getLua(), ref, "testMetatable", 0, 1);
+    lua_State* lua = iGame.getLua()->getRaw();
+    int ref = LuaModuleMgr::load(lua, "tests/scripts/C.lua").iRef;
+    callLuaFun(lua, ref, "testMetatable", 0, 1);
 }
 
 TEST_FIXTURE(sFixture, Inheritance)
 {
-    int ref = LuaModuleMgr::load(iGame.getLua(), "tests/scripts/C.lua").iRef;
-    callLuaFun(iGame.getLua(), ref, "testInheritance", 0, 1);
+    lua_State* lua = iGame.getLua()->getRaw();
+    int ref = LuaModuleMgr::load(lua, "tests/scripts/C.lua").iRef;
+    callLuaFun(lua, ref, "testInheritance", 0, 1);
 }
 
 TEST_FIXTURE(sFixture, ClassUniqueness1)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/classUniqueness1/C.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/classUniqueness1/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, ClassUniqueness2)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/classUniqueness2/C.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/classUniqueness2/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, ClassUniqueness3)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/classUniqueness3/C.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/classUniqueness3/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, CircularInheritance1)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/circularInheritance1/C.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/circularInheritance1/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, CircularInheritance2)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/circularInheritance2/C.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/circularInheritance2/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, CircularInheritance3)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/circularInheritance3/C.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/circularInheritance3/C.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, ClassNameUsedAsIdentifier)
 {
-    CHECK_THROW(LuaModuleMgr::load(iGame.getLua(), "tests/scripts/classNameUsedAsIdentifier.lua"), std::runtime_error);
+    CHECK_THROW(LuaModuleMgr::load(iGame.getLua()->getRaw(), "tests/scripts/classNameUsedAsIdentifier.lua"), std::runtime_error);
 }
 
 TEST_FIXTURE(sFixture, MeTable)
 {
-    eActor a1(iGame.getLua(), "tests/scripts/meTable.lua");
-    eActor a2(iGame.getLua(), "tests/scripts/meTable.lua");
+    eActor a1("tests/scripts/meTable.lua");
+    eActor a2("tests/scripts/meTable.lua");
 
-    a1.doScript();
-    a2.doScript();
+    lua_State* lua = iGame.getLua()->getRaw();
 
-    a1.callLuaFunc("setAttribs1");
-    a2.callLuaFunc("setAttribs1");
+    a1.doScript(lua);
+    a2.doScript(lua);
 
-    a1.callLuaFunc("checkAttribs1");
-    a2.callLuaFunc("checkAttribs1");
+    a1.callLuaFunc(lua, "setAttribs1");
+    a2.callLuaFunc(lua, "setAttribs1");
 
-    a1.callLuaFunc("setAttribs2");
-    a1.callLuaFunc("checkAttribs2");
-    a2.callLuaFunc("checkAttribs1");
+    a1.callLuaFunc(lua, "checkAttribs1");
+    a2.callLuaFunc(lua, "checkAttribs1");
+
+    a1.callLuaFunc(lua, "setAttribs2");
+    a1.callLuaFunc(lua, "checkAttribs2");
+    a2.callLuaFunc(lua, "checkAttribs1");
 
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, VirtualFunctions)
 {
-    eActor a(iGame.getLua(), "tests/scripts/virtualFunctions/B.lua");
-    a.doScript();
-    a.callLuaFunc("test");
+    eActor a("tests/scripts/virtualFunctions/B.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.callLuaFunc(lua, "test");
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, MeTableInheritance)
 {
-    eActor a(iGame.getLua(), "tests/scripts/meTableInheritance/C.lua");
-    a.doScript();
-    a.callOnInit();
-    a.callLuaFunc("test1");
-    a.callLuaFunc("test2");
+    eActor a("tests/scripts/meTableInheritance/C.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.callOnInit(lua);
+    a.callLuaFunc(lua, "test1");
+    a.callLuaFunc(lua, "test2");
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, ScriptSupport)
 {
-    eActor a(iGame.getLua(), "tests/scripts/scriptSupport.lua");
-    eActor b(iGame.getLua(), "tests/scripts/scriptSupport.lua");
+    eActor a("tests/scripts/scriptSupport.lua");
+    eActor b("tests/scripts/scriptSupport.lua");
 
-    a.doScript();
-    b.doScript();
+    lua_State* lua = iGame.getLua()->getRaw();
 
-    a.callLuaFunc("setActorFoo");
-    b.callLuaFunc("setActorBar");
+    a.doScript(lua);
+    b.doScript(lua);
 
-    a.callLuaFunc("test");
+    a.callLuaFunc(lua, "setActorFoo");
+    b.callLuaFunc(lua, "setActorBar");
+
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, GadgetTest)
 {
-    eActor a(iGame.getLua(), "tests/scripts/gadgetTest.lua");
-    a.doScript();
-    a.callLuaFunc("test");
+    eActor a("tests/scripts/gadgetTest.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, StateShift)
 {
-    eActor a(iGame.getLua(), "tests/scripts/stateShift.lua");
-    a.doScript();
-    a.update();
-    a.update();
-    a.callLuaFunc("test");
+    eActor a("tests/scripts/stateShift.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua);
+    a.update(lua);
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, GadgetAndState)
 {
-    eActor a(iGame.getLua(), "tests/scripts/gadgetAndState.lua");
-    a.doScript();
-    a.update();
-    a.update();
-    a.callLuaFunc("test");
+    eActor a("tests/scripts/gadgetAndState.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua);
+    a.update(lua);
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }

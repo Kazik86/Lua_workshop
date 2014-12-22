@@ -25,7 +25,7 @@ eGame::eGame():
     eActorMgr* actorMgr = eActorMgr::getMe();
     // actorMgr->add(iLua.get(), "scripts.foo");
     // actorMgr->add(iLua.get(), "scripts.foo");
-    actorMgr->doScript();
+    actorMgr->doScript(iLua->getRaw());
 }
 
 eGame::~eGame()
@@ -38,7 +38,7 @@ void eGame::mainLoop()
 {
     while (iIsRunning) {
 	handleEvents();
-	iActorMgr->update();
+	iActorMgr->update(iLua.get()->getRaw());
     }
 }
 
