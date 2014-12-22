@@ -2,5 +2,8 @@ Zależności:
 
     lua 5.2.3      http://www.lua.org/ftp/lua-5.2.3.tar.gz
     UnitTest++     https://github.com/unittest-cpp/unittest-cpp
+    SDL2	   https://www.libsdl.org/download-2.0.php
+    SDL2_image	   https://www.libsdl.org/projects/SDL_image/
 
-Makefile zakłada, że powyższe biblioteki zainstalowane są w katalogu 'system'.
+W przypadku gdy powyższe wersje bibliotek kolidują z wersjami już obecnymi w
+systemie, można je zainstalować do katalogu 'system'.
