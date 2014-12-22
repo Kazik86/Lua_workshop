@@ -24,7 +24,7 @@ eFsm::eFsm(eActor& aActor):
 
 eFsm::~eFsm()
 {
-    lua_State* lua = Game::getLua().getRaw();
+    lua_State* lua = eGame::getMe()->getLua()->getRaw();
     luaL_unref(lua, LUA_REGISTRYINDEX, iStateRef);
     luaL_unref(lua, LUA_REGISTRYINDEX, iEnterRef);
     luaL_unref(lua, LUA_REGISTRYINDEX, iUpdateRef);

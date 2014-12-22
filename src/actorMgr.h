@@ -1,18 +1,31 @@
 #ifndef ACTOR_MGR_H
 #define ACTOR_MGR_H
 
+#include <list>
 #include <string>
 
 class eActor;
 class eLuaState;
 
-namespace ActorMgr
+class eActorMgr
 {
-    void init();
-    void cleanup();
+public:
+    eActorMgr();
+    ~eActorMgr();
+
+    static eActorMgr* getMe() { return iMe; }
+
     void update();
-    eActor& add(eLuaState& aLua, const std::string& aScript);
     void doScript();
-}
+    eActor* add(eLuaState* aLua, const std::string& aScript);
+
+private:
+    eActorMgr(const eActorMgr& aOther);
+    eActorMgr& operator=(const eActorMgr& aOther);
+
+private:
+    static eActorMgr* iMe;
+    std::list<eActor*> iActors;
+};
 
 #endif // ACTOR_MGR_H

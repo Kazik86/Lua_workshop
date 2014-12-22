@@ -1,40 +1,42 @@
 #include "actorMgr.h"
 
 #include "actor.h"
-#include <list>
 
-namespace
+#include <stdexcept>
+
+eActorMgr* eActorMgr::iMe = 0;
+
+eActorMgr::eActorMgr()
 {
-    std::list<eActor*> iActors;
+    if (iMe)
+	throw std::runtime_error("eActorMgr: multiple instances not allowed.");
+
+    iMe = this;
 }
 
-void ActorMgr::init()
+eActorMgr::~eActorMgr()
 {
-
-}
-
-void ActorMgr::cleanup()
-{
-    for (eActor* elm : iActors)
-	delete elm;
+    for (eActor* a : iActors)
+	delete a;
 
     iActors.clear();
+    iMe = 0;
 }
 
-void ActorMgr::update()
+void eActorMgr::update()
 {
     for (eActor* a : iActors)
 	a->update();
 }
 
-eActor& ActorMgr::add(eLuaState& aLua, const std::string& aScript)
+eActor* eActorMgr::add(eLuaState* aLua, const std::string& aScript)
 {
     iActors.push_front(new eActor(aLua, aScript));
-    return *iActors.front();
+    return iActors.front();
 }
 
-void ActorMgr::doScript()
+void eActorMgr::doScript()
 {
-    for (eActor* elm : iActors)
-	elm->doScript();
+    for (eActor* a : iActors)
+	a->doScript();
 }

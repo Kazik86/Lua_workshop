@@ -8,14 +8,12 @@ int main(int /* aArgc */, char** /* aArgv */)
     int result = EXIT_SUCCESS;
 
     try {
-	Game::init();
-	Game::mainLoop();
+	eGame game;
+	game.mainLoop();
     } catch (const std::exception& aError) {
 	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, aError.what());
 	result = EXIT_FAILURE;
     }
-
-    Game::cleanup();
 
     return result;
 }

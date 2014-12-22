@@ -27,7 +27,7 @@ class eActor
     DECLARE_USERDATA_CLASS()
 
 public:
-    eActor(eLuaState& aLua, const std::string& aScript);
+    eActor(eLuaState* aLua, const std::string& aScript);
     ~eActor();
 
     void doScript();
@@ -51,7 +51,7 @@ private:
     void createGadgetsContainer();
 
 private:
-    eLuaState& iLua;
+    eLuaState* iLua;
     eFsm iFsm;
     std::list<int> iMeRef;
     std::string iScript;

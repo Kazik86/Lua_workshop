@@ -21,7 +21,7 @@ struct sModule
 
 namespace LuaModuleMgr
 {
-    const sModule& load(eLuaState& aLua, const std::string& aName);
+    const sModule& load(eLuaState* aLua, const std::string& aName);
     int getModule(const std::string& aName);
     void clear();
 }

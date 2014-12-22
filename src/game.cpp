@@ -6,67 +6,52 @@
 #include <SDL2/SDL.h>
 #include <stdexcept>
 
-namespace 
+eGame* eGame::iMe = 0;
+
+eGame::eGame():
+    iIsRunning(true),
+    iLua(new eLuaState()),
+    iActorMgr(new eActorMgr())
 {
-    bool iIsRunning = true;
-    eLuaState iLua;
+    if (iMe)
+	throw std::runtime_error("eGame: multiple instances not allowed.");
 
+    iMe = this;
 
-    // functions //////////////////////////////////////////////////////
-
-    void initModules()
-    {
-	ActorMgr::init();
-    }
-
-    void cleanupModules()
-    {
-	ActorMgr::cleanup();
-    }
-
-    void handleEvents()
-    {
-	SDL_Event event;
-	if (SDL_PollEvent(&event)) {
-	    switch (event.type) {
-		case SDL_QUIT:
-		    iIsRunning = false;
-		    break;
-		default:
-		    break;
-	    }
-	}
-    }
-}
-
-void Game::init()
-{
     if (SDL_Init(0/*SDL_INIT_VIDEO|SDL_INIT_TIMER*/) != 0) {
 	throw std::runtime_error(SDL_GetError());
     }
 
-    initModules();
-
-    ActorMgr::add(iLua, "scripts.foo");
-    ActorMgr::add(iLua, "scripts.foo");
-    ActorMgr::doScript();
+    eActorMgr* actorMgr = eActorMgr::getMe();
+    // actorMgr->add(iLua.get(), "scripts.foo");
+    // actorMgr->add(iLua.get(), "scripts.foo");
+    actorMgr->doScript();
 }
 
-void Game::cleanup()
+eGame::~eGame()
 {
-    cleanupModules();
     SDL_Quit();
+    iMe = 0;
 }
 
-void Game::mainLoop()
+void eGame::mainLoop()
 {
     while (iIsRunning) {
 	handleEvents();
-	ActorMgr::update();
+	iActorMgr->update();
     }
 }
 
-eLuaState& Game::getLua()
+void eGame::handleEvents()
 {
-    return iLua;
+    SDL_Event event;
+    if (SDL_PollEvent(&event)) {
+	switch (event.type) {
+	    case SDL_QUIT:
+		iIsRunning = false;
+		break;
+	    default:
+		break;
+	}
+    }
 }

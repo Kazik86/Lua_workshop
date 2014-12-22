@@ -42,7 +42,7 @@ DEFINE_USERDATA_API(eActor)
 
 DEFINE_USERDATA_CLASS(eActor)
 
-eActor::eActor(eLuaState& aLua, const std::string& aScript):
+eActor::eActor(eLuaState* aLua, const std::string& aScript):
     iLua(aLua),
     iFsm(*this),
     iScript(aScript)
@@ -51,7 +51,7 @@ eActor::eActor(eLuaState& aLua, const std::string& aScript):
 
 eActor::~eActor()
 {
-    lua_State* lua = iLua.getRaw();
+    lua_State* lua = iLua->getRaw();
     for (int ref : iMeRef)
 	luaL_unref(lua, LUA_REGISTRYINDEX, ref);
 }
@@ -68,7 +68,7 @@ void eActor::doScript()
 
 void eActor::update()
 {
-    lua_State* lua = iLua.getRaw();
+    lua_State* lua = iLua->getRaw();
 
     for (eGadget* g : iGadgets) {
 	if (g->isEnabled())
@@ -98,7 +98,7 @@ void eActor::shareInternalsWithScript(lua_State* aLua, int aRef)
 
 void eActor::createMeTables()
 {
-    lua_State* lua = iLua.getRaw();
+    lua_State* lua = iLua->getRaw();
 
     // me
     lua_newtable(lua);
@@ -136,7 +136,7 @@ void eActor::callLuaFunc(const char* aFunctionName)
 
 void eActor::callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionName)
 {
-    lua_State* lua = iLua.getRaw();
+    lua_State* lua = iLua->getRaw();
     
     lua_rawgeti(lua, LUA_REGISTRYINDEX, aModuleRef);
     lua_getfield(lua, -1, aFunctionName);
@@ -183,7 +183,7 @@ void eActor::callOnRestart()
 
 void eActor::createGadgetsContainer()
 {
-    lua_State* lua = iLua.getRaw();
+    lua_State* lua = iLua->getRaw();
     std::vector<eGadget*>::size_type gadgetsNum = 0;
 
     // najpierw policzmy ile aktor ma gadżetów
