@@ -61,6 +61,8 @@ void eActor::doScript()
     iModule = &LuaModuleMgr::load(iLua, iScript);
     createMeTables();
     callOnInit();
+    if (! iFsm.isEntryStateSet())
+	throw std::runtime_error(iScript + ": no entry state.");
     createGadgetsContainer();
 }
 
@@ -76,7 +78,7 @@ void eActor::update()
     iFsm.update(lua);
 }
 
-void eActor::shareInternalsWithScript()
+void eActor::shareInternalsWithScript(lua_State* aLua, int aRef)
 {
     std::vector<sActorSharedInternal> shares
     {
@@ -84,12 +86,14 @@ void eActor::shareInternalsWithScript()
 	{"eFsm", &iFsm}
     };
 
-    lua_State* lua = iLua.getRaw();
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aRef);
 
     for (const sActorSharedInternal& s : shares) {
-	lua_pushlightuserdata(lua, s.iAddress);
-	lua_setfield(lua, -2, s.iName);
+	lua_pushlightuserdata(aLua, s.iAddress);
+	lua_setfield(aLua, -2, s.iName);
     }
+
+    lua_pop(aLua, 1);
 }
 
 void eActor::createMeTables()
@@ -120,10 +124,9 @@ void eActor::createMeTables()
     }
 
     lua_pop(lua, 1);
-
-    shareInternalsWithScript();
-
     iMeRef.push_front(luaL_ref(lua, LUA_REGISTRYINDEX));
+
+    shareInternalsWithScript(lua, iMeRef.back());
 }
 
 void eActor::callLuaFunc(const char* aFunctionName)

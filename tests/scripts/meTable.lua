@@ -1,6 +1,8 @@
 Class = "Base"
+Derives = "scripts/Actor.lua"
 
 function OnInit(me)
+    shift(me, state_main)
 end
 
 function setAttribs1(me)
@@ -24,3 +26,14 @@ function checkAttribs2(me)
 	error("checkAttribs2 test failed")
     end
 end
+
+state_main = {
+    enter = function(me)
+    end,
+
+    leave = function(me)
+    end,
+
+    update = function(me)
+    end
+}

@@ -47,7 +47,7 @@ private:
     void createMeTables();
     void callLuaFuncWithEnv(int aModuleRef, int aMeRef, const char* aFunctionName);
     void callLuaFuncThroughInheritanceHierarchyBackward(const char* aFunctionName);
-    void shareInternalsWithScript();
+    void shareInternalsWithScript(lua_State* aLua, int aRef);
     void createGadgetsContainer();
 
 private:

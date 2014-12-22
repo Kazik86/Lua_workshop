@@ -1,6 +1,8 @@
 Class = "Foo"
+Derives = "scripts/Actor.lua"
 
 function OnInit(me)
+    shift(me, state_main)
 end
 
 function setActorFoo(me)
@@ -21,3 +23,13 @@ function test(me)
     _G.assert(ActorFooPtr ~= ActorBarPtr)
 end
 
+state_main = {
+    enter = function(me)
+    end,
+
+    leave = function(me)
+    end,
+
+    update = function(me)
+    end
+}
