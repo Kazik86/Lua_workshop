@@ -1,6 +1,8 @@
 #ifndef ACTOR_MGR_H
 #define ACTOR_MGR_H
 
+#include "userdata.h"
+
 #include <list>
 #include <lua.hpp>
 #include <string>
@@ -10,6 +12,8 @@ class eLuaState;
 
 class eActorMgr
 {
+    DECLARE_USERDATA_CLASS()
+
 public:
     eActorMgr();
     ~eActorMgr();
@@ -19,6 +23,7 @@ public:
     void update(lua_State* aLua);
     void doScript(lua_State* aLua);
     eActor* add(const std::string& aScript);
+    std::list<eActor*>::size_type getActorsNum() const { return iActors.size(); }
 
 private:
     eActorMgr(const eActorMgr& aOther);

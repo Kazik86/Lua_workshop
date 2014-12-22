@@ -2,6 +2,7 @@
 #define LUA_LIBS_H
 
 #include "actor.h"
+#include "actorMgr.h"
 #include "../tests/gFoo.h"
 #include "luaState.h"
 
@@ -23,6 +24,7 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 
 const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActor", eActor::luaOpen},
+    {"eActorMgr", eActorMgr::luaOpen},
     {"gFoo", gFoo::luaOpen},
     {NULL, NULL}
 };

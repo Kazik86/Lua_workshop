@@ -6,6 +6,25 @@
 
 eActorMgr* eActorMgr::iMe = 0;
 
+namespace
+{
+    int newActor(lua_State* aLua)
+    {
+	eActorMgr* me = eActorMgr::getMe();
+	eActor* a = me->add(Script::getVal<const char*>(aLua, 1));
+	Script::pushVal<void*>(aLua, a);
+	return 1;
+    }
+}
+
+DEFINE_USERDATA_API(eActorMgr)
+{
+    {"newActor", ::newActor},
+    {0, 0}
+};
+
+DEFINE_USERDATA_CLASS(eActorMgr)
+
 eActorMgr::eActorMgr()
 {
     if (iMe)

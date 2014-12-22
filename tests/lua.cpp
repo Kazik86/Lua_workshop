@@ -1,6 +1,7 @@
 #include <UnitTest++/UnitTest++.h>
 
 #include "actor.h"
+#include "actorMgr.h"
 #include "gadget.h"
 #include "game.h"
 #include "luaModule.h"
@@ -205,4 +206,15 @@ TEST_FIXTURE(sFixture, GadgetAndState)
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ActorCreatedFromScript)
+{
+    CHECK(eActorMgr::getMe()->getActorsNum() == 0);
+
+    eActor a("tests/scripts/actorCreatedFromScript.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+
+    CHECK(eActorMgr::getMe()->getActorsNum() == 1);
 }
