@@ -21,6 +21,8 @@ private:
     eGame(const eGame& aOther);
     eGame& operator=(const eGame& aOther);
 
+    void createModules();
+    void destroyModules();
     void handleEvents();
 
 private:

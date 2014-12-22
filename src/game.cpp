@@ -9,9 +9,7 @@
 eGame* eGame::iMe = 0;
 
 eGame::eGame():
-    iIsRunning(true),
-    iLua(new eLuaState()),
-    iActorMgr(new eActorMgr())
+    iIsRunning(true)
 {
     if (iMe)
 	throw std::runtime_error("eGame: multiple instances not allowed.");
@@ -22,16 +20,29 @@ eGame::eGame():
 	throw std::runtime_error(SDL_GetError());
     }
 
+    createModules();
+
     eActorMgr* actorMgr = eActorMgr::getMe();
-    // actorMgr->add(iLua.get(), "scripts.foo");
-    // actorMgr->add(iLua.get(), "scripts.foo");
     actorMgr->doScript(iLua->getRaw());
 }
 
 eGame::~eGame()
 {
+    destroyModules();
     SDL_Quit();
     iMe = 0;
+}
+
+void eGame::createModules()
+{
+    iLua.reset(new eLuaState());
+    iActorMgr.reset(new eActorMgr());
+}
+
+void eGame::destroyModules()
+{
+    iActorMgr.reset(nullptr);
+    iLua.reset(nullptr);
 }
 
 void eGame::mainLoop()
