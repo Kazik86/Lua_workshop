@@ -3,7 +3,7 @@
 
 #include <lua.hpp>
 
-#define DECLARE_USERDATA_SUPPORT()                \
+#define DECLARE_USERDATA_CLASS()                  \
     public:                                       \
         static int luaOpen(lua_State* aLua);      \
                                                   \
@@ -11,7 +11,7 @@
         static const struct luaL_Reg iMethods[];
 
 
-#define DEFINE_USERDATA_SUPPORT(aClass)           \
+#define DEFINE_USERDATA_CLASS(aClass)             \
     int aClass::luaOpen(lua_State* aLua)          \
     {                                             \
 	luaL_newlib(aLua, iMethods);              \

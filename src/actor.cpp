@@ -40,7 +40,7 @@ DEFINE_USERDATA_API(eActor)
     {0, 0}
 };
 
-DEFINE_USERDATA_SUPPORT(eActor)
+DEFINE_USERDATA_CLASS(eActor)
 
 eActor::eActor(eLuaState& aLua, const std::string& aScript):
     iLua(aLua),
