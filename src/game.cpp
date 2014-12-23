@@ -3,6 +3,7 @@
 #include "actorMgr.h"
 #include "luaState.h"
 #include "renderer.h"
+#include "textureMgr.h"
 
 #include <glm/glm.hpp>
 #include <SDL2/SDL.h>
@@ -12,7 +13,7 @@ eGame* eGame::iMe = 0;
 
 namespace
 {
-    const int KTimeStep = 3;
+    const int KTimeStep = 30;
     const int KMaxAccumulatedTime = 1000;
     const float KDelta = float(KTimeStep) / float(1000);
 }
@@ -30,12 +31,14 @@ eGame::eGame():
 
     createModules();
 
+    // move this to eRenderer ctor?
+    eRenderer::getMe()->init("Tanki", 0, 0, 800, 600, 0);
+    eTextureMgr::getMe()->init();
+
     // TODO: the below is only for doing 'doScript' on 'Main' script. Ugly. Get
     // rid of this.
     eActorMgr* actorMgr = eActorMgr::getMe();
     actorMgr->doScript(iLua->getRaw());
-
-    eRenderer::getMe()->init("Tanki", 0, 0, 800, 600, 0);
 }
 
 eGame::~eGame()
@@ -49,10 +52,12 @@ void eGame::createModules()
     iLua.reset(new eLuaState());
     iActorMgr.reset(new eActorMgr());
     iRenderer.reset(new eRenderer());
+    iTextureMgr.reset(new eTextureMgr());
 }
 
 void eGame::destroyModules()
 {
+    iTextureMgr.reset(nullptr);
     iRenderer.reset(nullptr);
     iActorMgr.reset(nullptr);
     iLua.reset(nullptr);

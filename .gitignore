@@ -29,6 +29,7 @@
 
 # Directories
 system/
+textures/
 tmp/
 
 # Dependency tracking files

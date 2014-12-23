@@ -2,6 +2,7 @@
 #define USERDATA_H
 
 #include <lua.hpp>
+#include <string>
 
 #define DECLARE_USERDATA_CLASS()                  \
     public:                                       \
@@ -109,6 +110,12 @@ inline const char* getVal(lua_State* aLua, int aIdx)
 }
 
 template <>
+inline std::string getVal(lua_State* aLua, int aIdx)
+{
+    return luaL_checkstring(aLua, aIdx);
+}
+
+template <>
 inline bool getVal(lua_State* aLua, int aIdx)
 {
     return lua_toboolean(aLua, aIdx);
@@ -136,6 +143,12 @@ template <>
 inline void pushVal(lua_State* aLua, const char* aVal)
 {
     lua_pushstring(aLua, aVal);
+}
+
+template <>
+inline void pushVal(lua_State* aLua, std::string aVal)
+{
+    lua_pushstring(aLua, aVal.c_str());
 }
 
 template <>

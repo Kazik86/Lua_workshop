@@ -4,6 +4,7 @@
 class eActorMgr;
 class eLuaState;
 class eRenderer;
+class eTextureMgr;
 
 #include <memory>
 
@@ -37,6 +38,7 @@ private:
     std::unique_ptr<eLuaState> iLua;
     std::unique_ptr<eActorMgr> iActorMgr;
     std::unique_ptr<eRenderer> iRenderer;
+    std::unique_ptr<eTextureMgr> iTextureMgr;
 };
 
 #endif // GAME_H

@@ -52,6 +52,15 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+w eTextureMgr::getTexture używam std::cerr. Zamiast tego powinien być logger.
+
+				     ***
+
+W userdata.h mam: inline void pushVal(lua_State* aLua, std::string aVal). Jest 
+to słabe (przekazanie stringa przez wartość). Do smth z tym dziadostwem.
+
+				     ***
+
 W klasie 'eFsm' tam gdzie sprawdzam, czy 'shift' nie został wywołany z 'leave' 
 trzeba wypisać jakis warning. W tym celu potrzebna klasa Logger np. z trzema 
 typami outputu: msg, warning i error.

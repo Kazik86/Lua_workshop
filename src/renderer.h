@@ -8,10 +8,10 @@
 class eRenderable
 {
 public:
-    eRenderable() {}
+    eRenderable();
     virtual ~eRenderable() {}
 
-    virtual void draw() = 0;
+    virtual void draw(SDL_Renderer* aRenderer) = 0;
 };
 
 class eRenderer
@@ -24,6 +24,8 @@ public:
 
     void init(const std::string& aCaption, int aX, int aY, int aWidth, int aHeight, int aFlags);
     void render();
+    SDL_Renderer* getRaw() { return iRenderer; }
+    void addRenderable(eRenderable* aObj);
 
 private:
     eRenderer(const eRenderer& aOther);

@@ -2,6 +2,13 @@
 
 #include <stdexcept>
 
+eRenderable::eRenderable()
+{
+    eRenderer::getMe()->addRenderable(this);
+}
+
+///////////////////////////////////////////////////////////////////////
+
 eRenderer* eRenderer::iMe = 0;
 
 eRenderer::eRenderer():
@@ -52,7 +59,12 @@ void eRenderer::render()
     SDL_RenderClear(iRenderer);
 
     for (eRenderable* r : iRenderables)
-	r->draw();
+	r->draw(iRenderer);
 
     SDL_RenderPresent(iRenderer);
+}
+
+void eRenderer::addRenderable(eRenderable* aObj)
+{
+    iRenderables.push_front(aObj);
 }
