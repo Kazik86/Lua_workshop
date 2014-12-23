@@ -44,8 +44,6 @@ int aClass::create(lua_State* aLua)                                     \
     luaL_getmetatable(aLua, #aClass);					\
     lua_setmetatable(aLua, -2);						\
 									\
-    g->begin(aLua);                                                     \
-									\
     return 1;								\
 }									\
 									\
@@ -91,6 +89,7 @@ public:
     bool isEnabled() const { return iIsEnabled; }
     virtual void update(lua_State* /* aLua */) {}
     virtual void restart() {}
+    virtual void begin() {}
 
 protected:
     eGadget();
@@ -106,7 +105,6 @@ private:
     static int disable(lua_State* aLua);
 
 protected:
-    virtual void begin(lua_State* /* aLua */) {}
     virtual void enable() {}
     virtual void disable() {}
 

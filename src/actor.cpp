@@ -66,6 +66,7 @@ void eActor::doScript(lua_State* aLua)
 	throw std::runtime_error(iScript + ": no entry state.");
 
     createGadgetsContainer(aLua);
+    beginGadget();
 }
 
 void eActor::update(lua_State* aLua)
@@ -216,4 +217,10 @@ void eActor::createGadgetsContainer(lua_State* aLua)
 
 	lua_pop(aLua, 1);
     }
+}
+
+void eActor::beginGadget()
+{
+    for (eGadget* g : iGadgets)
+	g->begin();
 }

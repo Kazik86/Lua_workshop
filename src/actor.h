@@ -49,6 +49,7 @@ private:
     void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName);
     void shareInternalsWithScript(lua_State* aLua, int aRef);
     void createGadgetsContainer(lua_State* aLua);
+    void beginGadget();
 
 private:
     eFsm iFsm;
