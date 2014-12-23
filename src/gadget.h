@@ -87,7 +87,7 @@ class eGadget
 {
 public:
     bool isEnabled() const { return iIsEnabled; }
-    virtual void update(lua_State* /* aLua */) {}
+    virtual void update(lua_State* /* aLua */, float /* aDelta */) {}
     virtual void restart() {}
     virtual void begin() {}
 

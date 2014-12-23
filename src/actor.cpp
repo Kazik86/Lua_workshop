@@ -69,11 +69,11 @@ void eActor::doScript(lua_State* aLua)
     beginGadget();
 }
 
-void eActor::update(lua_State* aLua)
+void eActor::update(lua_State* aLua, float aDelta)
 {
     for (eGadget* g : iGadgets) {
 	if (g->isEnabled())
-	    g->update(aLua);
+	    g->update(aLua, aDelta);
     }
 
     iFsm.update(aLua);

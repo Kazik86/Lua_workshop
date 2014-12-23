@@ -41,12 +41,12 @@ eActorMgr::~eActorMgr()
     iMe = 0;
 }
 
-void eActorMgr::update(lua_State* aLua)
+void eActorMgr::update(lua_State* aLua, float aDelta)
 {
-    iMainActor.update(aLua);
+    iMainActor.update(aLua, aDelta);
 
     for (eActor* a : iActors)
-	a->update(aLua);
+	a->update(aLua, aDelta);
 }
 
 eActor* eActorMgr::add(const std::string& aScript)

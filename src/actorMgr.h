@@ -21,7 +21,7 @@ public:
 
     static eActorMgr* getMe() { return iMe; }
 
-    void update(lua_State* aLua);
+    void update(lua_State* aLua, float aDelta);
     void doScript(lua_State* aLua);
     eActor* add(const std::string& aScript);
     std::list<eActor*>::size_type getActorsNum() const { return iActors.size(); }

@@ -1,8 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
-class eLuaState;
 class eActorMgr;
+class eLuaState;
+class eRenderer;
 
 #include <memory>
 
@@ -28,10 +29,14 @@ private:
 private:
     static eGame* iMe;
     bool iIsRunning;
+    int iAccumulator;
+    unsigned int iLastUpdateTime;
+    bool iPause;
 
     // modules
     std::unique_ptr<eLuaState> iLua;
     std::unique_ptr<eActorMgr> iActorMgr;
+    std::unique_ptr<eRenderer> iRenderer;
 };
 
 #endif // GAME_H

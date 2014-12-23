@@ -31,7 +31,7 @@ public:
     ~eActor();
 
     void doScript(lua_State* aLua);
-    void update(lua_State* aLua);
+    void update(lua_State* aLua, float aDelta);
     void callOnInit(lua_State* aLua);
     void callOnRestart(lua_State* aLua);
     void callLuaFunc(lua_State* aLua, const char* aFunctionName);
