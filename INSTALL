@@ -6,4 +6,5 @@ Zależności:
     SDL2_image	   https://www.libsdl.org/projects/SDL_image/
 
 W przypadku gdy powyższe wersje bibliotek kolidują z wersjami już obecnymi w
-systemie, można je zainstalować do katalogu 'system'.
+systemie, można je zainstalować do katalogu 'system' w folderze projektu (obok
+'src', 'scripts' itp.)
