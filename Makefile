@@ -13,7 +13,7 @@ test_LDLIBS   := -lUnitTest++
 CXX := g++
 CXXFLAGS += -g -Wall -Wextra -std=c++0x -pedantic -I./src -I./system/include
 LDFLAGS  += -L./system/lib
-LDLIBS   += -llua -lSDL2 -ldl
+LDLIBS   += -llua -lSDL2 -lSDL2_image -ldl
 
 .PHONY: all test clean
 
