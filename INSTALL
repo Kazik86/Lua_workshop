@@ -4,6 +4,7 @@ Zależności:
     UnitTest++     https://github.com/unittest-cpp/unittest-cpp
     SDL2	   https://www.libsdl.org/download-2.0.php
     SDL2_image	   https://www.libsdl.org/projects/SDL_image/
+    GLM 0.9.6.1    http://glm.g-truc.net/0.9.6/index.html
 
 W przypadku gdy powyższe wersje bibliotek kolidują z wersjami już obecnymi w
 systemie, można je zainstalować do katalogu 'system' w folderze projektu (obok
