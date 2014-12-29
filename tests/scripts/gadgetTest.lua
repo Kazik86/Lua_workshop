@@ -2,17 +2,17 @@ Class = "Foo"
 Derives = "scripts/Actor.lua"
 
 function OnInit(me)
-    me.gFoo = _G.gFoo.create()
-    me.gFoo2 = _G.gFoo.create()
-    me.gFoo:setVal(5)
-    me.gFoo2:setVal(3)
+    me.gTexture = _G.gTexture.create()
+    me.gTexture2 = _G.gTexture.create()
+    me.gTexture:setName("foo")
+    me.gTexture2:setName("bar")
     shift(me, state_main)
 end
 
 function test(me)
     _G.assert(_G.eActor.getGadgetsNum(me.eActor) == 2)
-    _G.assert(me.gFoo:getVal() == 5)
-    _G.assert(me.gFoo2:getVal() == 3)
+    _G.assert(me.gTexture:getName() == "foo")
+    _G.assert(me.gTexture2:getName() == "bar")
 end
 
 state_main = {

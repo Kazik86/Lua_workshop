@@ -3,7 +3,6 @@
 
 #include "actor.h"
 #include "actorMgr.h"
-#include "../tests/gFoo.h"
 #include "gTexture.h"
 #include "luaState.h"
 
@@ -26,7 +25,6 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActor", eActor::luaOpen},
     {"eActorMgr", eActorMgr::luaOpen},
-    //{"gFoo", gFoo::luaOpen},
     {"gTexture", gTexture::luaOpen},
     {NULL, NULL}
 };

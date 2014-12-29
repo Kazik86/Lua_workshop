@@ -2,6 +2,7 @@
 #define GAME_H
 
 class eActorMgr;
+class eLuaModuleMgr;
 class eLuaState;
 class eRenderer;
 class eTextureMgr;
@@ -36,6 +37,7 @@ private:
 
     // modules
     std::unique_ptr<eLuaState> iLua;
+    std::unique_ptr<eLuaModuleMgr> iModuleMgr;
     std::unique_ptr<eActorMgr> iActorMgr;
     std::unique_ptr<eRenderer> iRenderer;
     std::unique_ptr<eTextureMgr> iTextureMgr;

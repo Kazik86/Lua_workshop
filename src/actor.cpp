@@ -58,7 +58,7 @@ eActor::~eActor()
 
 void eActor::doScript(lua_State* aLua)
 {
-    iModule = &LuaModuleMgr::load(aLua, iScript);
+    iModule = &eLuaModuleMgr::getMe()->load(aLua, iScript);
     createMeTables(aLua);
     callOnInit(aLua);
 

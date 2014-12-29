@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include "actorMgr.h"
+#include "luaModule.h"
 #include "luaState.h"
 #include "renderer.h"
 #include "textureMgr.h"
@@ -50,6 +51,7 @@ eGame::~eGame()
 void eGame::createModules()
 {
     iLua.reset(new eLuaState());
+    iModuleMgr.reset(new eLuaModuleMgr());
     iActorMgr.reset(new eActorMgr());
     iRenderer.reset(new eRenderer());
     iTextureMgr.reset(new eTextureMgr());
@@ -60,6 +62,7 @@ void eGame::destroyModules()
     iTextureMgr.reset(nullptr);
     iRenderer.reset(nullptr);
     iActorMgr.reset(nullptr);
+    iModuleMgr.reset(nullptr);
     iLua.reset(nullptr);
 }
 

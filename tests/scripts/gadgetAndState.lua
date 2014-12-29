@@ -2,14 +2,14 @@ Class = "Foo"
 Derives = "scripts/Actor.lua"
 
 function OnInit(me)
-    me.gFoo = _G.gFoo.create()
+    me.gTexture = _G.gTexture.create()
     shift(me, state_main)
 end
 
 state_main = {
     enter = function(me)
-	me.gFoo:enable()
-	me.gFoo:setVal(0)
+	me.gTexture:enable()
+	me.gTexture:setName("foo")
     end,
 
     update = function(me)
@@ -20,5 +20,5 @@ state_main = {
 }
 
 function test(me)
-    _G.assert(me.gFoo:getVal() == 2)
+    _G.assert(me.gTexture:getName() == "foo")
 end
