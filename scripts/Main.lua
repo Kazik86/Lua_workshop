@@ -2,7 +2,8 @@ Class = "Main"
 Derives = "scripts/Actor.lua"
 
 function OnInit(me)
-    me.foo = _G.eActorMgr.newActor("scripts/foo.lua")
+    me.bar = _G.eActorMgr.newActor("scripts/bar.lua")
+    me.baz = _G.eActorMgr.newActor("scripts/baz.lua")
     shift(me, state_main)
 end
 

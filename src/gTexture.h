@@ -18,6 +18,10 @@ public:
 
     // props
     DECLARE_GADGET_PROPERTY(Name, std::string)
+    DECLARE_GADGET_PROPERTY(SdlRectX, int)
+    DECLARE_GADGET_PROPERTY(SdlRectY, int)
+    DECLARE_GADGET_PROPERTY(SdlRectW, int)
+    DECLARE_GADGET_PROPERTY(SdlRectH, int)
 
 private:
     SDL_Texture* iTexture;
