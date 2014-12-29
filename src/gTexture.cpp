@@ -2,14 +2,11 @@
 
 #include "textureMgr.h"
 
-namespace
-{
-    DEFINE_GADGET_PROPERTY(gTexture, Name, std::string)
-    DEFINE_GADGET_PROPERTY(gTexture, SdlRectX, int)
-    DEFINE_GADGET_PROPERTY(gTexture, SdlRectY, int)
-    DEFINE_GADGET_PROPERTY(gTexture, SdlRectW, int)
-    DEFINE_GADGET_PROPERTY(gTexture, SdlRectH, int)
-}
+DEFINE_GADGET_PROPERTY(gTexture, Name, iName)
+DEFINE_GADGET_PROPERTY(gTexture, SdlRectX, iSdlRect.x)
+DEFINE_GADGET_PROPERTY(gTexture, SdlRectY, iSdlRect.y)
+DEFINE_GADGET_PROPERTY(gTexture, SdlRectW, iSdlRect.w)
+DEFINE_GADGET_PROPERTY(gTexture, SdlRectH, iSdlRect.h)
 
 DEFINE_GADGET_API(gTexture)
 {
@@ -24,10 +21,6 @@ DEFINE_GADGET_API(gTexture)
 DEFINE_GADGET_CLASS(gTexture)
 
 gTexture::gTexture():
-    iSdlRectX(0),
-    iSdlRectY(0),
-    iSdlRectW(800),
-    iSdlRectH(600),
     iTexture(0)
 {
 
@@ -45,12 +38,7 @@ void gTexture::update(lua_State* /* aLua */, float /* aDelta */)
 void gTexture::draw(SDL_Renderer* aRenderer)
 {
     if (iIsEnabled) {
-	SDL_Rect rect;
-	rect.x = iSdlRectX;
-	rect.y = iSdlRectY;
-	rect.w = iSdlRectW;
-	rect.h = iSdlRectH;
-	SDL_RenderCopy(aRenderer, iTexture, 0, &rect);
+	SDL_RenderCopy(aRenderer, iTexture, 0, &iSdlRect);
     }
 }
 

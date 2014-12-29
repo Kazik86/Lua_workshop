@@ -5,11 +5,11 @@
 
 #include <new>
 
-#define DECLARE_GADGET_PROPERTY(aName, aType) \
-    DECLARE_USERDATA_PROPERTY(aName, aType)
+#define DECLARE_GADGET_PROPERTY(aName) \
+    DECLARE_USERDATA_PROPERTY(aName)
 
-#define DEFINE_GADGET_PROPERTY(aClass, aName, aType) \
-    DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aType, getGadget)
+#define DEFINE_GADGET_PROPERTY(aClass, aName, aVar) \
+    DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aVar, getGadget)
 
 #define DEFINE_GADGET_API(aClass) \
     DEFINE_USERDATA_API(aClass)

@@ -17,14 +17,16 @@ public:
     void begin();
 
     // props
-    DECLARE_GADGET_PROPERTY(Name, std::string)
-    DECLARE_GADGET_PROPERTY(SdlRectX, int)
-    DECLARE_GADGET_PROPERTY(SdlRectY, int)
-    DECLARE_GADGET_PROPERTY(SdlRectW, int)
-    DECLARE_GADGET_PROPERTY(SdlRectH, int)
+    DECLARE_GADGET_PROPERTY(Name)
+    DECLARE_GADGET_PROPERTY(SdlRectX)
+    DECLARE_GADGET_PROPERTY(SdlRectY)
+    DECLARE_GADGET_PROPERTY(SdlRectW)
+    DECLARE_GADGET_PROPERTY(SdlRectH)
 
 private:
     SDL_Texture* iTexture;
+    std::string iName;
+    SDL_Rect iSdlRect;
 };
 
 #endif // G_TEXTURE_H

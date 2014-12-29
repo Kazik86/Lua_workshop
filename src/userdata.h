@@ -24,27 +24,23 @@
     const struct luaL_Reg aClass::iMethods[] =
 
 
-#define DECLARE_USERDATA_PROPERTY(aName, aType)                       \
-    public:                                                           \
-	void set##aName(aType aVal) { i##aName = aVal; }              \
-        aType get##aName() const { return i##aName; }                 \
-								      \
-    private:                                                          \
-        aType i##aName;
+#define DECLARE_USERDATA_PROPERTY(aName)                       \
+	static int set##aName(lua_State*); \
+        static int get##aName(lua_State*);
 
 
-#define DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aType, aGetFun)      \
-    int set##aName(lua_State* aLua)                                         \
+#define DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aVar, aGetFun)      \
+    int aClass::set##aName(lua_State* aLua)                                         \
     {                                                                       \
         aClass* me = Script::aGetFun<aClass>(aLua);                         \
-        me->set##aName(Script::getVal<aType>(aLua, 2));                     \
+        me->aVar = Script::getVal<decltype(me->aVar)>(aLua, 2);                     \
 	return 0;                                                           \
     }                                                                       \
     								            \
-    int get##aName(lua_State* aLua)                                         \
+    int aClass::get##aName(lua_State* aLua)                                         \
     {                                                                       \
         aClass* me = Script::aGetFun<aClass>(aLua);                         \
-        Script::pushVal<aType>(aLua, me->get##aName());                     \
+        Script::pushVal<decltype(me->aVar)>(aLua, me->aVar);                     \
         return 1;                                                           \
     }
 
@@ -57,8 +53,8 @@
 
 
 #define REGISTER_USERDATA_PROPERTY(aName)    \
-    { STRINGIZE(set##aName), ::set##aName }, \
-    { STRINGIZE(get##aName), ::get##aName }
+    { STRINGIZE(set##aName), set##aName }, \
+    { STRINGIZE(get##aName), get##aName }
 
 namespace Script
 {
