@@ -2,7 +2,7 @@ Class = "Baz"
 Derives = "scripts/foo.lua"
 
 function OnInit(me)
-    me.gTexture:setName("textures/Tim.png")
+    me.gTexture:setName("textures/qt.png")
     me.gTexture:setSdlRectX(20)
     me.gTexture:setSdlRectY(20)
     me.gTexture:setSdlRectW(48)

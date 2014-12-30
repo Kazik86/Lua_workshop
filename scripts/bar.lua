@@ -2,7 +2,7 @@ Class = "Bar"
 Derives = "scripts/foo.lua"
 
 function OnInit(me)
-    me.gTexture:setName("textures/PNG_transparency_demonstration_2.png")
+    me.gTexture:setName("textures/wb_logo_brighter.png")
     me.gTexture:setSdlRectX(0)
     me.gTexture:setSdlRectY(0)
     me.gTexture:setSdlRectW(800)

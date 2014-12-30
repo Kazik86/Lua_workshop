@@ -5,17 +5,38 @@
 
 #include <new>
 
-#define DECLARE_GADGET_PROPERTY(aName) \
-    DECLARE_USERDATA_PROPERTY(aName)
+#define DECLARE_GADGET_READER(aName) \
+    DECLARE_USERDATA_READER(aName)
 
-#define DEFINE_GADGET_PROPERTY(aClass, aName, aVar) \
-    DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aVar, getGadget)
+#define DECLARE_GADGET_WRITER(aName) \
+    DECLARE_USERDATA_WRITER(aName)
+
+#define DECLARE_GADGET_ACCESSOR(aReader, aWriter)    \
+    DECLARE_GADGET_READER(aReader)		    \
+    DECLARE_GADGET_WRITER(aWriter)
+
+#define DEFINE_GADGET_READER(aClass, aName, aVar)		    \
+    DEFINE_USERDATA_READER_COMMON(aClass, aName, aVar, getGadget)
+
+#define DEFINE_GADGET_WRITER(aClass, aName, aVar)		    \
+    DEFINE_USERDATA_WRITER_COMMON(aClass, aName, aVar, getGadget)
+
+#define DEFINE_GADGET_ACCESSOR(aClass, aReader, aWriter, aVar)	    \
+    DEFINE_GADGET_READER(aClass, aReader, aVar)			    \
+    DEFINE_GADGET_WRITER(aClass, aWriter, aVar)			    \
 
 #define DEFINE_GADGET_API(aClass) \
     DEFINE_USERDATA_API(aClass)
 
-#define REGISTER_GADGET_PROPERTY(aName)    \
-    REGISTER_USERDATA_PROPERTY(aName)
+#define REGISTER_GADGET_READER(aName)    \
+    REGISTER_USERDATA_READER(aName)
+
+#define REGISTER_GADGET_WRITER(aName)    \
+    REGISTER_USERDATA_WRITER(aName)
+
+#define REGISTER_GADGET_ACCESSOR(aReader, aWriter)   \
+    REGISTER_GADGET_READER(aReader)		    \
+    REGISTER_GADGET_WRITER(aWriter)
 
 #define DECLARE_GADGET_CLASS()                                      \
 public:								    \

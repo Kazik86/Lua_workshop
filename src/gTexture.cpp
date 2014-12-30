@@ -2,19 +2,19 @@
 
 #include "textureMgr.h"
 
-DEFINE_GADGET_PROPERTY(gTexture, Name, iName)
-DEFINE_GADGET_PROPERTY(gTexture, SdlRectX, iSdlRect.x)
-DEFINE_GADGET_PROPERTY(gTexture, SdlRectY, iSdlRect.y)
-DEFINE_GADGET_PROPERTY(gTexture, SdlRectW, iSdlRect.w)
-DEFINE_GADGET_PROPERTY(gTexture, SdlRectH, iSdlRect.h)
+DEFINE_GADGET_ACCESSOR(gTexture, getName, setName, iName)
+DEFINE_GADGET_ACCESSOR(gTexture, getSdlRectX, setSdlRectX, iSdlRect.x)
+DEFINE_GADGET_ACCESSOR(gTexture, getSdlRectY, setSdlRectY, iSdlRect.y)
+DEFINE_GADGET_ACCESSOR(gTexture, getSdlRectW, setSdlRectW, iSdlRect.w)
+DEFINE_GADGET_ACCESSOR(gTexture, getSdlRectH, setSdlRectH, iSdlRect.h)
 
 DEFINE_GADGET_API(gTexture)
 {
-    REGISTER_GADGET_PROPERTY(Name),
-    REGISTER_GADGET_PROPERTY(SdlRectX),
-    REGISTER_GADGET_PROPERTY(SdlRectY),
-    REGISTER_GADGET_PROPERTY(SdlRectW),
-    REGISTER_GADGET_PROPERTY(SdlRectH),
+    REGISTER_GADGET_ACCESSOR(getName, setName)
+    REGISTER_GADGET_ACCESSOR(getSdlRectX, setSdlRectX)
+    REGISTER_GADGET_ACCESSOR(getSdlRectY, setSdlRectY)
+    REGISTER_GADGET_ACCESSOR(getSdlRectW, setSdlRectW)
+    REGISTER_GADGET_ACCESSOR(getSdlRectH, setSdlRectH)
     {0, 0}
 };
 

@@ -17,11 +17,11 @@ public:
     void begin();
 
     // props
-    DECLARE_GADGET_PROPERTY(Name)
-    DECLARE_GADGET_PROPERTY(SdlRectX)
-    DECLARE_GADGET_PROPERTY(SdlRectY)
-    DECLARE_GADGET_PROPERTY(SdlRectW)
-    DECLARE_GADGET_PROPERTY(SdlRectH)
+    DECLARE_GADGET_ACCESSOR(getName, setName)
+    DECLARE_GADGET_ACCESSOR(getSdlRectX, setSdlRectX)
+    DECLARE_GADGET_ACCESSOR(getSdlRectY, setSdlRectY)
+    DECLARE_GADGET_ACCESSOR(getSdlRectW, setSdlRectW)
+    DECLARE_GADGET_ACCESSOR(getSdlRectH, setSdlRectH)
 
 private:
     SDL_Texture* iTexture;

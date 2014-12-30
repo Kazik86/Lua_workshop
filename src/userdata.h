@@ -24,37 +24,51 @@
     const struct luaL_Reg aClass::iMethods[] =
 
 
-#define DECLARE_USERDATA_PROPERTY(aName)                       \
-	static int set##aName(lua_State*); \
-        static int get##aName(lua_State*);
+#define DECLARE_USERDATA_READER(aName)     \
+    static int aName(lua_State*);
+
+#define DECLARE_USERDATA_WRITER(aName)     \
+    static int aName(lua_State*);
+
+#define DECLARE_USERDATA_ACCESSOR(aReader, aWriter)   \
+    DECLARE_USERDATA_READER(aReader)                  \
+    DECLARE_USERDATA_WRITER(aWriter)
 
 
-#define DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aVar, aGetFun)      \
-    int aClass::set##aName(lua_State* aLua)                                         \
+#define DEFINE_USERDATA_READER_COMMON(aClass, aName, aVar, aGetFun)  \
+    int aClass::aName(lua_State* aLua)                                      \
+    {                                                                       \
+	aClass* me = Script::aGetFun<aClass>(aLua);                         \
+	Script::pushVal<decltype(me->aVar)>(aLua, me->aVar);                \
+	return 1;                                                           \
+    }
+
+#define DEFINE_USERDATA_WRITER_COMMON(aClass, aName, aVar, aGetFun)  \
+    int aClass::aName(lua_State* aLua)                                      \
     {                                                                       \
         aClass* me = Script::aGetFun<aClass>(aLua);                         \
-        me->aVar = Script::getVal<decltype(me->aVar)>(aLua, 2);                     \
+        me->aVar = Script::getVal<decltype(me->aVar)>(aLua, 2);             \
 	return 0;                                                           \
-    }                                                                       \
-    								            \
-    int aClass::get##aName(lua_State* aLua)                                         \
-    {                                                                       \
-        aClass* me = Script::aGetFun<aClass>(aLua);                         \
-        Script::pushVal<decltype(me->aVar)>(aLua, me->aVar);                     \
-        return 1;                                                           \
     }
 
 
-#define DEFINE_USERDATA_PROPERTY(aClass, aName, aType)         \
-    DEFINE_USERDATA_PROPERTY_COMMON(aClass, aName, aType, getUdata)
+#define DEFINE_USERDATA_READER(aClass, aName, aVar)		    \
+    DEFINE_USERDATA_READER_COMMON(aClass, aName, aVar, getUdata)
+
+#define DEFINE_USERDATA_WRITER(aClass, aName, aVar)		    \
+    DEFINE_USERDATA_WRITER_COMMON(aClass, aName, aVar, getUdata)
+
+#define DEFINE_USERDATA_ACCESSOR(aClass, aReader, aWriter, aVar)     \
+    DEFINE_USERDATA_READER(aClass, aReader, aVar)                    \
+    DEFINE_USERDATA_WRITER(aClass, aWriter, aVar)
 
 
-#define STRINGIZE(aParam) #aParam
+#define REGISTER_USERDATA_READER(aName) { #aName, aName },
+#define REGISTER_USERDATA_WRITER(aName) { #aName, aName },
 
-
-#define REGISTER_USERDATA_PROPERTY(aName)    \
-    { STRINGIZE(set##aName), set##aName }, \
-    { STRINGIZE(get##aName), get##aName }
+#define REGISTER_USERDATA_ACCESSOR(aReader, aWriter)	    \
+    REGISTER_USERDATA_READER(aReader)			    \
+    REGISTER_USERDATA_WRITER(aWriter)
 
 namespace Script
 {
