@@ -45,7 +45,8 @@ DEFINE_USERDATA_CLASS(eActor)
 
 eActor::eActor(const std::string& aScript):
     iFsm(*this),
-    iScript(aScript)
+    iScript(aScript),
+    iPos(0, 0)
 {
 }
 

@@ -4,6 +4,7 @@
 #include "fsm.h"
 #include "userdata.h"
 
+#include <glm/glm.hpp>
 #include <list>
 #include <string>
 #include <vector>
@@ -40,6 +41,9 @@ public:
     void shift(lua_State* aLua) { iFsm.shift(aLua); }
     int getMeRef() const { return iMeRef.front(); }
 
+    const glm::vec2& getPos() const { return iPos; }
+    void setPos(const glm::vec2& aPos) { iPos = aPos; }
+
 private:
     eActor(const eActor& aOther);
     eActor& operator=(const eActor& aOther);
@@ -57,6 +61,7 @@ private:
     std::string iScript;
     const sModule* iModule;
     std::vector<eGadget*> iGadgets;
+    glm::vec2 iPos;
 };
 
 #endif // ACTOR_H
