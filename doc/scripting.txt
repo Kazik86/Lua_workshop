@@ -52,6 +52,19 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Mechanizm wysyłania przez gadżety eventów. Coś w stylu 'send 
+animationFinished', aby mozna było to obsłużyć z poziomu skryptu.
+
+				     ***
+
+Mechanizm walidacji skryptów. Obecnie muszę odpalić cały silnik, żeby 
+dowiedzieć się że coś jest nie tak. Trzeba dodać jakiś argument wiersza 
+polecenia, który odpali tylko kod spr. poprawnośc skryptu i wyrzuci output 
+w jakimś standardowym formacie, żeby mozna było to ładnie wyświetlić 
+w edytorze.
+
+				     ***
+
 Jak kiedyś się dorobię systemu automatycznej dokumentacji gadżetów to trzeba 
 by przerobić makra dające dostęp do atrybutów, tak aby mogła być zczytywana 
 również domyślna wartość każdego z atrybutów.
