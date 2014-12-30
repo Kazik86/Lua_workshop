@@ -2,8 +2,8 @@ Class = "Foo"
 Derives = "scripts/Actor.lua"
 
 function OnInit(me)
-    me.gTexture = _G.gTexture.create()
-    me.gTexture2 = _G.gTexture.create()
+    me.gTexture = _G.gTexture.create(me)
+    me.gTexture2 = _G.gTexture.create(me)
     me.gTexture:setName("foo")
     me.gTexture2:setName("bar")
     shift(me, state_main)

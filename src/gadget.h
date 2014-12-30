@@ -58,9 +58,15 @@ const char* aClass::iClassName = #aClass;				\
 									\
 int aClass::create(lua_State* aLua)                                     \
 {                                                                       \
+    luaL_checktype(aLua, 1, LUA_TTABLE);				\
+    lua_getfield(aLua, 1, "eActor");					\
+    eActor* owner = static_cast<eActor*>(lua_touserdata(aLua, -1));	\
+    lua_pop(aLua, 1);							\
+									\
     size_t classSize = sizeof(aClass);                                  \
     aClass* g = static_cast<aClass*>(lua_newuserdata(aLua, classSize)); \
-    new((void*)g) aClass;                                               \
+    new((void*)g) aClass();                                             \
+    g->iActor = owner;							\
 									\
     luaL_getmetatable(aLua, #aClass);					\
     lua_setmetatable(aLua, -2);						\
@@ -104,6 +110,8 @@ int aClass::luaOpen(lua_State* aLua)                                    \
     return 1;								\
 }
 
+class eActor;
+
 class eGadget
 {
 public:
@@ -117,6 +125,7 @@ protected:
     virtual ~eGadget() {}
 
     static void registerCommonMethods(lua_State* aLua);
+    eActor* getActor() { return iActor; }
 
 private:
     eGadget(const eGadget& aOther);
@@ -130,6 +139,7 @@ protected:
     virtual void disable() {}
 
 protected:
+    eActor* iActor;
     bool iIsEnabled;
 
 private:
