@@ -52,6 +52,12 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Jak kiedyś się dorobię systemu automatycznej dokumentacji gadżetów to trzeba 
+by przerobić makra dające dostęp do atrybutów, tak aby mogła być zczytywana 
+również domyślna wartość każdego z atrybutów.
+
+				     ***
+
 w eTextureMgr::getTexture używam std::cerr. Zamiast tego powinien być logger.
 
 				     ***
