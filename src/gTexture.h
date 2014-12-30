@@ -22,11 +22,13 @@ public:
     DECLARE_GADGET_ACCESSOR(getSdlRectY, setSdlRectY)
     DECLARE_GADGET_ACCESSOR(getSdlRectW, setSdlRectW)
     DECLARE_GADGET_ACCESSOR(getSdlRectH, setSdlRectH)
+    DECLARE_GADGET_WRITER(setPosFromActor)
 
 private:
     SDL_Texture* iTexture;
     std::string iName;
     SDL_Rect iSdlRect;
+    bool iPosFromActor;
 };
 
 #endif // G_TEXTURE_H

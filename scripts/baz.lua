@@ -3,6 +3,7 @@ Derives = "scripts/foo.lua"
 
 function OnInit(me)
     me.gTexture:setName("textures/qt.png")
+    --me.gTexture:setPosFromActor(true)
     me.gTexture:setSdlRectX(20)
     me.gTexture:setSdlRectY(20)
     me.gTexture:setSdlRectW(48)
