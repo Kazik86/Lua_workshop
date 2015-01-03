@@ -52,8 +52,59 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+W manualu (rozdział 3.7 Table constructors) znalazłem ciekawy fragment:
+
+    Lua also offers a special syntax to initialize a table record-like, as in 
+    the next example:
+    a = {x=10, y=20}
+    This previous line is equivalent to these commands:
+    a = {}; a.x=10; a.y=20
+    The original expression, however, is faster, because Lua creates the table 
+    already with the right size.
+
+Zatem używając 'table constructors' mżna by przyspieszyc proces tworzenia 'me 
+table' dla każdego aktora. Zamiast dotychczasowego:
+
+    function Init(me)
+	me.foo = 1
+	me.bar = 2
+    end
+
+można dodać ekstra funkcję w rodzaju:
+
+    function SetProps()
+	return { foo = 1,
+		 bar = 2 }
+    end
+				     ***
+
+Pewnie kiedyś będę potrzebował w skrypcie czegoś w rodzaju 'sleep' czy 
+'yield'. Chyba mozna by to zrealizować przy użyciu 'continuations'.
+
+				     ***
+
 Mechanizm wysyłania przez gadżety eventów. Coś w stylu 'send 
-animationFinished', aby mozna było to obsłużyć z poziomu skryptu.
+animationFinished', aby mozna było to obsłużyć z poziomu skryptu. Kod, który 
+ma zostać wywołany pm stronie skrypu w odpowiedzi na dany event może mieć 
+postać funkcji przypisanej do propertisu gadżetu np.
+
+    function Init(me)
+	me.gAnim = _G.gAnim.create(me)
+	me.gFoo.onAnimFinished = onAnimFinished
+    end
+
+    function onAnimFinished()
+	...
+    end
+
+albo nawet funkcji anonimowej:
+
+    function Init(me)
+	me.gAnim = _G.gAnim.create(me)
+	me.gFoo.onAnimFinished = function()
+				    ...
+				 end
+    end
 
 				     ***
 
@@ -61,7 +112,8 @@ Mechanizm walidacji skryptów. Obecnie muszę odpalić cały silnik, żeby
 dowiedzieć się że coś jest nie tak. Trzeba dodać jakiś argument wiersza 
 polecenia, który odpali tylko kod spr. poprawnośc skryptu i wyrzuci output 
 w jakimś standardowym formacie, żeby mozna było to ładnie wyświetlić 
-w edytorze.
+w edytorze. Chyba najprościej będzie napisac jakiś parser w Lua bo łatwo 
+zintegruję to z reszta silnika, który już używa Luy do skryptowania.
 
 				     ***
 
