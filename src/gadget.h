@@ -67,6 +67,7 @@ int aClass::create(lua_State* aLua)                                     \
     aClass* g = static_cast<aClass*>(lua_newuserdata(aLua, classSize)); \
     new((void*)g) aClass();                                             \
     g->iActor = owner;							\
+    owner->addGadget(g);						\
 									\
     luaL_getmetatable(aLua, #aClass);					\
     lua_setmetatable(aLua, -2);						\

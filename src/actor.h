@@ -7,7 +7,6 @@
 #include <glm/glm.hpp>
 #include <list>
 #include <string>
-#include <vector>
 
 class eGadget;
 class eLuaState;
@@ -37,9 +36,10 @@ public:
     void callOnRestart(lua_State* aLua);
     void callLuaFunc(lua_State* aLua, const char* aFunctionName);
     const std::string& getScript() const { return iScript; }
-    std::vector<eGadget*>::size_type getGadgetsNum() const { return iGadgets.size(); }
+    std::list<eGadget*>::size_type getGadgetsNum() const { return iGadgets.size(); }
     void shift(lua_State* aLua) { iFsm.shift(aLua); }
     int getMeRef() const { return iMeRef.front(); }
+    void addGadget(eGadget* aGadget);
 
     const glm::vec2& getPos() const { return iPos; }
     void setPos(const glm::vec2& aPos) { iPos = aPos; }
@@ -52,7 +52,6 @@ private:
     void callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName);
     void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName);
     void shareInternalsWithScript(lua_State* aLua, int aRef);
-    void createGadgetsContainer(lua_State* aLua);
     void beginGadget();
 
 private:
@@ -60,7 +59,7 @@ private:
     std::list<int> iMeRef;
     std::string iScript;
     const sModule* iModule;
-    std::vector<eGadget*> iGadgets;
+    std::list<eGadget*> iGadgets;
     glm::vec2 iPos;
 };
 

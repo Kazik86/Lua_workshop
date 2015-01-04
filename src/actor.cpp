@@ -66,7 +66,6 @@ void eActor::doScript(lua_State* aLua)
     if (! iFsm.isEntryStateSet())
 	throw std::runtime_error(iScript + ": no entry state.");
 
-    createGadgetsContainer(aLua);
     beginGadget();
 }
 
@@ -179,45 +178,10 @@ void eActor::callOnRestart(lua_State* aLua)
     callLuaFuncThroughInheritanceHierarchyBackward(aLua, "OnRestart");
 }
 
-void eActor::createGadgetsContainer(lua_State* aLua)
+
+void eActor::addGadget(eGadget* aGadget)
 {
-    std::vector<eGadget*>::size_type gadgetsNum = 0;
-
-    // najpierw policzmy ile aktor ma gadżetów
-    for (int ref : iMeRef) {
-	lua_rawgeti(aLua, LUA_REGISTRYINDEX, ref);
-	lua_pushnil(aLua);
-
-	while (lua_next(aLua, -2) != 0) {
-	    if (lua_isuserdata(aLua, -1) && !lua_islightuserdata(aLua, -1))
-		++gadgetsNum;
-
-	    lua_pop(aLua, 1);
-	}
-
-	lua_pop(aLua, 1);
-    }
-
-    // miejsce na gadżety
-    iGadgets.reserve(gadgetsNum);
-
-    // a teraz tworzymy listę gadżetów
-    auto itBeg = iMeRef.crbegin();
-    auto itEnd = iMeRef.crend();
-
-    for (auto it = itBeg; it != itEnd; ++it) {
-	lua_rawgeti(aLua, LUA_REGISTRYINDEX, *it);
-	lua_pushnil(aLua);
-
-	while (lua_next(aLua, -2) != 0) {
-	    if (lua_isuserdata(aLua, -1) && !lua_islightuserdata(aLua, -1))
-		iGadgets.push_back(static_cast<eGadget*>(lua_touserdata(aLua, -1)));
-
-	    lua_pop(aLua, 1);
-	}
-
-	lua_pop(aLua, 1);
-    }
+    iGadgets.push_back(aGadget);
 }
 
 void eActor::beginGadget()
