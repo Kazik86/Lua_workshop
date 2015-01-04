@@ -52,6 +52,100 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Zbiór wszystkich gadżetów Aktora zdefiniowany jest jako std::list<eGadget*>. 
+Elementy do tej listy dodawane są w eGadget::create. To nie jest optymalne 
+rozwiązanie bo wymga wielu operacji 'new'. Mógłbym to zrobic ładniej 
+i zastapic std::list przez std::vector z prealokowanym miejscem na gadżety 
+(metoda 'reserve' w std::vector). W tym celu muszę uprzednio znać liczbe 
+gadżetów. Wcześniej miałem to zaimplementowane tak:
+
+void eActor::createGadgetsContainer(lua_State* aLua)
+{
+    std::vector<eGadget*>::size_type gadgetsNum = 0;
+
+    // najpierw policzmy ile aktor ma gadżetów
+    for (int ref : iMeRef) {
+	lua_rawgeti(aLua, LUA_REGISTRYINDEX, ref);
+	lua_pushnil(aLua);
+
+	while (lua_next(aLua, -2) != 0) {
+	    if (lua_isuserdata(aLua, -1) && !lua_islightuserdata(aLua, -1))
+		++gadgetsNum;
+
+	    lua_pop(aLua, 1);
+	}
+
+	lua_pop(aLua, 1);
+    }
+
+    // miejsce na gadżety
+    iGadgets.reserve(gadgetsNum);
+
+    // a teraz tworzymy listę gadżetów
+    auto itBeg = iMeRef.crbegin();
+    auto itEnd = iMeRef.crend();
+
+    for (auto it = itBeg; it != itEnd; ++it) {
+	lua_rawgeti(aLua, LUA_REGISTRYINDEX, *it);
+	lua_pushnil(aLua);
+
+	while (lua_next(aLua, -2) != 0) {
+	    if (lua_isuserdata(aLua, -1) && !lua_islightuserdata(aLua, -1))
+		iGadgets.push_back(static_cast<eGadget*>(lua_touserdata(aLua, -1)));
+
+	    lua_pop(aLua, 1);
+	}
+
+	lua_pop(aLua, 1);
+    }
+}
+
+czyli najpierw iterowałem po 'me table' i zliczałem wszystkie 'userdata', 
+potem alokacja miejsca za pomoca std::vector::reserve i znów iteracja 
+i wrzucanie gadżetów do juz przygotowanego kontenera. Nie było to dobre bo:
+- 'lua_next' za pomocą której iteruje zwraca elementy w innej kolejności niż 
+  są zdefiniowane w skyryptowym 'OnInit', a co za tym idzie nie mam kontroli 
+  nad kolejnościa update'u gadżetów;
+- zliczanie gadżetów czyli te dwie iteracje są wykonywane dla _każdego_ 
+  aktora, a przecież ilość gadżetów mogłaby być liczona tylko dla pierwszego 
+  aktora danej klasy, zapamiętana w strukturze modułu i użyta dla kolejnych 
+  aktorów tej klasy. Ale to nie rozwiązuje problemu kolejności update'u 
+  gadżetów.
+
+Trzeba by to rozwiązać dodając ekstra tablice postaci:
+
+Class = "Foo"
+Derives = ...
+Gadgets = { _G.gFoo,
+            { class = _G.gBar, name = "gadzetBar", args = { ... }}}
+
+'_G.gFoo' oznacza tablicę w której znajduje się funkcja 'create' do stworzenia 
+gadżetu o nazwie takiej jak gadżet, czyli "gFoo". Jeśli zajdzie potrzeba 
+stworzenia gadżetu o innej nazwie lub sparametryzowania go to użyjemy zapisu 
+jak w przypadku drugiego elementu tablicy 'Gadgets', a więc tablicy. I tu 
+pojawia się problem bo zarówno surowe '_G.gFoo' jak i tablica reprezentująca 
+gadżet 'gBar' są właśnie tablicami, przy czym tablica 'gBar' nie zawiera 
+funkcji 'create'. Wobec tego trzeba spr. czy w tablicy jest pole 'create', 
+jeśli jest to znaczy że chcemy stworzyć gadżet o defaultowej nazwie. Jeśli nie 
+ma, to spr. czy obecne jest pole 'class', i opcjonalnie 'name' lub 'args' 
+(w zależności od tego czego nam potrzeba).
+Wprowadzenie dodatkowej tablicy dostarcza nam informacji o ilości gadżetów dla 
+aktorów tej klasy. Ilość elementów w tej tablicy z poziomu C++ mogę dostać 
+z 'lua_len'. Następnie poiterować z użyciem 'lua_gettable':
+
+    for (int i = 1; i <= table_size; ++i) {
+	lua_pushnumber(lua, i);
+	lua_gettable(lua, -2)
+	// spr. czy jest to tablica z 'create' czy z 'class'
+	// odpalić 'create'
+	// ...
+    }
+
+Oczywiście referencję i rozmiar tablicy 'Gadgets' trzeba zapisać w strukturze 
+opisującej moduł danej klasy.
+
+				     ***
+
 W manualu (rozdział 3.7 Table constructors) znalazłem ciekawy fragment:
 
     Lua also offers a special syntax to initialize a table record-like, as in 
