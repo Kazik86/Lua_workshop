@@ -2,7 +2,7 @@ Class = "Foo"
 Derives = "scripts/Actor.lua"
 
 function OnInit(me)
-    me.child = _G.eActorMgr.newActor("tests/scripts/meTable.lua")
+    me.child = _G.eActorMgr.add("tests/scripts/meTable.lua")
     shift(me, state_main)
 end
 

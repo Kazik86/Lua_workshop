@@ -17,7 +17,7 @@ namespace
 
 DEFINE_USERDATA_API(eActorMgr)
 {
-    {"newActor", ::newActor},
+    {"add", ::newActor},
     {0, 0}
 };
 
