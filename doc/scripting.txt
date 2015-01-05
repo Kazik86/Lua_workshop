@@ -52,6 +52,56 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Skrypt definiuje _zachowanie_ Aktora. Zachowanie definiowane jest przez 
+aktywne gadżety i ich parametryzację. Jeśli zmieniamy ilość aktywnych gadżetów 
+bądź parametryzację któregokolwiek z nich w istocie zmieniamy zachowanie 
+Aktora, a więc jego _stan_. Płynie stąd wniosek, że należy na poziomie języka 
+wprowadzić mechanizmy uniemożliwiające zmianę ilości aktywnych gadżetów i ich 
+właściwości bez zmiany stanu.
+
+Przykład:
+
+W tej chwili mogę zdefiniować stan 'fly' jako:
+
+    state_fly = {
+	enter = function(me)
+		    me.gFly:enable()
+		    me.gFly:setSpeed(100)
+		end
+    }
+
+ale nic mnie nie powstrzymuje przed rozszerzeniem tego stanu o kod, który 
+powinien znaleźć się w odrębnym stanie, w tym przypadku w stanie 'flyFast':
+
+    state_fly = {
+	enter = function(me)
+		    me.gFly:enable()
+		    me.gFly:setSpeed(100)
+		end
+	update = function(me)
+		    if (hurryUp()) then
+			me.gFly:setSpeed(200)	
+		    end
+		 end
+    }
+
+albo w stanie 'walk':
+
+    state_fly = {
+	enter = function(me)
+		    me.gFly:enable()
+		    me.gFly:setSpeed(100)
+		end
+	update = function(me)
+		    if (getPos() < 10) then
+			me.gFly:disable()
+			me.gWalk:enable()	
+		    end
+		 end
+    }
+
+				     ***
+
 Zbiór wszystkich gadżetów Aktora zdefiniowany jest jako std::list<eGadget*>. 
 Elementy do tej listy dodawane są w eGadget::create. To nie jest optymalne 
 rozwiązanie bo wymga wielu operacji 'new'. Mógłbym to zrobic ładniej 
@@ -214,6 +264,23 @@ zintegruję to z reszta silnika, który już używa Luy do skryptowania.
 Jak kiedyś się dorobię systemu automatycznej dokumentacji gadżetów to trzeba 
 by przerobić makra dające dostęp do atrybutów, tak aby mogła być zczytywana 
 również domyślna wartość każdego z atrybutów.
+Być może aby połączyć atrybut gadżetu z jego domyślna wartością należałoby te 
+atrybuty nie definiować bezpośrednio np.
+
+    int iSpeed;
+
+ale przez pośrednika w rodzaju klasy szablonowej:
+
+    eGadgetAttrib<int> iSpeed;
+
+gdzie 'eGadgetAttrib' ma postać:
+
+    template <typename T>
+    class eGadgetAttrib
+    {
+	T iVal;
+	T iInit;
+    };
 
 				     ***
 
