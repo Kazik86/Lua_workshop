@@ -10,7 +10,11 @@ function callVirtuallFun(me)
 end
 
 function virtualFun(me)
-    return nil
+    return 666
+end
+
+function test(me)
+    _G.assert(666 == callVirtuallFun(me))
 end
 
 state_main = {

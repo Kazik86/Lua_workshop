@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <iostream>
 #include <stdexcept>
 
 namespace
@@ -12,7 +13,7 @@ namespace
 int replaceEnv(lua_State* aLua)
 {
     if (lua_getmetatable(aLua, 1)) {
-	lua_getfield(aLua, -1, "super");
+	lua_getfield(aLua, -1, "Data");
 	if (! lua_isnil(aLua, -1)) {
 	    lua_pushvalue(aLua, 2);
 	    lua_gettable(aLua, -2);
@@ -74,6 +75,7 @@ eLuaModuleMgr::~eLuaModuleMgr()
 
 void eLuaModuleMgr::setClass(lua_State* aLua, sModule& aModule)
 {
+    lua_getfield(aLua, -1, "Data");
     lua_getfield(aLua, -1, "Class");
 
     if (! lua_isstring(aLua, -1))
@@ -92,8 +94,9 @@ void eLuaModuleMgr::setClass(lua_State* aLua, sModule& aModule)
 
     aModule.iClass = lua_tostring(aLua, -1);
 
-    lua_pushvalue(aLua, -2);
-    lua_settable(aLua, -3);
+    lua_pushvalue(aLua, -3);
+    lua_settable(aLua, -4);
+    lua_pop(aLua, 1);
 }
 
 void eLuaModuleMgr::setGlobal(lua_State* aLua)
@@ -111,7 +114,7 @@ std::list<sModule*> eLuaModuleMgr::derive(lua_State* aLua)
 	lua_newtable(aLua);
 	sModule& super = add(aLua, lua_tostring(aLua, -2));
 	lua_rawgeti(aLua, LUA_REGISTRYINDEX, super.iRef);
-	lua_setfield(aLua, -2, "super");
+	lua_setfield(aLua, -2, "Data");
 	lua_pushcfunction(aLua, replaceEnv);
 	lua_setfield(aLua, -2, "__index");
 	lua_setmetatable(aLua, -3);
@@ -172,7 +175,20 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 
 	    m.iLua = aLua;
 
+	    // główna tablica Aktora
 	    lua_newtable(aLua);
+	    // główna tablica będzie jednocześnie swoją metatablicą więc
+	    // kopiujemy
+	    lua_pushvalue(aLua, -1);
+
+	    // do tablicy 'Data' załadowane zostaną wszystkie dane ze skryptu
+	    lua_newtable(aLua);
+	    lua_setfield(aLua, -2, "Data");
+	    lua_pushcfunction(aLua, replaceEnv);
+	    lua_setfield(aLua, -2, "__index");
+	    lua_setmetatable(aLua, -2);
+
+	    lua_getfield(aLua, -1, "Data");
 
 	    if (luaL_loadfile(aLua, aName.c_str()) != LUA_OK)
 		throw std::runtime_error(lua_tostring(aLua, -1));
@@ -183,9 +199,11 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
 		throw std::runtime_error(lua_tostring(aLua, -1));
 
+	    m.iInheritanceHierarchy = derive(aLua);
+	    lua_pop(aLua, 1);
 	    setClass(aLua, m);
 	    setGlobal(aLua);
-	    m.iInheritanceHierarchy = derive(aLua);
+
 	    m.iRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
 	    m.iScript = aName;
 

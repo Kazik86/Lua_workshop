@@ -139,8 +139,11 @@ TEST_FIXTURE(sFixture, MeTable)
 
 TEST_FIXTURE(sFixture, VirtualFunctions)
 {
-    eActor a("tests/scripts/virtualFunctions/B.lua");
+    eActor a("tests/scripts/virtualFunctions/A.lua");
+    eActor b("tests/scripts/virtualFunctions/B.lua");
     lua_State* lua = iGame.getLua()->getRaw();
+    b.doScript(lua);
+    b.callLuaFunc(lua, "test");
     a.doScript(lua);
     a.callLuaFunc(lua, "test");
     CHECK(true);
