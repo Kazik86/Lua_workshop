@@ -30,12 +30,20 @@ namespace
 	me->shift(aLua);
 	return 0;
     }
+
+    int getY(lua_State* aLua)
+    {
+	const eActor* me = Script::getUdata<eActor>(aLua);
+	lua_pushnumber(aLua, me->getPos().y);
+	return 1;
+    }
 }
 
 DEFINE_USERDATA_API(eActor)
 {
     {"getScript", ::scriptName},
     {"getGadgetsNum", ::gadgetsNum},
+    {"getY", ::getY},
     {"shift", ::shift},
     {0, 0}
 };
