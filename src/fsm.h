@@ -31,6 +31,8 @@ private:
     void enter(lua_State* aLua);
     void leave(lua_State* aLua);
 
+    void replaceEnv(lua_State* aLua);
+
 private:
     eActor& iActor;
     unsigned int iFlags;

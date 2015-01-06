@@ -2,7 +2,6 @@
 
 #include "gadget.h"
 #include "game.h"
-#include "luaModule.h"
 #include "luaState.h"
 
 #include <cassert>

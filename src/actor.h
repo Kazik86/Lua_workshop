@@ -2,6 +2,7 @@
 #define ACTOR_H
 
 #include "fsm.h"
+#include "luaModule.h"
 #include "userdata.h"
 
 #include <glm/glm.hpp>
@@ -10,7 +11,6 @@
 
 class eGadget;
 class eLuaState;
-struct sModule;
 
 struct sActorSharedInternal
 {
@@ -39,6 +39,7 @@ public:
     std::list<eGadget*>::size_type getGadgetsNum() const { return iGadgets.size(); }
     void shift(lua_State* aLua) { iFsm.shift(aLua); }
     int getMeRef() const { return iMeRef.front(); }
+    int getModuleRef() const { return iModule->iRef; }
     void addGadget(eGadget* aGadget);
 
     const glm::vec2& getPos() const { return iPos; }
