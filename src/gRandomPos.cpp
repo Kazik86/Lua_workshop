@@ -24,5 +24,5 @@ gRandomPos::~gRandomPos()
 
 void gRandomPos::update(lua_State* /* aLua */, float /* aDelta */)
 {
-    getActor()->setPos(glm::vec2(glm::linearRand(0, 800), glm::linearRand(-300, -140)));
+    getActor()->setPos(glm::vec2(glm::linearRand(-50, 750), glm::linearRand(-600, -140)));
 }

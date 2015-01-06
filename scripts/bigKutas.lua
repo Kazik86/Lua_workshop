@@ -9,6 +9,6 @@ end
 
 function onEnterMoveDown(me)
     Kutas.onEnterMoveDown(me)
-    me.gMove:setSpeed(_G.math.random(80, 220))
+    me.gMove:setSpeed(_G.math.random(200, 300))
 end
 
