@@ -3,8 +3,12 @@ Derives = "scripts/Actor.lua"
 
 function OnInit(me)
     me.background = _G.eActorMgr.add("scripts/background.lua")
-    me.kutas = _G.eActorMgr.add("scripts/kutas.lua")
-    me.bigKutas = _G.eActorMgr.add("scripts/bigKutas.lua")
+
+    for i = 1, 20 do
+	_G.eActorMgr.add("scripts/kutas.lua")
+	_G.eActorMgr.add("scripts/bigKutas.lua")
+    end
+
     shift(me, state_main)
 end
 

@@ -10,7 +10,7 @@ function OnInit(me)
     me.gTexture:enable()
 
     me.gMove = _G.gMove.create(me)
-    --me.gRandomPos = _G.gRandomPos.create(me)
+    me.gRandomPos = _G.gRandomPos.create(me)
 
     shift(me, state_main)
 end
@@ -18,11 +18,11 @@ end
 
 state_main = {
     enter = function(me)
-	--me.gRandomPos:enable()
+	me.gRandomPos:enable()
     end,
 
     leave = function(me)
-	--me.gRandomPos:disable()
+	me.gRandomPos:disable()
     end,
 
     update = function(me)
@@ -33,7 +33,7 @@ state_main = {
 
 function onEnterMoveDown(me)
     me.gMove:enable()
-    me.gMove:setSpeed(30)
+    me.gMove:setSpeed(_G.math.random(40, 300))
 end
 
 state_moveDown = {
@@ -46,9 +46,9 @@ state_moveDown = {
     end,
 
     update = function(me)
-	--if (getY(me) > 640) then
-	--    shift(me, state_main)
-	--end
+	if (_G.eActor.getY(me.eActor) > 600) then
+	    shift(me, state_main)
+	end
     end
 }
 
