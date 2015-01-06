@@ -27,7 +27,7 @@ DEFINE_GADGET_CLASS(gTexture)
 
 gTexture::gTexture():
     iTexture(0),
-    iPosFromActor(false)
+    iPosFromActor(true)
 {
 
 }

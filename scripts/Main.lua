@@ -2,8 +2,9 @@ Class = "Main"
 Derives = "scripts/Actor.lua"
 
 function OnInit(me)
-    me.bar = _G.eActorMgr.add("scripts/bar.lua")
-    me.baz = _G.eActorMgr.add("scripts/baz.lua")
+    me.background = _G.eActorMgr.add("scripts/background.lua")
+    me.kutas = _G.eActorMgr.add("scripts/kutas.lua")
+    me.bigKutas = _G.eActorMgr.add("scripts/bigKutas.lua")
     shift(me, state_main)
 end
 
@@ -15,6 +16,5 @@ state_main = {
     end,
 
     update = function(me)
-	_G.print "main"
     end
 }
