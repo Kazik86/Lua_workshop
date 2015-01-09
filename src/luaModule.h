@@ -44,6 +44,8 @@ private:
 
     void setClass(lua_State* aLua, sModule& aModule);
     void setGlobal(lua_State* aLua);
+    void setScript(lua_State* aLua, const std::string& aScript);
+
     std::list<sModule*> derive(lua_State* aLua);
     sModule* checkClassUniqueness(lua_State* aLua, sModule& aModule);
     sModule& add(lua_State* aLua, const std::string& aName);

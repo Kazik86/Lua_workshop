@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <iostream>
 #include <stdexcept>
 
 namespace
@@ -37,6 +38,16 @@ int replaceEnv(lua_State* aLua)
 
 		    lua_pop(aLua, 1);
 		}
+	    } else if (lua_isnil(aLua, -1)) {
+		// tu wystarczy log bo za chwilę gdzieś dalej i tak posypie się
+		// błąd w rodzaju 'attempt to index local 'foo' (a nil value)'
+		// i program zostanie przerwany. Poza tym dzięki temu, że nie
+		// przerywam programu poniżej, dostaję coś w rodzaju
+		// 'callstack' dla kolejnych poziomów dziedziczenia i ostatni
+		// log przed wystąpieniem błędu będzie wskazywał na winnego.
+		lua_getfield(aLua, 1, "Script");
+		std::cerr << "Uninitialized variable: '" << lua_tostring(aLua, 2)  << "' in script: " << lua_tostring(aLua, -1) << std::endl;
+		lua_pop(aLua, 1);
 	    }
 	}
     } else
@@ -85,7 +96,7 @@ void eLuaModuleMgr::setClass(lua_State* aLua, sModule& aModule)
      * Foo = 1
      */
     lua_pushvalue(aLua, -1);
-    lua_gettable(aLua, -3);
+    lua_rawget(aLua, -3);
     if (! lua_isnil(aLua, -1))
 	throw std::runtime_error("Class name is used as an identifier.");
 
@@ -102,6 +113,12 @@ void eLuaModuleMgr::setGlobal(lua_State* aLua)
 {
     lua_pushglobaltable(aLua);
     lua_setfield(aLua, -2, "_G");
+}
+
+void eLuaModuleMgr::setScript(lua_State* aLua, const std::string& aScript)
+{
+    lua_pushstring(aLua, aScript.c_str());
+    lua_setfield(aLua, -2, "Script");
 }
 
 std::list<sModule*> eLuaModuleMgr::derive(lua_State* aLua)
@@ -200,8 +217,10 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 
 	    m.iInheritanceHierarchy = derive(aLua);
 	    lua_pop(aLua, 1);
+
 	    setClass(aLua, m);
 	    setGlobal(aLua);
+	    setScript(aLua, aName);
 
 	    m.iRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
 	    m.iScript = aName;
