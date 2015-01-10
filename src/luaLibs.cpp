@@ -27,6 +27,7 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActor", eActor::luaOpen},
     {"eActorMgr", eActorMgr::luaOpen},
+    {"eLuaModuleMgr", eLuaModuleMgr::luaOpen},
     {"gMove", gMove::luaOpen},
     {"gRandomPos", gRandomPos::luaOpen},
     {"gTexture", gTexture::luaOpen},

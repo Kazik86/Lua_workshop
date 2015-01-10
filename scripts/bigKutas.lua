@@ -1,5 +1,5 @@
 Class = "BigKutas"
-Derives = "scripts/kutas.lua"
+Super = _G.eLuaModuleMgr.derive("scripts/kutas.lua")
 
 function OnInit(me)
     me.gTexture:setName("textures/big_kutas.png")

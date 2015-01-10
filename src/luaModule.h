@@ -1,6 +1,8 @@
 #ifndef LUA_MODULE_H
 #define LUA_MODULE_H
 
+#include "userdata.h"
+
 #include <list>
 #include <lua.hpp>
 #include <string>
@@ -20,15 +22,10 @@ struct sModule
     std::list<sModule*> iInheritanceHierarchy;
 };
 
-namespace LuaModuleMgr
-{
-    const sModule& load(lua_State* aLua, const std::string& aName);
-    int getModule(const std::string& aName);
-    void clear();
-}
-
 class eLuaModuleMgr
 {
+    DECLARE_USERDATA_CLASS()
+
 public:
     eLuaModuleMgr();
     ~eLuaModuleMgr();
@@ -46,7 +43,6 @@ private:
     void setGlobal(lua_State* aLua);
     void setScript(lua_State* aLua, const std::string& aScript);
 
-    std::list<sModule*> derive(lua_State* aLua);
     sModule* checkClassUniqueness(lua_State* aLua, sModule& aModule);
     sModule& add(lua_State* aLua, const std::string& aName);
 

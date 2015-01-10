@@ -1,5 +1,5 @@
 Class = "Background"
-Derives = "scripts/Actor.lua"
+Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function OnInit(me)
     me.gTexture = _G.gTexture.create(me)
@@ -7,7 +7,7 @@ function OnInit(me)
     me.gTexture:setSdlRectW(800)
     me.gTexture:setSdlRectH(600)
     me.gTexture:enable()
-    shift(me, state_main)
+    Super.shift(me, state_main)
 end
 
 state_main = {

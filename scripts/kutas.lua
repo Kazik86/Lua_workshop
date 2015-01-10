@@ -1,5 +1,5 @@
 Class = "Kutas"
-Derives = "scripts/Actor.lua"
+Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 
 function OnInit(me)
@@ -12,7 +12,7 @@ function OnInit(me)
     me.gMove = _G.gMove.create(me)
     me.gRandomPos = _G.gRandomPos.create(me)
 
-    shift(me, state_main)
+    Super.shift(me, state_main)
 end
 
 
@@ -26,7 +26,7 @@ state_main = {
     end,
 
     update = function(me)
-	shift(me, state_moveDown)
+	Super.shift(me, state_moveDown)
     end
 }
 
@@ -47,7 +47,7 @@ state_moveDown = {
 
     update = function(me)
 	if (_G.eActor.getY(me.eActor) > 600) then
-	    shift(me, state_main)
+	    Super.shift(me, state_main)
 	end
     end
 }
