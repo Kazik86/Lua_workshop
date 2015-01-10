@@ -1,5 +1,5 @@
 Class = "B"
-Derives = "tests/scripts/meTableInheritance/A.lua"
+Super = _G.eLuaModuleMgr.derive("tests/scripts/meTableInheritance/A.lua")
 
 function OnInit(me)
     me.b = 2

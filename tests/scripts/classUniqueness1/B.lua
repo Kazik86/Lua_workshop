@@ -1,2 +1,2 @@
 Class = "C"
-Derives = "tests/scripts/classUniqueness1/A.lua"
+Super = _G.eLuaModuleMgr.derive("tests/scripts/classUniqueness1/A.lua")

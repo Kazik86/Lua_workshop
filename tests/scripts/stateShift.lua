@@ -1,5 +1,5 @@
 Class = "Foo"
-Derives = "scripts/Actor.lua"
+Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function OnInit(me)
     me.mainEnterVisited = false

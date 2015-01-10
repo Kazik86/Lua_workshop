@@ -1,5 +1,5 @@
 Class = "B"
-Derives = "tests/scripts/virtualFunctions/A.lua"
+Super = _G.eLuaModuleMgr.derive("tests/scripts/virtualFunctions/A.lua")
 
 function OnInit(me)
     me.c = 3

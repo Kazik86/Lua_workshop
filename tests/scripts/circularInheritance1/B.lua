@@ -1,2 +1,2 @@
 Class = "B"
-Derives = "tests/scripts/circularInheritance1/C.lua"
+Super = _G.eLuaModuleMgr.derive("tests/scripts/circularInheritance1/C.lua")

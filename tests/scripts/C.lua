@@ -1,7 +1,10 @@
 Class = "C"
-Derives = "tests/scripts/B.lua"
+Super = _G.eLuaModuleMgr.derive("tests/scripts/B.lua")
 
 function foo()
+end
+
+function onlyInC()
 end
 
 MetatableTests = {
@@ -24,7 +27,7 @@ InheritanceTests = {
 	  end,
 
     [3] = function ()
-	      return B == require(Derives)
+	      return B == Super
 	  end,
 
     [4] = function ()
@@ -51,7 +54,7 @@ InheritanceTests = {
 function doTests(t)
     for i = 1, #t do
 	if not t[i]() then
-	    print("\tTest " .. i .. " failed.")
+	    _G.print("\tTest " .. i .. " failed.")
 	    return false
 	end
     end
@@ -60,11 +63,11 @@ function doTests(t)
 end
 
 function testMetatable()
-    print "Testing metatable..."
+    _G.print "Testing metatable..."
     return doTests(MetatableTests)
 end
 
 function testInheritance()
-    print "Testing inheritance..."
+    _G.print "Testing inheritance..."
     return doTests(InheritanceTests)
 end

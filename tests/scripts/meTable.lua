@@ -1,5 +1,5 @@
 Class = "Base"
-Derives = "scripts/Actor.lua"
+Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function OnInit(me)
     shift(me, state_main)
