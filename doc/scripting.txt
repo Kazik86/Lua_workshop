@@ -396,3 +396,6 @@ tzn. 'tablicaB' zawiera wszystkie swoje dane ale jednocześnie jest metatablicą
 dla 'tablicaA'. Analogicznie 'tablicaA' jest metatablicą dla 'tablicaB'.
 
 W chuj wydajniejsze by to było.
+
+EDIT:
+W modułach już zostało to naprawione. Pora na 'meTable'
