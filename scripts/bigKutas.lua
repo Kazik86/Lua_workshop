@@ -7,8 +7,13 @@ function OnInit(me)
     me.gTexture:setSdlRectH(138)
 end
 
-function onEnterMoveDown(me)
-    Kutas.onEnterMoveDown(me)
-    me.gMove:setSpeed(_G.math.random(200, 300))
-end
+state_moveDown = {
+    enter = function(me)
+	Super.state_moveDown.enter(me)
+	me.gMove:setSpeed(_G.math.random(200, 300))
+    end,
+
+    leave =  Super.state_moveDown.leave,
+    update = Super.state_moveDown.update
+}
 

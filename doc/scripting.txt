@@ -52,6 +52,35 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Dziedziczenie stanów. Póki co posługuję sie takim idiomem:
+
+    state_moveDown = {
+	enter = function(me)
+	    Super.state_moveDown.enter(me)
+	    me.gMove:setSpeed(_G.math.random(200, 300))
+	end,
+
+	leave =  Super.state_moveDown.leave,
+	update = Super.state_moveDown.update
+    }
+
+ale trzeba to zautomatyzować. Widzę to jakoś tak:
+
+    state_moveDown = _G.eLuaModuleMgr.extend{
+	super = Super.state_moveDown,
+
+	enter = function(me)
+	    me.gMove:setSpeed(_G.math.random(200, 300))
+	end
+    }
+
+Przypisania do 'leave' i 'update' są robione 'behind the scene', z automatu 
+przed 'enter' definiowanego stanu robiony będzie też 'enter' super-stanu więc 
+zbędne będzie wywołanie:
+    Super.state_moveDown.enter(me)
+
+				     ***
+
 Skrypt definiuje _zachowanie_ Aktora. Zachowanie definiowane jest przez 
 aktywne gadżety i ich parametryzację. Jeśli zmieniamy ilość aktywnych gadżetów 
 bądź parametryzację któregokolwiek z nich w istocie zmieniamy zachowanie 

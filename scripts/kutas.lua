@@ -30,15 +30,10 @@ state_main = {
     end
 }
 
-
-function onEnterMoveDown(me)
-    me.gMove:enable()
-    me.gMove:setSpeed(_G.math.random(100, 200))
-end
-
 state_moveDown = {
     enter = function(me)
-	onEnterMoveDown(me)
+	me.gMove:enable()
+	me.gMove:setSpeed(_G.math.random(100, 200))
     end,
 
     leave = function(me)
