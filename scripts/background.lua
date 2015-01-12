@@ -7,7 +7,6 @@ function OnInit(me)
     me.gTexture:setSdlRectW(800)
     me.gTexture:setSdlRectH(600)
     me.gTexture:enable()
-    Super.shift(me, state_main)
 end
 
 state_main = {
@@ -20,3 +19,5 @@ state_main = {
     update = function(me)
     end
 }
+
+EntryState = state_main

@@ -14,7 +14,6 @@ public:
 
     void update(lua_State* aLua);
     void shift(lua_State* aLua);
-    bool isEntryStateSet() const { return iStateRef != LUA_NOREF; }
 
 private:
     eFsm(const eFsm& aOther);

@@ -8,8 +8,6 @@ function OnInit(me)
         _G.eActorMgr.add("scripts/kutas.lua")
         _G.eActorMgr.add("scripts/bigKutas.lua")
     end
-
-    Super.shift(me, state_main)
 end
 
 state_main = {
@@ -22,3 +20,5 @@ state_main = {
     update = function(me)
     end
 }
+
+EntryState = state_main

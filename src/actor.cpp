@@ -69,11 +69,8 @@ void eActor::doScript(lua_State* aLua)
     iModule = &eLuaModuleMgr::getMe()->load(aLua, iScript);
     createMeTables(aLua);
     callOnInit(aLua);
-
-    if (! iFsm.isEntryStateSet())
-	throw std::runtime_error(iScript + ": no entry state.");
-
     beginGadget();
+    shiftToEntryState(aLua);
 }
 
 void eActor::update(lua_State* aLua, float aDelta)
@@ -195,4 +192,18 @@ void eActor::beginGadget()
 {
     for (eGadget* g : iGadgets)
 	g->begin();
+}
+
+void eActor::shiftToEntryState(lua_State* aLua)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iMeRef.front());
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iModule->iRef);
+    lua_getfield(aLua, -1, "EntryState");
+
+    if (lua_isnil(aLua, -1) || ! lua_istable(aLua, -1))
+	throw std::runtime_error(iScript + ": entry state not defined or not a table.");
+
+    lua_remove(aLua, -2);
+    iFsm.shift(aLua);
+    lua_pop(aLua, 2);
 }

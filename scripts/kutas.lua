@@ -11,8 +11,6 @@ function OnInit(me)
 
     me.gMove = _G.gMove.create(me)
     me.gRandomPos = _G.gRandomPos.create(me)
-
-    Super.shift(me, state_main)
 end
 
 
@@ -47,4 +45,4 @@ state_moveDown = {
     end
 }
 
-
+EntryState = state_main
