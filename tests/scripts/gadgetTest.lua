@@ -6,7 +6,6 @@ function OnInit(me)
     me.gTexture2 = _G.gTexture.create(me)
     me.gTexture:setName("foo")
     me.gTexture2:setName("bar")
-    shift(me, state_main)
 end
 
 function test(me)
@@ -25,3 +24,5 @@ state_main = {
     update = function(me)
     end
 }
+
+EntryState = state_main

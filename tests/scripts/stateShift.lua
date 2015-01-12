@@ -9,8 +9,6 @@ function OnInit(me)
     me.fooEnterVisited = false
     me.fooUpdateVisited = false
     me.fooLeaveVisited = false
-
-    shift(me, stateMain)
 end
 
 stateMain = {
@@ -52,3 +50,5 @@ function test(me)
     _G.assert(me.fooUpdateVisited)
     _G.assert(me.fooLeaveVisited)
 end
+
+EntryState = stateMain

@@ -2,7 +2,6 @@ Class = "Foo"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function OnInit(me)
-    shift(me, state_main)
 end
 
 function setActorFoo(me)
@@ -33,3 +32,5 @@ state_main = {
     update = function(me)
     end
 }
+
+EntryState = state_main

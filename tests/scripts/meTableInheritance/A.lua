@@ -3,7 +3,6 @@ Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function OnInit(me)
     me.a = 1
-    shift(me, state_main)
 end
 
 state_main = {
@@ -16,3 +15,5 @@ state_main = {
     update = function(me)
     end
 }
+
+EntryState = state_main

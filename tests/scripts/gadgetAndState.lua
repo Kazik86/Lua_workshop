@@ -3,13 +3,12 @@ Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function OnInit(me)
     me.gTexture = _G.gTexture.create(me)
-    shift(me, state_main)
+    me.gTexture:setName("foo")
 end
 
 state_main = {
     enter = function(me)
 	me.gTexture:enable()
-	me.gTexture:setName("foo")
     end,
 
     update = function(me)
@@ -22,3 +21,5 @@ state_main = {
 function test(me)
     _G.assert(me.gTexture:getName() == "foo")
 end
+
+EntryState = state_main
