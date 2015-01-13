@@ -288,6 +288,18 @@ w jakimś standardowym formacie, żeby mozna było to ładnie wyświetlić
 w edytorze. Chyba najprościej będzie napisac jakiś parser w Lua bo łatwo 
 zintegruję to z reszta silnika, który już używa Luy do skryptowania.
 
+EDIT:
+Jeśli to tylko możliwe to wszelakie testy poprawności skryptu (np. 
+'EntryState', 'Class' itp.) powinny odbywać się na etapie ładowania modułu. 
+Kod ładownia modułu najłatwiej będzie przystosować do pełnienia roli "parsera" 
+sprawdzającego poprawność skryptu bez konieczności odpalania całego silnika. 
+Przeprowadzenie testów na etapie późniejszym np. 'eActor::doScript' wychwyci 
+odrobinę więcej błędów ale jest w praktyce niewykonalne. Na tym etapie 
+bowiem muszę mieć już załadowane wszystkie podsystemy, które aktor może 
+wykorzystywać w 'OnInit' czyli np. wszystkie gadżety, co z kolei pociąga za 
+sobą SDL (bo np. 'gTexture' z niego korzysta w swoim 'begin()', które jest 
+wołane z 'OnInit') itd. Gra nie warta świeczki.
+
 				     ***
 
 Jak kiedyś się dorobię systemu automatycznej dokumentacji gadżetów to trzeba 
