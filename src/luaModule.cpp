@@ -107,7 +107,7 @@ void eLuaModuleMgr::setClass(lua_State* aLua, sModule& aModule)
     lua_getfield(aLua, -1, "Class");
 
     if (! lua_isstring(aLua, -1))
-	throw std::runtime_error("Non-existent, empty or wrong type in field 'Class'.");
+	throw std::runtime_error("'Class' not defined or not a string.");
 
     /* spr. czy nazwa klasy nie jest użyta jako identyfikator np.
      * Class = "Foo"
@@ -166,6 +166,21 @@ sModule* eLuaModuleMgr::checkClassUniqueness(lua_State* aLua, sModule& aModule)
 
     lua_pop(aLua, 2);
 
+    return result;
+}
+
+bool eLuaModuleMgr::entryStateExists(lua_State* aLua, sModule& aModule)
+{
+    bool result = true;
+
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModule.iRef);
+    lua_getfield(aLua, -1, "EntryState");
+
+    if (lua_isnil(aLua, -1) || ! lua_istable(aLua, -1))
+	result = false;
+
+    lua_pop(aLua, 2);
+    
     return result;
 }
 
@@ -256,8 +271,12 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    m.iRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
 	    m.iScript = aName;
 
+	    // various tests
 	    if (sModule* redef = checkClassUniqueness(aLua, m))
 		throw std::runtime_error("Class defined in " + m.iScript + " redefinied in " + redef->iScript);
+
+	    if (! entryStateExists(aLua, m))
+		throw std::runtime_error(m.iScript + ": 'EntryState' not defined or not a table (or you just forgot to derive from Actor.lua).");
 	}
 
 	return m;

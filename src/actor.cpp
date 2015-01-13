@@ -199,10 +199,6 @@ void eActor::shiftToEntryState(lua_State* aLua)
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iMeRef.front());
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iModule->iRef);
     lua_getfield(aLua, -1, "EntryState");
-
-    if (lua_isnil(aLua, -1) || ! lua_istable(aLua, -1))
-	throw std::runtime_error(iScript + ": entry state not defined or not a table.");
-
     lua_remove(aLua, -2);
     iFsm.shift(aLua);
     lua_pop(aLua, 2);

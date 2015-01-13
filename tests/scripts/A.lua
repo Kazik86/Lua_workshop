@@ -5,3 +5,5 @@ end
 
 function onlyInA()
 end
+
+EntryState = {}

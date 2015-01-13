@@ -44,6 +44,7 @@ private:
     void setScript(lua_State* aLua, const std::string& aScript);
 
     sModule* checkClassUniqueness(lua_State* aLua, sModule& aModule);
+    bool entryStateExists(lua_State* aLua, sModule& aModule);
     sModule& add(lua_State* aLua, const std::string& aName);
 
 private:

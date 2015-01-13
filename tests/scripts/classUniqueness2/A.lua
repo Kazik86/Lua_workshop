@@ -1,1 +1,2 @@
 Class = "B"
+EntryState = {}
