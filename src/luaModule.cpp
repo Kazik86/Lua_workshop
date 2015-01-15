@@ -200,10 +200,11 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    m.iLua = aLua;
 
 	    /* główna tablica Aktora, zawiera pola:
+	     *     This - adres samej siebie
 	     *     Data - tablica do której będzie za chwilę ładowany skrypt;
 	     *     __index - bo tablica główna będzie jednocześnie swoją metatablicą;
 	     *     Script - ścieżka skryptu;
-	     *     'NazwaKlasy' - to co w pliku .lua zapisano w 'Class'.
+	     *     'NazwaKlasy' - ponownie adres samej siebie
 	     *
 	     * W tablicy 'Data' jest wszystko to co zdefiniowano z poziomu
 	     * skryptu plus namespace'y używane w skryptach np.: _G;
@@ -219,6 +220,10 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	     * identyfikator jest funkcją. Jeśli tak - podmieniam _ENV.
 	     */
 	    lua_newtable(aLua);
+
+	    lua_pushvalue(aLua, -1);
+	    lua_setfield(aLua, -2, "This");
+
 	    setScript(aLua, aName);
 
 	    // do tablicy 'Data' załadowane zostaną wszystkie dane ze skryptu
