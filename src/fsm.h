@@ -2,6 +2,7 @@
 #define FSM_H
 
 #include <lua.hpp>
+#include <string>
 
 class eActor;
 class eLuaState;
@@ -31,6 +32,7 @@ private:
     void leave(lua_State* aLua);
 
     void replaceEnv(lua_State* aLua);
+    void setName(lua_State* aLua);
 
 private:
     eActor& iActor;
@@ -39,6 +41,7 @@ private:
     int iEnterRef;
     int iUpdateRef;
     int iLeaveRef;
+    std::string iName;
 };
 
 #endif // FSM_H

@@ -14,35 +14,39 @@ function OnInit(me)
 end
 
 
-state_main = {
-    enter = function(me)
+Super.DefState(This, {
+    Name = "state_main",
+
+    Enter = function(me)
 	me.gRandomPos:enable()
     end,
 
-    leave = function(me)
+    Leave = function(me)
 	me.gRandomPos:disable()
     end,
 
-    update = function(me)
+    Update = function(me)
 	Super.shift(me, state_moveDown)
     end
-}
+})
 
-state_moveDown = {
-    enter = function(me)
+Super.DefState(This, {
+    Name = "state_moveDown",
+
+    Enter = function(me)
 	me.gMove:enable()
 	me.gMove:setSpeed(_G.math.random(100, 200))
     end,
 
-    leave = function(me)
+    Leave = function(me)
 	me.gMove:disable()
     end,
 
-    update = function(me)
+    Update = function(me)
 	if (_G.eActor.getY(me.eActor) > 600) then
 	    Super.shift(me, state_main)
 	end
     end
-}
+})
 
 EntryState = state_main

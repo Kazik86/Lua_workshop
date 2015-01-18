@@ -10,15 +10,8 @@ function OnInit(me)
     end
 end
 
-state_main = {
-    enter = function(me)
-    end,
-
-    leave = function(me)
-    end,
-
-    update = function(me)
-    end
-}
+Super.DefState(This, {
+    Name = "state_main",
+})
 
 EntryState = state_main

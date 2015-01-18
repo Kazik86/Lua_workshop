@@ -7,13 +7,11 @@ function OnInit(me)
     me.gTexture:setSdlRectH(138)
 end
 
-state_moveDown = {
-    enter = function(me)
-	Super.state_moveDown.enter(me)
-	me.gMove:setSpeed(_G.math.random(200, 300))
-    end,
+Super.DefState(This, {
+    Extends = Super.state_moveDown,
 
-    leave =  Super.state_moveDown.leave,
-    update = Super.state_moveDown.update
-}
+    Enter = function(me)
+	me.gMove:setSpeed(_G.math.random(200, 300))
+    end
+})
 

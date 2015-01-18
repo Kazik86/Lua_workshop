@@ -53,9 +53,11 @@ void eFsm::setState(lua_State* aLua)
 {
     luaL_checktype(aLua, 2, LUA_TTABLE);
 
-    saveStage(aLua, "enter", iEnterRef);
-    saveStage(aLua, "update", iUpdateRef);
-    saveStage(aLua, "leave", iLeaveRef);
+    setName(aLua);
+
+    saveStage(aLua, "EnterEx", iEnterRef);
+    saveStage(aLua, "UpdateEx", iUpdateRef);
+    saveStage(aLua, "LeaveEx", iLeaveRef);
 
     lua_pushvalue(aLua, 2);
 
@@ -68,7 +70,8 @@ void eFsm::setState(lua_State* aLua)
 void eFsm::saveStage(lua_State* aLua, const char* aName, /* in/out */ int& aRef)
 {
     lua_getfield(aLua, 2, aName);
-    luaL_checktype(aLua, -1, LUA_TFUNCTION);
+    if (lua_type(aLua, -1) != LUA_TFUNCTION)
+	luaL_error(aLua, "'%s' in state '%s' not defined or not a function.", aName, iName.c_str());
 
     if (aRef == LUA_NOREF)
 	aRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
@@ -119,4 +122,14 @@ void eFsm::replaceEnv(lua_State* aLua)
 
 	lua_pop(aLua, 1);
     }
+}
+
+void eFsm::setName(lua_State* aLua)
+{
+    lua_getfield(aLua, 2, "FullName");
+    if (lua_type(aLua, -1) != LUA_TSTRING)
+	luaL_error(aLua, "'FullName' is not defined. Usually it means you didn't use 'DefState' to create state.");
+
+    iName = lua_tostring(aLua, -1);
+    lua_pop(aLua, 1);
 }
