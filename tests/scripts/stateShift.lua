@@ -20,7 +20,7 @@ Super.DefState(This, {
 
     Update = function(me)
 	me.mainUpdateVisited = true
-	shift(me, stateFoo)
+	return Shift(me, stateFoo)
     end,
 
     Leave = function(me)
@@ -37,7 +37,7 @@ Super.DefState(This, {
 
     Update = function(me)
 	me.fooUpdateVisited = true
-	shift(me, stateMain)
+	return Shift(me, stateMain)
     end,
 
     Leave = function(me)

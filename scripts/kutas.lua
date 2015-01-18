@@ -26,7 +26,7 @@ Super.DefState(This, {
     end,
 
     Update = function(me)
-	Super.shift(me, state_moveDown)
+	return Shift(me, state_moveDown)
     end
 })
 
@@ -44,7 +44,7 @@ Super.DefState(This, {
 
     Update = function(me)
 	if (_G.eActor.getY(me.eActor) > 600) then
-	    Super.shift(me, state_main)
+	    return Shift(me, state_main)
 	end
     end
 })
