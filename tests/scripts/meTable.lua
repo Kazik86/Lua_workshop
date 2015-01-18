@@ -26,14 +26,8 @@ function checkAttribs2(me)
     end
 end
 
-state_main = {
-    enter = function(me)
-    end,
+Super.DefState(This, {
+    Name = "state_main"
+})
 
-    leave = function(me)
-    end,
-
-    update = function(me)
-    end
-}
 EntryState = state_main

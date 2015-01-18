@@ -6,17 +6,13 @@ function OnInit(me)
     me.gTexture:setName("foo")
 end
 
-state_main = {
-    enter = function(me)
+Super.DefState(This, {
+    Name = "state_main",
+
+    Enter = function(me)
 	me.gTexture:enable()
-    end,
-
-    update = function(me)
-    end,
-
-    leave = function(me)
     end
-}
+})
 
 function test(me)
     _G.assert(me.gTexture:getName() == "foo")

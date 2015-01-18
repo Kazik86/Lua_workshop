@@ -11,35 +11,39 @@ function OnInit(me)
     me.fooLeaveVisited = false
 end
 
-stateMain = {
-    enter = function(me)
+Super.DefState(This, {
+    Name = "stateMain",
+
+    Enter = function(me)
 	me.mainEnterVisited = true
     end,
 
-    update = function(me)
+    Update = function(me)
 	me.mainUpdateVisited = true
 	shift(me, stateFoo)
     end,
 
-    leave = function(me)
+    Leave = function(me)
 	me.mainLeaveVisited = true
     end
-}
+})
 
-stateFoo = {
-    enter = function(me)
+Super.DefState(This, {
+    Name = "stateFoo",
+
+    Enter = function(me)
 	me.fooEnterVisited = true
     end,
 
-    update = function(me)
+    Update = function(me)
 	me.fooUpdateVisited = true
 	shift(me, stateMain)
     end,
 
-    leave = function(me)
+    Leave = function(me)
 	me.fooLeaveVisited = true
     end
-}
+})
 
 function test(me)
     _G.assert(me.mainEnterVisited)
