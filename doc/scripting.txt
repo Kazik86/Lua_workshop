@@ -52,6 +52,23 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Nowa składnia tworzenia stanów: DefState ma poważny feler. Funkcję DefState 
+można przez nieuwagę przedefiniować np.:
+    zamiast Super.DefState(This, {})
+    napisać Super.DefState = {}
+Kolejne użycie 'DefState' jako funkcji zwróci błąd. Jakiś mechanizm 
+zapobiegający nadpisywaniu identyfikatorów zastrzeżonych by się przydał.
+
+				     ***
+
+W luaModule.cpp spr. unikalność klasy modułu za pomocą 'checkClassUniqueness'. 
+Może lepiej będzie rejestrować wszystkie klasy w _G (tak jak klasy z C++). 
+Dzieki temu spr. unikalności klasy sprowadzi się do wywołania 
+lua_getfield(_G, "NazwaKlasy"). Poza tym taki zabieg i tak będzie chyba potrzebny 
+w momencie gdy zajdzie potrzeba komunikacji między aktorami.
+
+				     ***
+
 Dziedziczenie stanów. Póki co posługuję sie takim idiomem:
 
     state_moveDown = {

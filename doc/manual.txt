@@ -16,3 +16,9 @@ typu 'number' i 'nil' bowiem brakujące 'b' w wywołaniu funkcji 'foo' zostaje
 przez Luę po cichu zastapione nilem. Jesli będę kontynuował rozwój tego języka 
 to na pewno trzeba będzie machnąc parser, który będzie obsługiwał takie 
 rzeczy.
+
+Konfiguracja Vima
+
+au BufRead *.lua setlocal efm=luac:\ %f:%l:%m
+au FileType lua nnoremap <buffer> <F8> :setlocal makeprg=luac\ -p\ %<CR>:w<CR>:silent make!<CR><C-l>:cw<CR>
+
