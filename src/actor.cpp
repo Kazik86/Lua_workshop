@@ -140,11 +140,27 @@ void eActor::callLuaFunc(lua_State* aLua, const char* aFunctionName)
 void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
-    lua_getfield(aLua, -1, aFunctionName);
+
+    /* Do odnalezienia funkcji nie mogę posłużyć się 'lua_getfield', bo ta
+     * funkcja przeszukuje całą hierarchię dziedziczenia, a mnie interesuje
+     * tylko moduł na samym dole hierarchii.
+     */
+    
+    // tutaj 'lua_getfield' jest bezpieczne, bo każdy moduł ma tablice 'Data'
+    lua_getfield(aLua, -1, "Data");
+    lua_pushstring(aLua, aFunctionName);
+    lua_rawget(aLua, -2);
 
     if (! lua_isfunction(aLua, -1))
 	throw std::runtime_error(iScript + ": no function with name " + aFunctionName);
 
+    lua_pop(aLua, 2);
+
+    /* funkcja istnieje, ale muszę ją odłożyć na stos ponownie, tym razem
+     * przy użyciu 'getfield' aby za pośrednictwem metametody '__index'
+     * podmienić _ENV.
+     */
+    lua_getfield(aLua, -1, aFunctionName);
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
 
     if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
