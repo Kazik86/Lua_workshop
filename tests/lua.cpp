@@ -223,3 +223,35 @@ TEST_FIXTURE(sFixture, ActorCreatedFromScript)
 
     CHECK(eActorMgr::getMe()->getActorsNum() == num + 1);
 }
+
+TEST_FIXTURE(sFixture, VirtualFunctionInsideState)
+{
+    eActor a("tests/scripts/virtualFunctionInsideState/a.lua");
+    eActor b("tests/scripts/virtualFunctionInsideState/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+
+    a.doScript(lua);
+    b.doScript(lua);
+
+    b.update(lua, KDelta);
+    b.update(lua, KDelta);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+    b.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ExtendingState)
+{
+    eActor b("tests/scripts/extendingState/b.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    b.doScript(lua);
+    b.update(lua, KDelta);
+    b.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
