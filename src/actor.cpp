@@ -152,7 +152,7 @@ void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, con
     lua_rawget(aLua, -2);
 
     if (! lua_isfunction(aLua, -1))
-	throw std::runtime_error(iScript + ": no function with name " + aFunctionName);
+	throw std::runtime_error(iScript + ": no function with name '" + aFunctionName + "'");
 
     lua_pop(aLua, 2);
 
