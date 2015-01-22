@@ -113,7 +113,7 @@ void eActor::createMeTables(lua_State* aLua)
     for (const sModule* m : iModule->iInheritanceHierarchy) {
 	lua_newtable(aLua);
 	lua_pushvalue(aLua, -1);
-	lua_setfield(aLua, 1, m->iClass.c_str()); // me.DerivedClass = DerivedMe
+	lua_setfield(aLua, -2, m->iClass.c_str()); // me.DerivedClass = DerivedMe
 
 	lua_newtable(aLua);
 	lua_pushvalue(aLua, -2);
@@ -155,6 +155,8 @@ void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, con
     lua_pop(aLua, 2);
 
     if (! isFun) {
+	lua_pop(aLua, 1);
+
 	if (aThrow)
 	    throw std::runtime_error(iScript + ": no function with name '" + aFunctionName + "'");
 	else
