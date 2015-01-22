@@ -1,9 +1,6 @@
 Class = "Base"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
-end
-
 Super.DefState(This, {
     Name = "state_main",
 

@@ -1,8 +1,5 @@
 Class = "Actor"
 
-function OnInit(me)
-end
-
 function Shift(me, newState)
     _G.eActor.shift(me.eActor, newState)
 end

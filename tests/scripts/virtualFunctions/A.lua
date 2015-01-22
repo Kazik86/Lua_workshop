@@ -1,9 +1,6 @@
 Class = "A"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
-end
-
 function callVirtuallFun(me)
     return virtualFun(me)
 end

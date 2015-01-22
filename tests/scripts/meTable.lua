@@ -1,9 +1,6 @@
 Class = "Base"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
-end
-
 function setAttribs1(me)
     me.foo = 1
     me.bar = 10

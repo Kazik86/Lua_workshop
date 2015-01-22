@@ -1,9 +1,6 @@
 Class = "Foo"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
-end
-
 function setActorFoo(me)
     ActorFooPtr = me.eActor
     ActorFooScript = _G.eActor.getScript(me.eActor)

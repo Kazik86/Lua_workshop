@@ -1,9 +1,6 @@
 Class = "Derived"
 Super = _G.eLuaModuleMgr.derive("tests/scripts/extendingState/a.lua")
 
-function OnInit(me)
-end
-
 Super.DefState(This, {
     Extends = Super.state_main,
 
