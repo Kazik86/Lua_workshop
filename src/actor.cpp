@@ -134,10 +134,10 @@ void eActor::createMeTables(lua_State* aLua)
 
 void eActor::callLuaFunc(lua_State* aLua, const char* aFunctionName)
 {
-    callLuaFuncWithEnv(aLua, iModule->iRef, iMeRef.front(), aFunctionName);
+    callLuaFuncWithEnv(aLua, iModule->iRef, iMeRef.front(), aFunctionName, true);
 }
 
-void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName)
+void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName, bool aThrow)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
 
@@ -151,10 +151,15 @@ void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, con
     lua_pushstring(aLua, aFunctionName);
     lua_rawget(aLua, -2);
 
-    if (! lua_isfunction(aLua, -1))
-	throw std::runtime_error(iScript + ": no function with name '" + aFunctionName + "'");
-
+    bool isFun = lua_isfunction(aLua, -1);
     lua_pop(aLua, 2);
+
+    if (! isFun) {
+	if (aThrow)
+	    throw std::runtime_error(iScript + ": no function with name '" + aFunctionName + "'");
+	else
+	    return;
+    }
 
     /* funkcja istnieje, ale muszę ją odłożyć na stos ponownie, tym razem
      * przy użyciu 'getfield' aby za pośrednictwem metametody '__index'
@@ -180,10 +185,10 @@ void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, con
 
     for (auto it = moduleItBeg; it != moduleItEnd; ++it, ++envIt) {
 	sModule* m = *it;
-	callLuaFuncWithEnv(aLua, m->iRef, *envIt, aFunctionName);
+	callLuaFuncWithEnv(aLua, m->iRef, *envIt, aFunctionName, false);
     }
 
-    callLuaFuncWithEnv(aLua, iModule->iRef, *envIt, aFunctionName);
+    callLuaFuncWithEnv(aLua, iModule->iRef, *envIt, aFunctionName, false);
 
     assert(++envIt == iMeRef.crend());
 }
