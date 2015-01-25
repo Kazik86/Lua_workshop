@@ -155,8 +155,12 @@ TEST_FIXTURE(sFixture, MeTableInheritance)
     eActor a("tests/scripts/meTableInheritance/C.lua");
     lua_State* lua = iGame.getLua()->getRaw();
     a.doScript(lua);
-    a.callLuaFunc(lua, "test1");
-    a.callLuaFunc(lua, "test2");
+    a.callLuaFunc(lua, "testInA_1");
+    a.callLuaFunc(lua, "testInB_1");
+    a.callLuaFunc(lua, "testInC_1");
+    a.callLuaFunc(lua, "testInC_2");
+    a.callLuaFunc(lua, "testInB_2");
+    a.callLuaFunc(lua, "testInA_2");
     CHECK(true);
 }
 
