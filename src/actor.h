@@ -50,7 +50,9 @@ private:
     eActor& operator=(const eActor& aOther);
 
     void createMeTables(lua_State* aLua);
-    void callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName, bool aThrow);
+    bool funcExistsInModule(lua_State* aLua, int aModuleRef, const char* aFunctionName);
+    void callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName, bool aThrow);
+    void callLuaFuncDeep(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName);
     void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName);
     void shareInternalsWithScript(lua_State* aLua, int aRef);
     void beginGadget();

@@ -134,10 +134,29 @@ void eActor::createMeTables(lua_State* aLua)
 
 void eActor::callLuaFunc(lua_State* aLua, const char* aFunctionName)
 {
-    callLuaFuncWithEnv(aLua, iModule->iRef, iMeRef.front(), aFunctionName, true);
+    callLuaFuncDeep(aLua, iModule, iMeRef.front(), aFunctionName);
 }
 
-void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, const char* aFunctionName, bool aThrow)
+/* wersja 'deep' w przeciwieństwie do 'shallow' w poszukiwaniu funkcji
+ * przeszukuje całą hierarchię dziedziczenia.
+ */
+void eActor::callLuaFuncDeep(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModule->iRef);
+    lua_getfield(aLua, -1, aFunctionName);
+
+    if (! lua_isfunction(aLua, -1))
+	throw std::runtime_error(aModule->iScript + ": no function with name '" + aFunctionName + "'");
+
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
+
+    if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+	throw std::runtime_error(lua_tostring(aLua, -1));
+
+    lua_pop(aLua, 1);
+}
+
+bool eActor::funcExistsInModule(lua_State* aLua, int aModuleRef, const char* aFunctionName)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
 
@@ -152,28 +171,27 @@ void eActor::callLuaFuncWithEnv(lua_State* aLua, int aModuleRef, int aMeRef, con
     lua_rawget(aLua, -2);
 
     bool isFun = lua_isfunction(aLua, -1);
-    lua_pop(aLua, 2);
+    lua_pop(aLua, 3);
 
-    if (! isFun) {
-	lua_pop(aLua, 1);
+    return isFun;
+}
 
+/* 'shallow' oznacza, że interesuje nas tylko i wyłącznie funkcja zdefiniowana
+ * w module na samym dole hierarchii dziedziczenia. Jeśli jej tam nie ma
+ * zgłaszam błąd bez szukania jej w klasach bazowych.
+ */
+void eActor::callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName, bool aThrow)
+{
+    if (funcExistsInModule(aLua, aModule->iRef, aFunctionName))
+	/* funkcja istnieje w module głównym, wywołam ją za pomocą wersji
+	 * 'deep' tzn. za pośrednictwem metatablicy aby ustawić jej odpowiednie
+	 * _ENV
+	 */
+	callLuaFuncDeep(aLua, aModule, aMeRef, aFunctionName);
+    else { 
 	if (aThrow)
-	    throw std::runtime_error(iScript + ": no function with name '" + aFunctionName + "'");
-	else
-	    return;
+	    throw std::runtime_error(aModule->iScript + ": no function with name '" + aFunctionName + "'");
     }
-
-    /* funkcja istnieje, ale muszę ją odłożyć na stos ponownie, tym razem
-     * przy użyciu 'getfield' aby za pośrednictwem metametody '__index'
-     * podmienić _ENV.
-     */
-    lua_getfield(aLua, -1, aFunctionName);
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
-
-    if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
-	throw std::runtime_error(lua_tostring(aLua, -1));
-
-    lua_pop(aLua, 1);
 }
 
 void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName)
@@ -187,10 +205,10 @@ void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, con
 
     for (auto it = moduleItBeg; it != moduleItEnd; ++it, ++envIt) {
 	sModule* m = *it;
-	callLuaFuncWithEnv(aLua, m->iRef, *envIt, aFunctionName, false);
+	callLuaFuncShallow(aLua, m, *envIt, aFunctionName, false);
     }
 
-    callLuaFuncWithEnv(aLua, iModule->iRef, *envIt, aFunctionName, false);
+    callLuaFuncShallow(aLua, iModule, *envIt, aFunctionName, false);
 
     assert(++envIt == iMeRef.crend());
 }
