@@ -258,3 +258,12 @@ TEST_FIXTURE(sFixture, ExtendingState)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, DontSearchInitInBase)
+{
+    eActor a("tests/scripts/dontSearchInitInBase/b.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+
+    CHECK(true);
+}
