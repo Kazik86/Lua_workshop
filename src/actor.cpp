@@ -68,7 +68,7 @@ void eActor::doScript(lua_State* aLua)
 {
     iModule = &eLuaModuleMgr::getMe()->load(aLua, iScript);
     createMeTables(aLua);
-    callOnInit(aLua);
+    callInit(aLua);
     beginGadget();
     shiftToEntryState(aLua);
 }
@@ -213,14 +213,14 @@ void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, con
     assert(++envIt == iMeRef.crend());
 }
 
-void eActor::callOnInit(lua_State* aLua)
+void eActor::callInit(lua_State* aLua)
 {
-    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "OnInit");
+    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "Init");
 }
 
-void eActor::callOnRestart(lua_State* aLua)
+void eActor::callRestart(lua_State* aLua)
 {
-    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "OnRestart");
+    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "Restart");
 }
 
 

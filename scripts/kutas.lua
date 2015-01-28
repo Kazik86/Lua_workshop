@@ -2,7 +2,7 @@ Class = "Kutas"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 
-function OnInit(me)
+function Init(me)
     me.gTexture = _G.gTexture.create(me)
     me.gTexture:setName("textures/kutas.png")
     me.gTexture:setSdlRectW(49)

@@ -1,7 +1,7 @@
 Class = "Base"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
+function Init(me)
     if (me.base ~= nil) then
 	_G.assert(false)
     end

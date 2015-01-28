@@ -1,7 +1,7 @@
 Class = "C"
 Super = _G.eLuaModuleMgr.derive("tests/scripts/meTableInheritance/B.lua")
 
-function OnInit(me)
+function Init(me)
     me.c = 3
 end
 

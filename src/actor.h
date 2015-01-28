@@ -32,8 +32,8 @@ public:
 
     void doScript(lua_State* aLua);
     void update(lua_State* aLua, float aDelta);
-    void callOnInit(lua_State* aLua);
-    void callOnRestart(lua_State* aLua);
+    void callInit(lua_State* aLua);
+    void callRestart(lua_State* aLua);
     void callLuaFunc(lua_State* aLua, const char* aFunctionName);
     const std::string& getScript() const { return iScript; }
     std::list<eGadget*>::size_type getGadgetsNum() const { return iGadgets.size(); }

@@ -1,7 +1,7 @@
 Class = "Foo"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
+function Init(me)
     me.gTexture = _G.gTexture.create(me)
     me.gTexture:setName("foo")
 end

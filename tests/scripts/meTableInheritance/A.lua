@@ -1,7 +1,7 @@
 Class = "A"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
+function Init(me)
     me.a = 1
 end
 

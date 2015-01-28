@@ -1,7 +1,7 @@
 Class = "Foo"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
+function Init(me)
     me.mainEnterVisited = false
     me.mainUpdateVisited = false
     me.mainLeaveVisited = false

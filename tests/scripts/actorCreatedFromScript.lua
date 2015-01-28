@@ -1,7 +1,7 @@
 Class = "Foo"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-function OnInit(me)
+function Init(me)
     me.child = _G.eActorMgr.add("tests/scripts/meTable.lua")
 end
 
