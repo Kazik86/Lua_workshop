@@ -4,22 +4,96 @@ function Shift(me, newState)
     _G.eActor.shift(me.eActor, newState)
 end
 
-function DefStageNoExt(t, s, se)
-    if t[s] == nil then
-	t[se] = function(me)
+function EnableGadgets(me, gadgets)
+    if gadgets ~= nil then
+	for _, g in _G.ipairs(gadgets) do
+	    me[g]:enable()
 	end
-    else
-	t[se] = t[s]
     end
 end
 
-function DefStageWithExt(t, e, s, se)
-    if t[s] == nil then
-	t[se] = e[se]
+function DisableGadgets(me, gadgets)
+    if gadgets ~= nil then
+	for _, g in _G.ipairs(gadgets) do
+	    me[g]:disable()
+	end
+    end
+end
+
+function DefEnterExNoExtend(t)
+    if t.Enter == nil then
+	t.EnterEx = function(me)
+	    EnableGadgets(me, t.Gadgets)
+	end
     else
-	t[se] = function(me)
-	    e[se](me)
-	    t[s](me)
+	t.EnterEx = function(me)
+	    EnableGadgets(me, t.Gadgets)
+	    t.Enter(me)
+	end
+    end
+end
+
+function DefLeaveExNoExtend(t)
+    if t.Leave == nil then
+	t.LeaveEx = function(me)
+	    DisableGadgets(me, t.Gadgets)
+	end
+    else
+	t.LeaveEx = function(me)
+	    t.Leave(me)
+	    DisableGadgets(me, t.Gadgets)
+	end
+    end
+end
+
+function DefUpdateExNoExtend(t)
+    if t.Update == nil then
+	t.UpdateEx = function(me)
+	end
+    else
+	t.UpdateEx = t.Update
+    end
+end
+
+function DefEnterExWithExtend(t, e)
+    if t.Enter == nil then
+	t.EnterEx = function(me)
+	    e.EnterEx(me)
+	    EnableGadgets(me, t.Gadgets)
+	end
+    else
+	t.EnterEx = function(me)
+	    e.EnterEx(me)
+	    EnableGadgets(me, t.Gadgets)
+	    t.Enter(me)
+	end
+    end
+end
+
+function DefLeaveExWithExtend(t, e)
+    if t.Leave == nil then
+	t.LeaveEx = function(me)
+	    e.LeaveEx(me)
+	    DisableGadgets(me, t.Gadgets)
+	end
+    else
+	t.LeaveEx = function(me)
+	    e.LeaveEx(me)
+	    t.Leave(me)
+	    DisableGadgets(me, t.Gadgets)
+	end
+    end
+end
+
+function DefUpdateExWithExtend(t, e)
+    if t.Update == nil then
+	t.UpdateEx = function(me)
+	    e.UpdateEx(me)
+	end
+    else
+	t.UpdateEx = function(me)
+	    e.UpdateEx(me)
+	    t.Update(me)
 	end
     end
 end
@@ -28,17 +102,17 @@ function DefState(this, t)
     local ext = t.Extends
 
     if ext == nil then
-	DefStageNoExt(t, "Enter", "EnterEx")
-	DefStageNoExt(t, "Update", "UpdateEx")
-	DefStageNoExt(t, "Leave", "LeaveEx")
+	DefEnterExNoExtend(t)
+	DefUpdateExNoExtend(t)
+	DefLeaveExNoExtend(t)
     else
 	if _G.type(ext) ~= "table" then
 	    _G.error("'Extends' must be a table", 2)
 	end
 
-	DefStageWithExt(t, ext, "Enter", "EnterEx")
-	DefStageWithExt(t, ext, "Update", "UpdateEx")
-	DefStageWithExt(t, ext, "Leave", "LeaveEx")
+	DefEnterExWithExtend(t, ext)
+	DefUpdateExWithExtend(t, ext)
+	DefLeaveExWithExtend(t, ext)
 
 	if t.Name == nil then
 	    t.Name = ext.Name

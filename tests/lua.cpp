@@ -267,3 +267,25 @@ TEST_FIXTURE(sFixture, DontSearchInitInBase)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, AutoEnableDisableGadgets1)
+{
+    eActor a("tests/scripts/autoEnableDisableGadgets/a.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, AutoEnableDisableGadgets2)
+{
+    eActor b("tests/scripts/autoEnableDisableGadgets/b.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    b.doScript(lua);
+    b.update(lua, KDelta);
+    b.update(lua, KDelta);
+
+    CHECK(true);
+}
