@@ -19,6 +19,6 @@ rzeczy.
 
 Konfiguracja Vima
 
-au BufRead *.lua setlocal efm=luac:\ %f:%l:%m
+au BufRead,BufNewFile *.lua setlocal efm=luac:\ %f:%l:%m
 au FileType lua nnoremap <buffer> <F8> :setlocal makeprg=luac\ -p\ %<CR>:w<CR>:silent make!<CR><C-l>:cw<CR>
 
