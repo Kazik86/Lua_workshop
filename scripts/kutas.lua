@@ -16,14 +16,7 @@ end
 
 Super.DefState(This, {
     Name = "state_main",
-
-    Enter = function(me)
-	me.gRandomPos:enable()
-    end,
-
-    Leave = function(me)
-	me.gRandomPos:disable()
-    end,
+    Gadgets = { "gRandomPos" },
 
     Update = function(me)
 	return Shift(me, state_moveDown)
@@ -32,14 +25,10 @@ Super.DefState(This, {
 
 Super.DefState(This, {
     Name = "state_moveDown",
+    Gadgets = { "gMove" },
 
     Enter = function(me)
-	me.gMove:enable()
 	me.gMove:setSpeed(_G.math.random(100, 200))
-    end,
-
-    Leave = function(me)
-	me.gMove:disable()
     end,
 
     Update = function(me)
