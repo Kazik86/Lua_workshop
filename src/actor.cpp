@@ -238,13 +238,12 @@ void eActor::beginGadget()
 void eActor::shiftToEntryState(lua_State* aLua)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iModule->iRef);
-    lua_getfield(aLua, -1, "EntryState");
-    lua_pushcfunction(aLua, ::shift);
-    lua_pushlightuserdata(aLua, this);
-    lua_pushvalue(aLua, -3);
+    lua_getfield(aLua, -1, "Shift");
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iMeRef.front());
+    lua_getfield(aLua, -3, "EntryState");
 
     if(lua_pcall(aLua, 2, 0, 0) != LUA_OK)
 	throw std::runtime_error(iScript + ": while entering into 'EntryState' - " + lua_tostring(aLua, -1));
     
-    lua_pop(aLua, 2);
+    lua_pop(aLua, 1);
 }
