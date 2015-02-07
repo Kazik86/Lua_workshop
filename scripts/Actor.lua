@@ -1,7 +1,20 @@
 Class = "Actor"
 
+function Init(me)
+    --me.DumpState = 1
+end
+
 function Shift(me, newState)
+    if (me.DumpState ~= nil and me.State ~= nil) then
+	_G.print(Class .. " is about to leave " .. me.State.FullName)
+    end
+
     _G.eActor.shift(me.eActor, newState)
+    me.State = newState
+
+    if (me.DumpState ~= nil) then
+	_G.print(Class .. " entered " .. me.State.FullName)
+    end
 end
 
 function EnableGadgets(me, gadgets)
