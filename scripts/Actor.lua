@@ -28,7 +28,7 @@ function DefEnterExNoExtend(t)
     else
 	t.EnterEx = function(me)
 	    EnableGadgets(me, t.Gadgets)
-	    t.Enter(me)
+	    ReplaceEnv(t.Enter)(me)
 	end
     end
 end
@@ -40,7 +40,7 @@ function DefLeaveExNoExtend(t)
 	end
     else
 	t.LeaveEx = function(me)
-	    t.Leave(me)
+	    ReplaceEnv(t.Leave)(me)
 	    DisableGadgets(me, t.Gadgets)
 	end
     end
@@ -58,14 +58,14 @@ end
 function DefEnterExWithExtend(t, e)
     if t.Enter == nil then
 	t.EnterEx = function(me)
-	    e.EnterEx(me)
+	    ReplaceEnv(e.EnterEx)(me)
 	    EnableGadgets(me, t.Gadgets)
 	end
     else
 	t.EnterEx = function(me)
-	    e.EnterEx(me)
+	    ReplaceEnv(e.EnterEx)(me)
 	    EnableGadgets(me, t.Gadgets)
-	    t.Enter(me)
+	    ReplaceEnv(t.Enter)(me)
 	end
     end
 end
@@ -73,13 +73,13 @@ end
 function DefLeaveExWithExtend(t, e)
     if t.Leave == nil then
 	t.LeaveEx = function(me)
-	    e.LeaveEx(me)
+	    ReplaceEnv(e.LeaveEx)(me)
 	    DisableGadgets(me, t.Gadgets)
 	end
     else
 	t.LeaveEx = function(me)
-	    e.LeaveEx(me)
-	    t.Leave(me)
+	    ReplaceEnv(e.LeaveEx)(me)
+	    ReplaceEnv(t.Leave)(me)
 	    DisableGadgets(me, t.Gadgets)
 	end
     end
@@ -88,12 +88,12 @@ end
 function DefUpdateExWithExtend(t, e)
     if t.Update == nil then
 	t.UpdateEx = function(me)
-	    e.UpdateEx(me)
+	    ReplaceEnv(e.UpdateEx)(me)
 	end
     else
 	t.UpdateEx = function(me)
-	    e.UpdateEx(me)
-	    t.Update(me)
+	    ReplaceEnv(e.UpdateEx)(me)
+	    ReplaceEnv(t.Update)(me)
 	end
     end
 end
@@ -134,5 +134,30 @@ end
 DefState(This, {
     Name = "state_main"
 })
+
+function ReplaceEnv(f)
+    local name, upvalueIdx
+
+    for i = 1, _G.math.huge do
+	name = _G.debug.getupvalue(f, i)
+	if (name == "_ENV") then
+	    upvalueIdx = i
+	    break
+	elseif (name == nil) then
+	    return f
+	end
+    end
+
+    local upvalue
+    for i = 1, _G.math.huge do
+        name, upvalue = _G.debug.getupvalue(ReplaceEnv, i)
+        if (name == "_ENV") then
+	    _G.debug.setupvalue(f, upvalueIdx, upvalue)
+            break
+        end
+    end
+
+    return f
+end
 
 EntryState = state_main

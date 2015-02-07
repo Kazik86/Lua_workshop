@@ -289,3 +289,13 @@ TEST_FIXTURE(sFixture, AutoEnableDisableGadgets2)
 
     CHECK(true);
 }
+TEST_FIXTURE(sFixture, ReplaceEnv)
+{
+    eActor a("tests/scripts/replaceEnv/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+
+    CHECK(true);
+}
