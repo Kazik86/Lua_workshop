@@ -52,6 +52,26 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Makra z cyklu 'DEFINE' tzn. 'Reader', 'Writer', 'Accessor' i 'Method' dla 
+gadżetów, zdefiniowane są jako wrappery na makra zdefiniowane dla klasy 
+ogólnej czyli 'userdata' w 'userdata.h'. Sęk w tym, że żaden z używanych 
+obiektów typu 'userdata' (eLuaModuleMgr, eActor, eActorMgr) z tych makr nie 
+korzysta. Można zatem uznać, że makra te są właściwe tylko gadżetom 
+i przenieść je do 'gadget.h'.
+Problem z używaniem tych makr dla 'userdata' polega na tym, że pomyślane są 
+one jako metoda na tworzenie API obiektowego tzn. takiego z którego korzysta 
+się za pomocą składni z dwukropkiem: eActor:getPos(). Tymczasem 
+'eLuaModuleMgr' czy 'eActorMgr' nie funkcjonują w skryptach jako obiekty lecz 
+singletony czyli w zasadzie namespace'y, a co za tym idzie korzystają ze 
+składni 'z kropką': eActorMgr.add(). Tylko 'eActor' może zrobić użytek 
+z problematycznych makr (ale nie robi - całe skryptowe api zdefiniowałem 
+ręcznie!), ale jedna taka klasa to chyba zbyt mało, żeby w dalszym ciągu 
+rozwijać te makra z myślą o 'userdata'. Póki co nie usuwam już zdefiniowanych 
+makr dla 'userdata', ale jeśli w przyszłości nie pojawi się więcej klas, 
+którego by z nich korzystały, to trzeba je usunąć.
+
+				     ***
+
 Nowa składnia tworzenia stanów: DefState ma poważny feler. Funkcję DefState 
 można przez nieuwagę przedefiniować np.:
     zamiast Super.DefState(This, {})

@@ -70,6 +70,37 @@
     REGISTER_USERDATA_READER(aReader)			    \
     REGISTER_USERDATA_WRITER(aWriter)
 
+
+#define DECLARE_USERDATA_METHOD(aName)		    \
+    public:					    \
+	static int aName##_lua(lua_State* aLua);    \
+    private:
+
+#define DEFINE_USERDATA_METHOD_0_COMMON(aClass, aName, aGetFun) \
+    int aClass::aName##_lua(lua_State* aLua)			\
+    {								\
+	aClass* me = Script::aGetFun<aClass>(aLua);		\
+	me->aName(aLua);					\
+	return 0;						\
+    }
+
+#define DEFINE_USERDATA_METHOD_1_COMMON(aClass, aName, aGetFun) \
+    int aClass::aName##_lua(lua_State* aLua)			\
+    {								\
+	aClass* me = Script::aGetFun<aClass>(aLua);		\
+	Script::pushVal<std::result_of<decltype(&aClass::aName)(aClass, lua_State*)>::type>(aLua, me->aName(aLua));\
+	return 1;						\
+    }
+
+#define DEFINE_USERDATA_METHOD_0(aClass, aName)	\
+    DEFINE_USERDATA_METHOD_0_COMMON(aClass, aName, getUdata)
+
+#define DEFINE_USERDATA_METHOD_1(aClass, aName)	\
+    DEFINE_USERDATA_METHOD_1_COMMON(aClass, aName, getUdata)
+
+#define REGISTER_USERDATA_METHOD(aName)	\
+    {#aName, aName##_lua},
+
 namespace Script
 {
 
@@ -164,7 +195,7 @@ inline void pushVal(lua_State* aLua, std::string aVal)
 template <>
 inline void pushVal(lua_State* aLua, bool aVal)
 {
-    lua_toboolean(aLua, aVal);
+    lua_pushboolean(aLua, aVal);
 }
 
 template <>

@@ -38,6 +38,17 @@
     REGISTER_GADGET_READER(aReader)		    \
     REGISTER_GADGET_WRITER(aWriter)
 
+
+#define DECLARE_GADGET_METHOD(aName) \
+    DECLARE_USERDATA_METHOD(aName)
+
+#define DEFINE_GADGET_METHOD(aClass, aName)	\
+    DEFINE_USERDATA_METHOD_1_COMMON(aClass, aName, getGadget)
+
+#define REGISTER_GADGET_METHOD(aName)	\
+    REGISTER_USERDATA_METHOD(aName)
+
+
 #define DECLARE_GADGET_CLASS()                                      \
 public:								    \
     static int luaOpen (lua_State* aLua);			    \

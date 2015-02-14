@@ -15,6 +15,12 @@ public:
     // props
     DECLARE_GADGET_ACCESSOR(getVal, setVal)
 
+    // methods
+    DECLARE_GADGET_METHOD(isValGreater)
+
+private:
+    bool isValGreater(lua_State* aLua);
+
 private:
     int iVal;
 };
