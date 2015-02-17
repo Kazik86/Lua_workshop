@@ -311,3 +311,15 @@ TEST_FIXTURE(sFixture, GadgetStatus)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, GadgetEvent)
+{
+    eActor a("tests/scripts/gadgetEvent/a.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
+
+    CHECK(true);
+}

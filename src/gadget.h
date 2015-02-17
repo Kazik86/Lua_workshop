@@ -5,6 +5,12 @@
 
 #include <new>
 
+#define DEFINE_GADGET_API(aClass) \
+    DEFINE_USERDATA_API(aClass)
+
+
+// property ///////////////////////////////////////////////////////////
+
 #define DECLARE_GADGET_READER(aName) \
     DECLARE_USERDATA_READER(aName)
 
@@ -25,9 +31,6 @@
     DEFINE_GADGET_READER(aClass, aReader, aVar)			    \
     DEFINE_GADGET_WRITER(aClass, aWriter, aVar)			    \
 
-#define DEFINE_GADGET_API(aClass) \
-    DEFINE_USERDATA_API(aClass)
-
 #define REGISTER_GADGET_READER(aName)    \
     REGISTER_USERDATA_READER(aName)
 
@@ -38,6 +41,7 @@
     REGISTER_GADGET_READER(aReader)		    \
     REGISTER_GADGET_WRITER(aWriter)
 
+// method /////////////////////////////////////////////////////////////
 
 #define DECLARE_GADGET_METHOD(aName) \
     DECLARE_USERDATA_METHOD(aName)
@@ -47,6 +51,18 @@
 
 #define REGISTER_GADGET_METHOD(aName)	\
     REGISTER_USERDATA_METHOD(aName)
+
+
+// event //////////////////////////////////////////////////////////////
+
+#define DECLARE_GADGET_EVENT(aName) \
+    DECLARE_USERDATA_EVENT(aName)
+
+#define DEFINE_GADGET_EVENT(aClass, aName)  \
+    DEFINE_USERDATA_EVENT_COMMON(aClass, aName, getGadget)
+
+#define REGISTER_GADGET_EVENT(aName)	\
+    REGISTER_USERDATA_EVENT(aName)
 
 
 #define DECLARE_GADGET_CLASS()                                      \
@@ -123,6 +139,7 @@ int aClass::luaOpen(lua_State* aLua)                                    \
 }
 
 class eActor;
+class sEvent;
 
 class eGadget
 {
@@ -138,6 +155,7 @@ protected:
 
     static void registerCommonMethods(lua_State* aLua);
     eActor* getActor() { return iActor; }
+    void emit(lua_State* aLua, const sEvent& aEvent);
 
 private:
     eGadget(const eGadget& aOther);

@@ -24,6 +24,8 @@
     const struct luaL_Reg aClass::iMethods[] =
 
 
+// property ///////////////////////////////////////////////////////////
+
 #define DECLARE_USERDATA_READER(aName)     \
     static int aName(lua_State*);
 
@@ -71,6 +73,8 @@
     REGISTER_USERDATA_WRITER(aWriter)
 
 
+// method /////////////////////////////////////////////////////////////
+
 #define DECLARE_USERDATA_METHOD(aName)		    \
     public:					    \
 	static int aName##_lua(lua_State* aLua);    \
@@ -100,6 +104,46 @@
 
 #define REGISTER_USERDATA_METHOD(aName)	\
     {#aName, aName##_lua},
+
+
+// event //////////////////////////////////////////////////////////////
+
+struct sEvent
+{
+    sEvent();
+    ~sEvent();
+    int iEventRef;
+};
+
+#define DECLARE_USERDATA_EVENT(aName)		    \
+    public:					    \
+	static int aName##_event(lua_State* aLua);  \
+    private:					    \
+	sEvent aName;
+
+#define DEFINE_USERDATA_EVENT_COMMON(aClass, aName, aGetFun)	\
+    int aClass::aName##_event(lua_State* aLua)			\
+    {								\
+	aClass* me = Script::aGetFun<aClass>(aLua);		\
+								\
+	luaL_checktype(aLua, 2, LUA_TFUNCTION);			\
+	lua_pushvalue(aLua, 2);					\
+								\
+	int& eventRef = me->aName.iEventRef;			\
+								\
+	if (eventRef == LUA_NOREF)				\
+	    eventRef = luaL_ref(aLua, LUA_REGISTRYINDEX);	\
+	else							\
+	    lua_rawseti(aLua, LUA_REGISTRYINDEX, eventRef);	\
+								\
+	return 0;						\
+    }
+
+#define DEFINE_USERDATA_EVENT(aClass, aName)	\
+    DEFINE_USERDATA_EVENT_COMMON(aClass, aName, getUdata)
+
+#define REGISTER_USERDATA_EVENT(aName)	\
+    {#aName, aName##_event},
 
 namespace Script
 {
