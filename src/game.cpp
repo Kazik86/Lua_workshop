@@ -10,14 +10,25 @@
 #include <SDL2/SDL.h>
 #include <stdexcept>
 
-eGame* eGame::iMe = 0;
-
 namespace
 {
     const int KTimeStep = 30;
     const int KMaxAccumulatedTime = 1000;
     const float KDelta = float(KTimeStep) / float(1000);
 }
+
+struct sGameResources
+{
+    // modules
+    eLuaState iLua;
+    eLuaModuleMgr iModuleMgr;
+    eActorMgr iActorMgr;
+    eRenderer iRenderer;
+    eTextureMgr iTextureMgr;
+};
+
+eGame* eGame::iMe = 0;
+sGameResources* eGame::iResources = 0;
 
 eGame::eGame():
     iIsRunning(true),
@@ -30,7 +41,7 @@ eGame::eGame():
 
     iMe = this;
 
-    createModules();
+    iResources = new sGameResources();
 
     // move this to eRenderer ctor?
     eRenderer::getMe()->init("Tanki", 0, 0, 800, 600, 0);
@@ -39,31 +50,19 @@ eGame::eGame():
     // TODO: the below is only for doing 'doScript' on 'Main' script. Ugly. Get
     // rid of this.
     eActorMgr* actorMgr = eActorMgr::getMe();
-    actorMgr->doScript(iLua->getRaw());
+    actorMgr->doScript(iResources->iLua.getRaw());
 }
 
 eGame::~eGame()
 {
-    destroyModules();
+    cleanup();
     iMe = 0;
 }
 
-void eGame::createModules()
+void eGame::cleanup()
 {
-    iLua.reset(new eLuaState());
-    iModuleMgr.reset(new eLuaModuleMgr());
-    iActorMgr.reset(new eActorMgr());
-    iRenderer.reset(new eRenderer());
-    iTextureMgr.reset(new eTextureMgr());
-}
-
-void eGame::destroyModules()
-{
-    iTextureMgr.reset(nullptr);
-    iRenderer.reset(nullptr);
-    iActorMgr.reset(nullptr);
-    iModuleMgr.reset(nullptr);
-    iLua.reset(nullptr);
+    delete iResources;
+    iResources = 0;
 }
 
 void eGame::mainLoop()
@@ -80,7 +79,7 @@ void eGame::mainLoop()
 	{
 	    if (! iPause) {
 		handleEvents();
-		iActorMgr->update(iLua.get()->getRaw(), KDelta);
+		iResources->iActorMgr.update(iResources->iLua.getRaw(), KDelta);
 	    }
 
 	    iAccumulator -= KTimeStep;
@@ -102,4 +101,9 @@ void eGame::handleEvents()
 		break;
 	}
     }
+}
+
+eLuaState* eGame::getLua()
+{
+    return &(iResources->iLua);
 }

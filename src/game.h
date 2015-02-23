@@ -1,13 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-class eActorMgr;
-class eLuaModuleMgr;
 class eLuaState;
-class eRenderer;
-class eTextureMgr;
-
-#include <memory>
+struct sGameResources;
 
 class eGame
 {
@@ -16,8 +11,9 @@ public:
     ~eGame();
 
     static eGame* getMe() { return iMe; }
+    static void cleanup();
 
-    eLuaState* getLua() { return iLua.get(); }
+    eLuaState* getLua();
     void mainLoop();
 
 private:
@@ -34,13 +30,7 @@ private:
     int iAccumulator;
     unsigned int iLastUpdateTime;
     bool iPause;
-
-    // modules
-    std::unique_ptr<eLuaState> iLua;
-    std::unique_ptr<eLuaModuleMgr> iModuleMgr;
-    std::unique_ptr<eActorMgr> iActorMgr;
-    std::unique_ptr<eRenderer> iRenderer;
-    std::unique_ptr<eTextureMgr> iTextureMgr;
+    static sGameResources* iResources;
 };
 
 #endif // GAME_H
