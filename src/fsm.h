@@ -27,11 +27,9 @@ private:
     bool checkFlag(unsigned int aFlag) const { return iFlags & aFlag; }
 
     void saveStage(lua_State* aLua, const char* aName, /* in/out */ int& aRef);
-    void callFun(lua_State* aLua);
     void enter(lua_State* aLua);
     void leave(lua_State* aLua);
 
-    void replaceEnv(lua_State* aLua);
     void setName(lua_State* aLua);
 
 private:

@@ -11,6 +11,8 @@ public:
 
     lua_State* getRaw() { return iState; }
     static void stackDump(lua_State* aLua);
+    static void callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef);
+    static void replaceEnv(lua_State* aLua, int aEnvRef);
 
 private:
     eLuaState(const eLuaState& aOther);

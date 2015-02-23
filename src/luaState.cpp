@@ -1,5 +1,6 @@
 #include "luaState.h"
 
+#include <cstring>
 #include <stdexcept>
 
 eLuaState::eLuaState():
@@ -73,4 +74,30 @@ void eLuaState::stackDump(lua_State* aLua)
 	printf("\n");
     }
     printf("%s\n", "STACK DUMP END");
+}
+
+// it presumes that function is already on the top of the stack
+void eLuaState::callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef)
+{
+    replaceEnv(aLua, aEnvRef);
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
+    if (lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+	throw std::runtime_error(lua_tostring(aLua, -1));
+}
+
+void eLuaState::replaceEnv(lua_State* aLua, int aEnvRef)
+{
+    for (int i = 1; ; ++i) {
+	const char* upvalueName = lua_getupvalue(aLua, -1, i);
+	if (upvalueName == 0)
+	    break;
+	else if(strcmp(upvalueName, "_ENV") == 0) {
+	    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aEnvRef);
+	    lua_setupvalue(aLua, -3, i);
+	    lua_pop(aLua, 1);
+	    break;
+	}
+
+	lua_pop(aLua, 1);
+    }
 }

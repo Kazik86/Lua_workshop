@@ -4,7 +4,6 @@
 #include "game.h"
 #include "luaState.h"
 
-#include <cstring>
 #include <stdexcept>
 
 namespace
@@ -83,45 +82,20 @@ void eFsm::update(lua_State* aLua)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iUpdateRef);
     setFlag(KExecutingUpdate);
-    callFun(aLua);
+    eLuaState::callLuaFunWithEnv(aLua, iActor.getModuleRef(), iActor.getMeRef());
     unsetFlag(KExecutingUpdate);
 }
 
 void eFsm::enter(lua_State* aLua)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iEnterRef);
-    callFun(aLua);
+    eLuaState::callLuaFunWithEnv(aLua, iActor.getModuleRef(), iActor.getMeRef());
 }
 
 void eFsm::leave(lua_State* aLua)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iLeaveRef);
-    callFun(aLua);
-}
-
-void eFsm::callFun(lua_State* aLua)
-{
-    replaceEnv(aLua);
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iActor.getMeRef());
-    if (lua_pcall(aLua, 1, 0, 0) != LUA_OK)
-	throw std::runtime_error(lua_tostring(aLua, -1));
-}
-
-void eFsm::replaceEnv(lua_State* aLua)
-{
-    for (int i = 1; ; ++i) {
-	const char* upvalueName = lua_getupvalue(aLua, -1, i);
-	if (upvalueName == 0)
-	    break;
-	else if(strcmp(upvalueName, "_ENV") == 0) {
-	    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iActor.getModuleRef());
-	    lua_setupvalue(aLua, -3, i);
-	    lua_pop(aLua, 1);
-	    break;
-	}
-
-	lua_pop(aLua, 1);
-    }
+    eLuaState::callLuaFunWithEnv(aLua, iActor.getModuleRef(), iActor.getMeRef());
 }
 
 void eFsm::setName(lua_State* aLua)
