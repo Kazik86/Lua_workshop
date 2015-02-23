@@ -1,6 +1,5 @@
 #include "gTexture.h"
 
-#include "actor.h"
 #include "textureMgr.h"
 
 #include <glm/glm.hpp>

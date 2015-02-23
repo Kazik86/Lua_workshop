@@ -1,7 +1,5 @@
 #include "gRandomPos.h"
 
-#include "actor.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
 

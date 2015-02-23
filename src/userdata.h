@@ -3,6 +3,7 @@
 
 #include <lua.hpp>
 #include <string>
+#include <type_traits>
 
 #define DECLARE_USERDATA_CLASS()                  \
     public:                                       \

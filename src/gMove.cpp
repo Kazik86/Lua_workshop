@@ -1,7 +1,5 @@
 #include "gMove.h"
 
-#include "actor.h"
-
 DEFINE_GADGET_WRITER(gMove, setDirX, iDir.x)
 DEFINE_GADGET_WRITER(gMove, setDirY, iDir.y)
 DEFINE_GADGET_WRITER(gMove, setSpeed, iSpeed)

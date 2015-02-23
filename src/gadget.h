@@ -1,6 +1,7 @@
 #ifndef GADGET_H
 #define GADGET_H
 
+#include "actor.h"
 #include "userdata.h"
 
 #include <new>
@@ -138,7 +139,6 @@ int aClass::luaOpen(lua_State* aLua)                                    \
     return 1;								\
 }
 
-class eActor;
 class sEvent;
 
 class eGadget

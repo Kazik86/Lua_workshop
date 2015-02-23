@@ -1,10 +1,5 @@
 #include "gUnitTest.h"
 
-#include "actor.h"
-#include "luaState.h"
-
-#include <type_traits>
-
 // props
 DEFINE_GADGET_ACCESSOR(gUnitTest, getVal, setVal, iVal)
 DEFINE_GADGET_WRITER(gUnitTest, notifyWhenEqualTo, iEqualToVal)
