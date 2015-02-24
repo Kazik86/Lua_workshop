@@ -15,6 +15,8 @@ function Shift(me, newState)
     if (me.DumpState ~= nil) then
 	_G.print(Class .. " entered " .. me.State.FullName)
     end
+
+    return 1
 end
 
 function EnableGadgets(me, gadgets)
@@ -101,12 +103,16 @@ end
 function DefUpdateExWithExtend(t, e)
     if t.Update == nil then
 	t.UpdateEx = function(me)
-	    ReplaceEnv(e.UpdateEx)(me)
+	    return ReplaceEnv(e.UpdateEx)(me)
 	end
     else
 	t.UpdateEx = function(me)
-	    ReplaceEnv(e.UpdateEx)(me)
-	    ReplaceEnv(t.Update)(me)
+	    local ret = ReplaceEnv(e.UpdateEx)(me)
+	    if ret == nil then
+		return ReplaceEnv(t.Update)(me)
+	    else
+		return ret
+	    end
 	end
     end
 end

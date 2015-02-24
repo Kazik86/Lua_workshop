@@ -242,8 +242,8 @@ void eActor::shiftToEntryState(lua_State* aLua)
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iMeRef.front());
     lua_getfield(aLua, -3, "EntryState");
 
-    if(lua_pcall(aLua, 2, 0, 0) != LUA_OK)
+    if(lua_pcall(aLua, 2, 1, 0) != LUA_OK)
 	throw std::runtime_error(iScript + ": while entering into 'EntryState' - " + lua_tostring(aLua, -1));
     
-    lua_pop(aLua, 1);
+    lua_pop(aLua, 2);
 }
