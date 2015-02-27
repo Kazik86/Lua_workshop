@@ -11,7 +11,7 @@ public:
     gRandomPos();
     ~gRandomPos();
 
-    void update(lua_State* aLua, float aDelta);
+    int update(lua_State* aLua, float aDelta);
 };
 
 #endif // G_RANDOM_POS_H

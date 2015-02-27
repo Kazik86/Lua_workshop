@@ -36,13 +36,15 @@ gTexture::~gTexture()
 
 }
 
-void gTexture::update(lua_State* /* aLua */, float /* aDelta */)
+int gTexture::update(lua_State* /* aLua */, float /* aDelta */)
 {
     if (iPosFromActor) {
 	const glm::vec2& pos = getActor()->getPos();
 	iSdlRect.x = pos.x;
 	iSdlRect.y = pos.y;
     }
+
+    return 0;
 }
 
 void gTexture::draw(SDL_Renderer* aRenderer)

@@ -12,7 +12,7 @@ public:
     gTexture();
     ~gTexture();
 
-    void update(lua_State* aLua, float aDelta);
+    int  update(lua_State* aLua, float aDelta);
     void draw(SDL_Renderer* aRenderer);
     void begin();
 

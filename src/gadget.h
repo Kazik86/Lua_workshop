@@ -145,7 +145,7 @@ class eGadget
 {
 public:
     bool isEnabled() const { return iIsEnabled; }
-    virtual void update(lua_State* /* aLua */, float /* aDelta */) {}
+    virtual int  update(lua_State* /* aLua */, float /* aDelta */) { return 0; }
     virtual void restart() {}
     virtual void begin() {}
 
@@ -155,7 +155,7 @@ protected:
 
     static void registerCommonMethods(lua_State* aLua);
     eActor* getActor() { return iActor; }
-    void emit(lua_State* aLua, const sEvent& aEvent);
+    int emit(lua_State* aLua, const sEvent& aEvent);
 
 private:
     eGadget(const eGadget& aOther);

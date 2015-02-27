@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <vector>
 
+const int KStateShift = 1;
+
 namespace
 {
     int scriptName(lua_State* aLua)
@@ -77,7 +79,8 @@ void eActor::update(lua_State* aLua, float aDelta)
 {
     for (eGadget* g : iGadgets) {
 	if (g->isEnabled())
-	    g->update(aLua, aDelta);
+	    if (g->update(aLua, aDelta) == KStateShift)
+		return;
     }
 
     iFsm.update(aLua);

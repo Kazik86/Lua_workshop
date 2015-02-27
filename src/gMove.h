@@ -13,7 +13,7 @@ public:
     gMove();
     ~gMove();
 
-    void update(lua_State* aLua, float aDelta);
+    int update(lua_State* aLua, float aDelta);
 
     // props
     DECLARE_GADGET_WRITER(setDirX)

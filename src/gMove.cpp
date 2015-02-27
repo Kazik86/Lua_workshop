@@ -26,9 +26,11 @@ gMove::~gMove()
 
 }
 
-void gMove::update(lua_State* /* aLua */, float aDelta)
+int gMove::update(lua_State* /* aLua */, float aDelta)
 {
     eActor* actor = getActor();
     const auto& oldPos = actor->getPos();
     actor->setPos(oldPos + iDir * iSpeed * aDelta);
+
+    return 0;
 }

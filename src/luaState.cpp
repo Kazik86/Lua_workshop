@@ -77,12 +77,17 @@ void eLuaState::stackDump(lua_State* aLua)
 }
 
 // it presumes that function is already on the top of the stack
-void eLuaState::callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef)
+int eLuaState::callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef)
 {
     replaceEnv(aLua, aEnvRef);
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
-    if (lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+    if (lua_pcall(aLua, 1, 1, 0) != LUA_OK)
 	throw std::runtime_error(lua_tostring(aLua, -1));
+
+    int ret = static_cast<int>(lua_tointeger(aLua, -1));
+    lua_pop(aLua, 1);
+
+    return ret;
 }
 
 void eLuaState::replaceEnv(lua_State* aLua, int aEnvRef)

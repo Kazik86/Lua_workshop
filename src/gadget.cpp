@@ -36,12 +36,14 @@ int eGadget::disable(lua_State* aLua)
     return 0;
 }
 
-void eGadget::emit(lua_State* aLua, const sEvent& aEvent)
+int eGadget::emit(lua_State* aLua, const sEvent& aEvent)
 {
     const int& evRef = aEvent.iEventRef;
 
     if (evRef != LUA_NOREF) {
 	lua_rawgeti(aLua, LUA_REGISTRYINDEX, evRef);
-	eLuaState::callLuaFunWithEnv(aLua, iActor->getModuleRef(), iActor->getMeRef());
+	return eLuaState::callLuaFunWithEnv(aLua, iActor->getModuleRef(), iActor->getMeRef());
     }
+
+    return 0;
 }

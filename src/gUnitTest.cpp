@@ -32,12 +32,14 @@ gUnitTest::gUnitTest():
 
 }
 
-void gUnitTest::update(lua_State* aLua, float /* aDelta */)
+int gUnitTest::update(lua_State* aLua, float /* aDelta */)
 {
     ++iVal;
 
     if (iVal == iEqualToVal)
-	emit(aLua, onEqual);
+	return emit(aLua, onEqual);
+
+    return 0;
 }
 
 bool gUnitTest::isValGreater(lua_State* aLua)

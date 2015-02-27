@@ -10,7 +10,7 @@ class gUnitTest: public eGadget
 public:
     gUnitTest();
 
-    void update(lua_State* aLua, float aDelta);
+    int update(lua_State* aLua, float aDelta);
 
     // props
     DECLARE_GADGET_ACCESSOR(getVal, setVal)

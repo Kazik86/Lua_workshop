@@ -334,3 +334,16 @@ TEST_FIXTURE(sFixture, BreakUpdateWhenShiftInExtended)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, StateShiftInEventHandlerBreaksGadgetsAndStateUpdate)
+{
+    eActor a("tests/scripts/stateShiftInEventHandlerBreaksGadgetsAndStateUpdate.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
