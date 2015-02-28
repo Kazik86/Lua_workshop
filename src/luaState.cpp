@@ -76,7 +76,15 @@ void eLuaState::stackDump(lua_State* aLua)
     printf("%s\n", "STACK DUMP END");
 }
 
-// it presumes that function is already on the top of the stack
+// it presumes that function is already on the top of the stack and needs
+// environment change. Using this function only makes sense for calling lua
+// functions via registry index i.e:
+//	lua_rawgeti(aLua, LUA_REGISTRYINDEX, iFunctionRef);
+// If you want to call function using its name i.e:
+//	lua_getfield(aLua, -1, aFunctionName);
+// use plain 'lua_pcall' instead. In this case environment
+// replacement is already done thanks to metatables. There is no point in
+// doing this twice.
 int eLuaState::callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef)
 {
     replaceEnv(aLua, aEnvRef);
