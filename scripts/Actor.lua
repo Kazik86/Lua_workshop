@@ -5,16 +5,41 @@ function Init(me)
 end
 
 function Shift(me, newState)
-    if (me.DumpState ~= nil and me.State ~= nil) then
-	_G.print(Class .. " is about to leave " .. me.State.FullName)
+    if newState == nil then
+	_G.error("In state '" .. me.State.FullName .. "': 'Shift' to non existent state.")
+    end
+
+    local oldState = me.State
+    local parentChanged = false
+    local newStateParent = GetParent(newState)
+
+    if oldState ~= nil then
+	local oldStateParent = GetParent(oldState)
+	parentChanged = oldStateParent ~= newStateParent 
+
+	if oldStateParent ~= nil and parentChanged then
+	    ReplaceEnv(oldStateParent.LeaveEx)(me)
+	end
+
+	ReplaceEnv(oldState.LeaveEx)(me)
+
+	if (me.DumpState ~= nil) then
+	    _G.print(Class .. " left " .. oldState.FullName)
+	end
     end
 
     _G.eActor.shift(me.eActor, newState)
     me.State = newState
 
     if (me.DumpState ~= nil) then
-	_G.print(Class .. " entered " .. me.State.FullName)
+	_G.print(Class .. " is about to enter " .. newState.FullName)
     end
+
+    if newStateParent ~= nil and parentChanged then
+	ReplaceEnv(newStateParent.EnterEx)(me)
+    end
+
+    ReplaceEnv(newState.EnterEx)(me)
 
     return 1
 end
@@ -35,119 +60,224 @@ function DisableGadgets(me, gadgets)
     end
 end
 
-function DefEnterExNoExtend(t)
-    if t.Enter == nil then
-	t.EnterEx = function(me)
-	    EnableGadgets(me, t.Gadgets)
+-- EnterEx ------------------------------------------------------------
+
+function GenEnterEx(state)
+    return function(me)
+	EnableGadgets(me, state.Gadgets)
+    end
+end
+
+function GenEnterEx_enter(state)
+    return function(me)
+	EnableGadgets(me, state.Gadgets)
+	ReplaceEnv(state.Enter)(me)
+    end
+end
+
+function GenEnterEx_extends(state)
+    return function(me)
+	ReplaceEnv(state.Extends.EnterEx)(me)
+	EnableGadgets(me, state.Gadgets)
+    end
+end
+
+function GenEnterEx_extends_enter(state)
+    return function(me)
+	ReplaceEnv(state.Extends.EnterEx)(me)
+	EnableGadgets(me, state.Gadgets)
+	ReplaceEnv(state.Enter)(me)
+    end
+end
+
+function DefEnterEx(state)
+    if state.Extends == nil then
+	if state.Enter == nil then
+	    state.EnterEx = GenEnterEx(state)
+	else
+	    state.EnterEx = GenEnterEx_enter(state)
 	end
     else
-	t.EnterEx = function(me)
-	    EnableGadgets(me, t.Gadgets)
-	    ReplaceEnv(t.Enter)(me)
+	if state.Enter == nil then
+	    state.EnterEx = GenEnterEx_extends(state)
+	else
+	    state.EnterEx = GenEnterEx_extends_enter(state)
 	end
     end
 end
 
-function DefLeaveExNoExtend(t)
-    if t.Leave == nil then
-	t.LeaveEx = function(me)
-	    DisableGadgets(me, t.Gadgets)
+-- LeaveEx ------------------------------------------------------------
+
+function GenLeaveEx(state)
+    return function(me)
+	DisableGadgets(me, state.Gadgets)
+    end
+end
+
+function GenLeaveEx_leave(state)
+    return function(me)
+	ReplaceEnv(state.Leave)(me)
+	DisableGadgets(me, state.Gadgets)
+    end
+end
+
+function GenLeaveEx_extends(state)
+    return function(me)
+	ReplaceEnv(state.Extends.LeaveEx)(me)
+	DisableGadgets(me, state.Gadgets)
+    end
+end
+
+function GenLeaveEx_extends_leave(state)
+    return function(me)
+	ReplaceEnv(state.Extends.LeaveEx)(me)
+	ReplaceEnv(state.Leave)(me)
+	DisableGadgets(me, state.Gadgets)
+    end
+end
+
+function DefLeaveEx(state)
+    if state.Extends == nil then
+	if state.Leave == nil then
+	    state.LeaveEx = GenLeaveEx(state)
+	else
+	    state.LeaveEx = GenLeaveEx_leave(state)
 	end
     else
-	t.LeaveEx = function(me)
-	    ReplaceEnv(t.Leave)(me)
-	    DisableGadgets(me, t.Gadgets)
+	if state.Leave == nil then
+	    state.LeaveEx = GenLeaveEx_extends(state)
+	else
+	    state.LeaveEx = GenLeaveEx_extends_leave(state)
 	end
     end
 end
 
-function DefUpdateExNoExtend(t)
-    if t.Update == nil then
-	t.UpdateEx = function(me)
-	end
-    else
-	t.UpdateEx = t.Update
+-- UpdateEx -----------------------------------------------------------
+
+function GenUpdateEx(state)
+    return function(me)
     end
 end
 
-function DefEnterExWithExtend(t, e)
-    if t.Enter == nil then
-	t.EnterEx = function(me)
-	    ReplaceEnv(e.EnterEx)(me)
-	    EnableGadgets(me, t.Gadgets)
-	end
-    else
-	t.EnterEx = function(me)
-	    ReplaceEnv(e.EnterEx)(me)
-	    EnableGadgets(me, t.Gadgets)
-	    ReplaceEnv(t.Enter)(me)
-	end
+function GenUpdateEx_update(state)
+    return state.Update
+end
+
+function GenUpdateEx_extends(state)
+    return function(me)
+	return ReplaceEnv(state.Extends.UpdateEx)(me)
     end
 end
 
-function DefLeaveExWithExtend(t, e)
-    if t.Leave == nil then
-	t.LeaveEx = function(me)
-	    ReplaceEnv(e.LeaveEx)(me)
-	    DisableGadgets(me, t.Gadgets)
-	end
-    else
-	t.LeaveEx = function(me)
-	    ReplaceEnv(e.LeaveEx)(me)
-	    ReplaceEnv(t.Leave)(me)
-	    DisableGadgets(me, t.Gadgets)
+function GenUpdateEx_extends_update(state)
+    return function(me)
+	local ret = ReplaceEnv(state.Extends.UpdateEx)(me)
+	if ret == nil then
+	    return ReplaceEnv(state.Update)(me)
+	else
+	    return ret
 	end
     end
 end
 
-function DefUpdateExWithExtend(t, e)
-    if t.Update == nil then
-	t.UpdateEx = function(me)
-	    return ReplaceEnv(e.UpdateEx)(me)
+function GenUpdateEx_parent(state)
+    return function(me)
+	return ReplaceEnv(GetParent(state).UpdateEx)(me)
+    end
+end
+
+function GenUpdateEx_parent_update(state)
+    return function(me)
+	local ret = ReplaceEnv(GetParent(state).UpdateEx)(me)
+	if ret == nil then
+	    return ReplaceEnv(state.Update)(me)
+	else
+	    return ret
 	end
-    else
-	t.UpdateEx = function(me)
-	    local ret = ReplaceEnv(e.UpdateEx)(me)
-	    if ret == nil then
-		return ReplaceEnv(t.Update)(me)
+    end
+end
+
+function DefUpdateEx(state)
+    if state.Parent == nil then
+	if state.Extends == nil then
+	    if state.Update == nil then
+		state.UpdateEx = GenUpdateEx(state)
 	    else
-		return ret
+		state.UpdateEx = GenUpdateEx_update(state)
+	    end
+	else
+	    if state.Update == nil then
+		state.UpdateEx = GenUpdateEx_extends(state)
+	    else
+		state.UpdateEx = GenUpdateEx_extends_update(state)
 	    end
 	end
+    else
+	if state.Extends == nil then
+	    if state.Update == nil then
+		state.UpdateEx = GenUpdateEx_parent(state)
+	    else
+		state.UpdateEx = GenUpdateEx_parent_update(state)
+	    end
+	else
+	    -- state can not have 'Extends' and 'Parent' property at the same time.
+	    -- Think about scenario when state being extended already has parent. We
+	    -- would end up with two parents.
+	    _G.error("Defining 'Extends' and 'Parent' simultaneously not allowed.", 3)
+	end
     end
 end
 
-function DefState(this, t)
-    local ext = t.Extends
+-----------------------------------------------------------------------
 
-    if ext == nil then
-	DefEnterExNoExtend(t)
-	DefUpdateExNoExtend(t)
-	DefLeaveExNoExtend(t)
+function GetParent(state)
+    if state.DisableParentVirtualCall then
+	return state.Parent
     else
-	if _G.type(ext) ~= "table" then
-	    _G.error("'Extends' must be a table", 2)
+	if state.Parent ~= nil then
+	    return _ENV[state.Parent.Name]
+	else
+	    return nil
 	end
+    end
+end
 
-	DefEnterExWithExtend(t, ext)
-	DefUpdateExWithExtend(t, ext)
-	DefLeaveExWithExtend(t, ext)
+function DefState(this, state)
+    local parent = state.Parent
+    local extends = state.Extends
 
-	if t.Name == nil then
-	    t.Name = ext.Name
+    if parent ~= nil and _G.type(parent) ~= "table" then
+	_G.error("'Parent' must be a table.", 2)
+    end
+
+    if extends ~= nil then
+	if _G.type(extends) ~= "table" then
+	    _G.error("'Extends' must be a table", 2)
 	end
     end
 
-    if _G.type(t.Name) ~= "string" then
+    DefEnterEx(state)
+    DefUpdateEx(state)
+    DefLeaveEx(state)
+
+    if extends ~= nil then
+	if state.Name == nil then
+	    state.Name = extends.Name
+	end
+
+	state.Parent = extends.Parent
+    end
+
+    if _G.type(state.Name) ~= "string" then
 	_G.error("'Name' must be a string", 2)
     end
 
-    if _G.rawget(this, t.Name) ~= nil then
-	_G.error("State '" .. t.Name .. "' already defined", 2)
+    if _G.rawget(this, state.Name) ~= nil then
+	_G.error("State '" .. state.Name .. "' already defined", 2)
     end
 
-    this[t.Name] = t
-    t.FullName = this.Class .. "::" .. t.Name
+    this[state.Name] = state
+    state.FullName = this.Class .. "::" .. state.Name
 end
 
 DefState(This, {

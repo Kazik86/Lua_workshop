@@ -347,3 +347,96 @@ TEST_FIXTURE(sFixture, StateShiftInEventHandlerBreaksGadgetsAndStateUpdate)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, ParentState)
+{
+    eActor a("tests/scripts/parentState/parentState.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ParentState_redefineParent)
+{
+    eActor a("tests/scripts/parentState/redefineParent/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ParentState_redefineChild)
+{
+    eActor a("tests/scripts/parentState/redefineChild/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ParentState_extendParent)
+{
+    eActor a("tests/scripts/parentState/extendParent/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ParentState_extendChild)
+{
+    eActor a("tests/scripts/parentState/extendChild/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ParentState_redefineParentAndChild)
+{
+    eActor a("tests/scripts/parentState/redefineParentAndChild/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
+TEST_FIXTURE(sFixture, ParentState_extendParentAndChild)
+{
+    eActor a("tests/scripts/parentState/extendParentAndChild/b.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}

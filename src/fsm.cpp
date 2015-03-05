@@ -8,6 +8,7 @@
 
 namespace
 {
+    // not used anymore but maybe someday I'm gonna need it
     const unsigned int KExecutingUpdate = 0x00000001;
     const unsigned int KExecutingLeave  = 0x00000002;
 }
@@ -16,9 +17,7 @@ eFsm::eFsm(eActor& aActor):
     iActor(aActor),
     iFlags(0),
     iStateRef(LUA_NOREF),
-    iEnterRef(LUA_NOREF),
-    iUpdateRef(LUA_NOREF),
-    iLeaveRef(LUA_NOREF)
+    iUpdateRef(LUA_NOREF)
 {
 }
 
@@ -26,38 +25,14 @@ eFsm::~eFsm()
 {
     lua_State* lua = eGame::getMe()->getLua()->getRaw();
     luaL_unref(lua, LUA_REGISTRYINDEX, iStateRef);
-    luaL_unref(lua, LUA_REGISTRYINDEX, iEnterRef);
     luaL_unref(lua, LUA_REGISTRYINDEX, iUpdateRef);
-    luaL_unref(lua, LUA_REGISTRYINDEX, iLeaveRef);
 }
 
 void eFsm::shift(lua_State* aLua)
 {
-    if (iStateRef != LUA_NOREF) {
-	//to zapobiega przepełnieniu stosu gdy ktoś w leave'ie stanu
-	//spróbuje zrobić operację 'shift'
-	if(checkFlag(KExecutingLeave))
-	    return;
-
-	setFlag(KExecutingLeave);
-	leave(aLua);
-	unsetFlag(KExecutingLeave);
-    }
-
-    setState(aLua);
-    enter(aLua);
-}
-
-void eFsm::setState(lua_State* aLua)
-{
     luaL_checktype(aLua, 2, LUA_TTABLE);
-
     setName(aLua);
-
-    saveStage(aLua, "EnterEx", iEnterRef);
     saveStage(aLua, "UpdateEx", iUpdateRef);
-    saveStage(aLua, "LeaveEx", iLeaveRef);
-
     lua_pushvalue(aLua, 2);
 
     if (iStateRef == LUA_NOREF)
@@ -81,20 +56,6 @@ void eFsm::saveStage(lua_State* aLua, const char* aName, /* in/out */ int& aRef)
 void eFsm::update(lua_State* aLua)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iUpdateRef);
-    setFlag(KExecutingUpdate);
-    eLuaState::callLuaFunWithEnv(aLua, iActor.getModuleRef(), iActor.getMeRef());
-    unsetFlag(KExecutingUpdate);
-}
-
-void eFsm::enter(lua_State* aLua)
-{
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iEnterRef);
-    eLuaState::callLuaFunWithEnv(aLua, iActor.getModuleRef(), iActor.getMeRef());
-}
-
-void eFsm::leave(lua_State* aLua)
-{
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iLeaveRef);
     eLuaState::callLuaFunWithEnv(aLua, iActor.getModuleRef(), iActor.getMeRef());
 }
 
