@@ -32,6 +32,7 @@ Super.DefState(This, {
 })
 
 function test(me)
+    _G.assert(me.State == state_two)
     _G.assert(me.g1:getVal() == 1)
     _G.assert(me.g2:getVal() == 0)
 end

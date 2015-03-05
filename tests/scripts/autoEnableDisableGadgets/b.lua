@@ -37,4 +37,12 @@ Super.DefState(This, {
     end
 })
 
+function test(me)
+    _G.assert(me.gUnitTest1:getVal() == 1)
+    _G.assert(me.gUnitTest2:getVal() == 2)
+
+    _G.assert(me.gUnitTest3:getVal() == 101)
+    _G.assert(me.gUnitTest4:getVal() == 202)
+end
+
 EntryState = state_gadgetsEnabledEx

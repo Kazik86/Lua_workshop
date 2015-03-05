@@ -31,6 +31,11 @@ Super.DefState(This, {
     end
 })
 
+function test(me)
+    _G.assert(me.gUnitTest1:getVal() == 1)
+    _G.assert(me.gUnitTest2:getVal() == 2)
+end
+
 -- used in AutoEnableDisableGadgets2
 
 Super.DefState(This, {

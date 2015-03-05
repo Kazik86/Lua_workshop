@@ -18,13 +18,11 @@ Super.DefState(This, {
 	me.gadget:setVal(1)
 	me.gadget:notifyWhenEqualTo(me.triggerVal)
 	me.gadget:onEqual(onEqualEvent)
-    end,
-
-    Update = function(me)
-	if me.gadget:getVal() == me.triggerVal then
-	    _G.assert(me.equalEvent == true)
-	end
     end
 })
+
+function test(me)
+    _G.assert(me.equalEvent == true)
+end
 
 EntryState = state_main

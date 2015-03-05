@@ -264,6 +264,7 @@ TEST_FIXTURE(sFixture, DontSearchInitInBase)
     eActor a("tests/scripts/dontSearchInitInBase/b.lua");
     lua_State* lua = iGame.getLua()->getRaw();
     a.doScript(lua);
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }
@@ -276,6 +277,8 @@ TEST_FIXTURE(sFixture, AutoEnableDisableGadgets1)
     a.update(lua, KDelta);
     a.update(lua, KDelta);
 
+    a.callLuaFunc(lua, "test");
+
     CHECK(true);
 }
 
@@ -287,6 +290,8 @@ TEST_FIXTURE(sFixture, AutoEnableDisableGadgets2)
     b.update(lua, KDelta);
     b.update(lua, KDelta);
 
+    b.callLuaFunc(lua, "test");
+
     CHECK(true);
 }
 
@@ -296,7 +301,7 @@ TEST_FIXTURE(sFixture, ReplaceEnv)
 
     lua_State* lua = iGame.getLua()->getRaw();
     a.doScript(lua);
-    a.update(lua, KDelta);
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }
@@ -307,7 +312,7 @@ TEST_FIXTURE(sFixture, GadgetStatus)
 
     lua_State* lua = iGame.getLua()->getRaw();
     a.doScript(lua);
-    a.update(lua, KDelta);
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }
@@ -321,6 +326,8 @@ TEST_FIXTURE(sFixture, GadgetEvent)
     a.update(lua, KDelta);
     a.update(lua, KDelta);
 
+    a.callLuaFunc(lua, "test");
+
     CHECK(true);
 }
 
@@ -331,6 +338,7 @@ TEST_FIXTURE(sFixture, BreakUpdateWhenShiftInExtended)
     lua_State* lua = iGame.getLua()->getRaw();
     a.doScript(lua);
     a.update(lua, KDelta);
+    a.callLuaFunc(lua, "test");
 
     CHECK(true);
 }

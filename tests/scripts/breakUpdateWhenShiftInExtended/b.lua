@@ -9,4 +9,8 @@ Super.DefState(This, {
     end
 })
 
+function test(me)
+    _G.assert(me.State == Base.state_two)
+end
+
 EntryState = state_main

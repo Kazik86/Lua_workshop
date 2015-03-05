@@ -11,12 +11,12 @@ Super.DefState(This, {
 
     Enter = function(me)
 	me.gUnitTest:setVal(10)
-    end,
-
-    Update = function(me)
-	_G.assert(me.gUnitTest:isValGreater(9) == true)
-	_G.assert(me.gUnitTest:isValGreater(11) == false)
     end
 })
+
+function test(me)
+    _G.assert(me.gUnitTest:isValGreater(9) == true)
+    _G.assert(me.gUnitTest:isValGreater(11) == false)
+end
 
 EntryState = state_main
