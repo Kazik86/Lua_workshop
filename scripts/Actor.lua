@@ -297,14 +297,7 @@ function ReplaceEnv(f)
 	end
     end
 
-    local upvalue
-    for i = 1, _G.math.huge do
-        name, upvalue = _G.debug.getupvalue(ReplaceEnv, i)
-        if (name == "_ENV") then
-	    _G.debug.setupvalue(f, upvalueIdx, upvalue)
-            break
-        end
-    end
+    _G.debug.setupvalue(f, upvalueIdx, _ENV)
 
     return f
 end
