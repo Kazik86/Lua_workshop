@@ -1,3 +1,16 @@
+------------------------------------------------------------------------
+Android development
+
+debugging:
+ndk-gdb --start
+
+logs:
+http://developer.android.com/tools/debugging/debugging-log.html
+do wyświetlania logów (SDL_Log) używałem któregoś z poniższych poleceń (piszę 
+z pamięci, nie pamiętam dokładnie):
+adb logcat SDL:E *:S
+adb logcat SDL/APP:E *:S
+------------------------------------------------------------------------
 Błędy składniowe
 
 Niestety Lua nawet jak na język dynamicznie typowany jest językiem mało 
