@@ -28,6 +28,7 @@
 *.app
 
 # Directories
+android-project/
 system/
 tmp/
 
