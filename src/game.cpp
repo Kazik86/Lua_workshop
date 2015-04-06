@@ -56,13 +56,13 @@ eGame::eGame():
 eGame::~eGame()
 {
     cleanup();
-    iMe = 0;
 }
 
 void eGame::cleanup()
 {
     delete iResources;
     iResources = 0;
+    iMe = 0;
 }
 
 void eGame::mainLoop()
