@@ -3,6 +3,8 @@
 #include <cstring>
 #include <stdexcept>
 
+#include <SDL2/SDL_rwops.h>
+
 eLuaState::eLuaState():
     iState(0)
 {
@@ -113,4 +115,28 @@ void eLuaState::replaceEnv(lua_State* aLua, int aEnvRef)
 
 	lua_pop(aLua, 1);
     }
+}
+
+int eLuaState::loadFile(lua_State* aLua, const std::string& aPath)
+{
+    ::memset(iBuf, 0, sizeof(iBuf));
+    SDL_RWops* file = SDL_RWFromFile(aPath.c_str(), "r");
+    std::string errorMsg = "eLuaState::loadFile, " + aPath;
+
+    if (file == 0)
+	throw std::runtime_error(errorMsg + ": " + SDL_GetError());
+
+    auto fileSize = SDL_RWsize(file);
+    if (fileSize > sizeof(iBuf)) {
+	SDL_RWclose(file);
+	throw std::runtime_error(errorMsg + ": File too large to load." );
+    }
+
+    if (SDL_RWread(file, iBuf, fileSize, 1) != 1) {
+	SDL_RWclose(file);
+	throw std::runtime_error(errorMsg + ": " + SDL_GetError());
+    }
+    
+    SDL_RWclose(file);
+    return luaL_loadbuffer(aLua, iBuf, fileSize, errorMsg.c_str());
 }

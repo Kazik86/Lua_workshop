@@ -2,6 +2,7 @@
 #define LUA_STATE_H
 
 #include <lua.hpp>
+#include <string>
 
 class eLuaState
 {
@@ -13,6 +14,7 @@ public:
     static void stackDump(lua_State* aLua);
     static int callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef);
     static void replaceEnv(lua_State* aLua, int aEnvRef);
+    int loadFile(lua_State* aLua, const std::string& aPath);
 
 private:
     eLuaState(const eLuaState& aOther);
@@ -26,6 +28,7 @@ private:
     lua_State* iState;
     static const luaL_Reg iBaseLibs[];
     static const luaL_Reg iGadgetLibs[];
+    char iBuf[128 * 1024];
 };
 
 #endif // LUA_STATE_H

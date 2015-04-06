@@ -1,5 +1,6 @@
 #include "luaModule.h"
 
+#include "game.h"
 #include "luaState.h"
 
 #include <cassert>
@@ -239,7 +240,7 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    lua_pushvalue(aLua, -1);
 	    lua_setmetatable(aLua, -2);
 
-	    if (luaL_loadfile(aLua, aName.c_str()) != LUA_OK)
+	    if (eGame::getMe()->getLua()->loadFile(aLua, aName) != LUA_OK)
 		throw std::runtime_error(lua_tostring(aLua, -1));
 
 	    lua_getfield(aLua, -2, "Data");
