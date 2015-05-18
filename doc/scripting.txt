@@ -69,6 +69,9 @@ okazało się, że to za dużo pracy.
 wywołuje 'replaceEnv' wielokrotnie na drodze w górę hierarchii, za każdym 
 razem zmieniając _ENV.
 
+W jednym z poniższych TODO znalazłem inną odmianę opisanego problemu 
+z 'replaceEnv'. Może uda się oba problemy rozwiązać za jednym zamachem?
+
 				     ***
 
 Wiele z zagadnień opisanych w niniejszym TODO ma istotne znaczenie dla 
@@ -487,6 +490,7 @@ przypadku użycia funkcji szablonowej.
 
 				     ***
 
+[KRYTYCZNE]
 Przy tworzeniu hierarchii modułow i "meTablic" wykorzystuję schemat:
 
 tablicaC -> metatablica[__index] -> tablicaB -> metatablica[__index] -> tablicaA
