@@ -52,6 +52,32 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+Spróbować pozbyć się 'This' jako argumentu 'DefScript'. Zamiast, już w ciele 
+'DefScript' można by użyć _ENV. Ale w tym celu 'DefScript' musiałoby być 
+wywoływane za pośrednictwem metatablicy, żeby zadziałała sztuczka 
+z 'replaceEnv' (bez tego, w ciele 'DefScript' _ENV ma wartość domyślną, czyli 
+tablicy, w której została zdefiniowana funkcja 'DefScript', czyli 'Data' 
+modułu "scripts/Actor.lua").
+
+Wbrew pozorom to dosyć skomplikowane, robiłem juz do tego podejście ale 
+okazało się, że to za dużo pracy.
+
+				     ***
+
+[KRYTYCZNE]
+'replaceEnv' wywołuje się rekurencyjnie. Jedyne 'lua_gettable' w tej funkcji 
+wywołuje 'replaceEnv' wielokrotnie na drodze w górę hierarchii, za każdym 
+razem zmieniając _ENV.
+
+				     ***
+
+Wiele z zagadnień opisanych w niniejszym TODO ma istotne znaczenie dla 
+wydajności modułu skrytptowego. Trzeba je przenieść do odrębnej sekcji aby 
+było wiadomo, które rzeczy mają najwyższy priorytet. Od teraz akapity 
+opisujące takie właśnie krytyczne zmiany będę specjalnie tagował.
+
+				     ***
+
 Makra z cyklu 'DEFINE' tzn. 'Reader', 'Writer', 'Accessor' i 'Method' dla 
 gadżetów, zdefiniowane są jako wrappery na makra zdefiniowane dla klasy 
 ogólnej czyli 'userdata' w 'userdata.h'. Sęk w tym, że żaden z używanych 
