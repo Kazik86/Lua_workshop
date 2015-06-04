@@ -64,6 +64,24 @@ okazało się, że to za dużo pracy.
 
 				     ***
 
+W skryptach przydałaby się funkcja 'warning', obok istniejącej 'error'. Np. do 
+obsługi takiego przypadku w Actor.lua:
+
+    -- warning instead of error because of real time update feature
+    if _G.rawget(this, state.Name) ~= nil then
+	_G.print("WARNING: State '" .. state.Name .. "' inside class '" .. this.Class .. "' already defined")
+    end
+
+Funkcja 'error' ma tę cenną właściwość że dodaje info o pliku i linii gdzie 
+wystąpił błąd. W powyższym przypadku ratuje mnie dostęp do unikalnej nazwy 
+klasy, która pozwala sprawnie zlokalizować problematyczne miejsce.
+
+Napisanie 'warning' jest proste, wystarczy skopiować kod odpowiedzialny za 
+implementację oryginalnej funkcji 'error' i trochę zmodyfikować. Kluczową rolę 
+będzie odgrywać funkcja 'luaL_where'
+
+				     ***
+
 [KRYTYCZNE]
 'replaceEnv' wywołuje się rekurencyjnie. Jedyne 'lua_gettable' w tej funkcji 
 wywołuje 'replaceEnv' wielokrotnie na drodze w górę hierarchii, za każdym 
