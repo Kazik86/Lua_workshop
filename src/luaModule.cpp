@@ -293,3 +293,33 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
     }
 }
 
+const sModule* eLuaModuleMgr::realTimeUpdate(lua_State* aLua, const std::string& aModule, const std::string& aFile)
+{
+    auto m = iModules.find(aModule);
+
+    if (m == iModules.end())
+        throw std::runtime_error("module not found");
+
+    if (eGame::getMe()->getLua()->loadFile(aLua, aFile) != LUA_OK)
+        throw std::runtime_error(lua_tostring(aLua, -1));
+
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, m->second.iRef);
+    lua_getfield(aLua, -1, "Data");
+    lua_setupvalue(aLua, -3, 1);
+    lua_pop(aLua, 1);
+
+    if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
+        throw std::runtime_error(lua_tostring(aLua, -1));
+
+    return &(m->second);
+}
+
+bool eLuaModuleMgr::isOnInheritanceList(const sModule* aModule, const sModule* aFind)
+{
+    for (const sModule* m : aModule->iInheritanceHierarchy) {
+        if (m == aFind)
+            return true;
+    }
+
+    return false;
+}

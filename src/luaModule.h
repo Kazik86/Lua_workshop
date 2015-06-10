@@ -34,6 +34,8 @@ public:
 
     const sModule& load(lua_State* aLua, const std::string& aName) { return add(aLua, aName); }
     int getModule(const std::string& aName) { return iModules[aName].iRef; }
+    const sModule* realTimeUpdate(lua_State* aLua, const std::string& aModule, const std::string& aFile);
+    bool isOnInheritanceList(const sModule* aModule, const sModule* aFind);
 
 private:
     eLuaModuleMgr(const eLuaModuleMgr& aOther);

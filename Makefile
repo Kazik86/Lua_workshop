@@ -15,6 +15,10 @@ CXXFLAGS += -g -Wall -Wextra -std=c++0x -pedantic -I./src -I./system/include
 LDFLAGS  += -L./system/lib
 LDLIBS   += -llua -lSDL2 -lSDL2_image -ldl
 
+ifdef KPR_REAL_TIME_UPDATE
+    CXXFLAGS += -DKPR_REAL_TIME_UPDATE
+endif
+
 .PHONY: all test clean
 
 all: $(app_NAME)

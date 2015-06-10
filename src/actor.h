@@ -56,7 +56,9 @@ private:
     void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName);
     void shareInternalsWithScript(lua_State* aLua, int aRef);
     void beginGadget();
+    void shiftToState(lua_State* aLua, const std::string& aName);
     void shiftToEntryState(lua_State* aLua);
+    void realTimeUpdate(lua_State* aLua, int aModuleRef);
 
 private:
     eFsm iFsm;

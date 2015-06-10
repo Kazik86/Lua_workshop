@@ -1,8 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
 
+#ifdef KPR_REAL_TIME_UPDATE
+#include "linux/socket.h"
+#endif
+
 class eLuaState;
 struct sGameResources;
+class sModule;
 
 class eGame
 {
@@ -23,6 +28,15 @@ private:
     void createModules();
     void destroyModules();
     void handleEvents();
+
+#ifdef KPR_REAL_TIME_UPDATE
+private:
+    eSocket iRtuSocket;
+    const sModule* iRtuModule;
+public:
+    void realTimeUpdate();
+    const sModule* getRtuModule() const { return iRtuModule; }
+#endif
 
 private:
     static eGame* iMe;

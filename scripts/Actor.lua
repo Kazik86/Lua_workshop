@@ -272,8 +272,9 @@ function DefState(this, state)
 	_G.error("'Name' must be a string", 2)
     end
 
+    -- warning instead of error because of real time update feature
     if _G.rawget(this, state.Name) ~= nil then
-	_G.error("State '" .. state.Name .. "' already defined", 2)
+	_G.print("WARNING: State '" .. state.Name .. "' inside class '" .. this.Class .. "' already defined")
     end
 
     this[state.Name] = state

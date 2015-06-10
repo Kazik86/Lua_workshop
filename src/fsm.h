@@ -15,6 +15,8 @@ public:
 
     void update(lua_State* aLua);
     void shift(lua_State* aLua);
+    int getStateRef() const { return iStateRef; }
+    const std::string& getFullName() const { return iName; }
 
 private:
     eFsm(const eFsm& aOther);

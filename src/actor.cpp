@@ -8,6 +8,10 @@
 #include <stdexcept>
 #include <vector>
 
+#ifdef KPR_REAL_TIME_UPDATE
+#include <iostream>
+#endif
+
 const int KStateShift = 1;
 
 namespace
@@ -77,13 +81,45 @@ void eActor::doScript(lua_State* aLua)
 
 void eActor::update(lua_State* aLua, float aDelta)
 {
-    for (eGadget* g : iGadgets) {
-	if (g->isEnabled())
-	    if (g->update(aLua, aDelta) == KStateShift)
-		return;
-    }
+#ifdef KPR_REAL_TIME_UPDATE
+    while (1) {
+        try {
+            const sModule* m = eGame::getMe()->getRtuModule();
+            if (m) {
+                if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m))
+                    realTimeUpdate(aLua, m->iRef);
+            }
+#endif
 
-    iFsm.update(aLua);
+
+            for (eGadget* g : iGadgets) {
+                if (g->isEnabled())
+                    if (g->update(aLua, aDelta) == KStateShift)
+                        return;
+            }
+
+            iFsm.update(aLua);
+            return;
+
+
+#ifdef KPR_REAL_TIME_UPDATE
+        } catch (const std::exception& aErr) {
+            std::cout << "-- RTU session; eActor::update -----------------------------------------\n"
+                      << aErr.what() << std::endl;
+
+            int c = '\0';
+            while (c != 'a' && c != 'r') {
+                std::cout << "[a]bort or [r]etry? ";
+                c = std::cin.get();
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            }
+
+            if (c == 'a') throw;
+            eGame::getMe()->realTimeUpdate();
+        }
+    }
+#endif
 }
 
 void eActor::shareInternalsWithScript(lua_State* aLua, int aRef)
@@ -240,13 +276,37 @@ void eActor::beginGadget()
 
 void eActor::shiftToEntryState(lua_State* aLua)
 {
+    shiftToState(aLua, "EntryState");
+}
+
+void eActor::shiftToState(lua_State* aLua, const std::string& aName)
+{
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iModule->iRef);
     lua_getfield(aLua, -1, "Shift");
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iMeRef.front());
-    lua_getfield(aLua, -3, "EntryState");
+    lua_getfield(aLua, -3, aName.c_str());
 
     if(lua_pcall(aLua, 2, 1, 0) != LUA_OK)
-	throw std::runtime_error(iScript + ": while entering into 'EntryState' - " + lua_tostring(aLua, -1));
+	throw std::runtime_error(iScript + ": while entering into '" + aName + "' - " + lua_tostring(aLua, -1));
     
     lua_pop(aLua, 2);
+}
+
+void eActor::realTimeUpdate(lua_State* aLua, int aModuleRef)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iFsm.getStateRef());
+    const void* currPtr = lua_topointer(aLua, -1);
+    lua_getfield(aLua, -1, "Name");
+    std::string currName = lua_tostring(aLua, -1);
+    lua_pop(aLua, 2);
+
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
+    lua_getfield(aLua, -1, currName.c_str());
+    const void* fromModulePtr = lua_topointer(aLua, -1);
+    lua_getfield(aLua, -1, "FullName");
+    std::string fromModuleFullName = lua_tostring(aLua, -1);
+    lua_pop(aLua, 3);
+
+    if (currPtr != fromModulePtr && iFsm.getFullName() == fromModuleFullName)
+        shiftToState(aLua, currName.c_str());
 }
