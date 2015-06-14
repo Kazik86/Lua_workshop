@@ -259,6 +259,17 @@ TEST_FIXTURE(sFixture, ExtendingState)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, RedefineStateBeingExtended)
+{
+    eActor b("tests/scripts/extendingState/redefineStateBeingExtended/b.lua");
+    lua_State* lua = iGame.getLua()->getRaw();
+    b.doScript(lua);
+    b.update(lua, KDelta);
+    b.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
 TEST_FIXTURE(sFixture, DontSearchInitInBase)
 {
     eActor a("tests/scripts/dontSearchInitInBase/b.lua");

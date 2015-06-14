@@ -77,14 +77,14 @@ end
 
 function GenEnterEx_extends(state)
     return function(me)
-	ReplaceEnv(state.Extends.EnterEx)(me)
+	ReplaceEnv(GetExtended(state).EnterEx)(me)
 	EnableGadgets(me, state.Gadgets)
     end
 end
 
 function GenEnterEx_extends_enter(state)
     return function(me)
-	ReplaceEnv(state.Extends.EnterEx)(me)
+	ReplaceEnv(GetExtended(state).EnterEx)(me)
 	EnableGadgets(me, state.Gadgets)
 	ReplaceEnv(state.Enter)(me)
     end
@@ -123,14 +123,14 @@ end
 
 function GenLeaveEx_extends(state)
     return function(me)
-	ReplaceEnv(state.Extends.LeaveEx)(me)
+	ReplaceEnv(GetExtended(state).LeaveEx)(me)
 	DisableGadgets(me, state.Gadgets)
     end
 end
 
 function GenLeaveEx_extends_leave(state)
     return function(me)
-	ReplaceEnv(state.Extends.LeaveEx)(me)
+	ReplaceEnv(GetExtended(state).LeaveEx)(me)
 	ReplaceEnv(state.Leave)(me)
 	DisableGadgets(me, state.Gadgets)
     end
@@ -165,13 +165,13 @@ end
 
 function GenUpdateEx_extends(state)
     return function(me)
-	return ReplaceEnv(state.Extends.UpdateEx)(me)
+	return ReplaceEnv(GetExtended(state).UpdateEx)(me)
     end
 end
 
 function GenUpdateEx_extends_update(state)
     return function(me)
-	local ret = ReplaceEnv(state.Extends.UpdateEx)(me)
+	local ret = ReplaceEnv(GetExtended(state).UpdateEx)(me)
 	if ret == nil then
 	    return ReplaceEnv(state.Update)(me)
 	else
@@ -236,6 +236,25 @@ function GetParent(state)
     else
 	if state.Parent ~= nil then
 	    return _ENV[state.Parent.Name]
+	else
+	    return nil
+	end
+    end
+end
+
+function GetExtended(state)
+    if state.DisableExtendedVirtualCall then
+	return state.Extends
+    else
+	if state.Extends ~= nil then
+	    local e = _ENV[state.Extends.Name]
+	    -- guard agains recursive call when state is in module at the
+	    -- bottom of inheritance hierarchy
+	    if e == state then
+		return state.Extends
+	    else
+		return e
+	    end
 	else
 	    return nil
 	end
