@@ -78,6 +78,52 @@ void eLuaState::stackDump(lua_State* aLua)
     printf("%s\n", "STACK DUMP END");
 }
 
+void eLuaState::tableDump(lua_State* aLua, int aIdx)
+{
+    printf("%s\n", "TABLE DUMP BEGIN:");
+
+    if (! lua_istable(aLua, aIdx)) {
+        printf("value at index '%d' is not a table!\n", aIdx);
+        printf("%s\n", "TABLE DUMP END");
+        return;
+    }
+
+    lua_pushnil(aLua);
+
+    int idx = aIdx > 0 ? aIdx : aIdx - 1;
+
+    while (lua_next(aLua, idx) != 0) {
+        printf("key type '%s': ", lua_typename(aLua, lua_type(aLua, -2))); printValue(aLua, -2); printf(";\t val type '%s': ", lua_typename(aLua, lua_type(aLua, -1))); printValue(aLua, -1); printf("\n");
+        lua_pop(aLua, 1);
+    }
+
+    printf("%s\n", "TABLE DUMP END");
+}
+
+void eLuaState::printValue(lua_State* aLua, int aIdx)
+{
+    int t = lua_type(aLua, aIdx);
+
+    switch(t)
+    {
+        case LUA_TSTRING:
+            printf("'%s'", lua_tostring(aLua, aIdx));
+            break;
+
+        case LUA_TBOOLEAN:
+            printf(lua_toboolean(aLua, aIdx) ? "true" : "false");
+            break;
+
+        case LUA_TNUMBER:
+            printf("%g", lua_tonumber(aLua, aIdx));
+            break;
+
+        default:
+            printf("%p", lua_topointer(aLua, aIdx));
+            break;
+    }
+}
+
 // it presumes that function is already on the top of the stack and needs
 // environment change. Using this function only makes sense for calling lua
 // functions via registry index i.e:
