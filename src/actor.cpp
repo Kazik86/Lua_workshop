@@ -87,7 +87,7 @@ void eActor::update(lua_State* aLua, float aDelta)
             const sModule* m = eGame::getMe()->getRtuModule();
             if (m) {
                 if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m))
-                    realTimeUpdate(aLua, m->iRef);
+                    reenterState(aLua);
             }
 #endif
 
@@ -279,12 +279,12 @@ void eActor::shiftToEntryState(lua_State* aLua)
     shiftToState(aLua, "EntryState");
 }
 
-void eActor::shiftToState(lua_State* aLua, const std::string& aName)
+void eActor::shiftToState(lua_State* aLua, const char* aName)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iModule->iRef);
     lua_getfield(aLua, -1, "Shift");
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iMeRef.front());
-    lua_getfield(aLua, -3, aName.c_str());
+    lua_getfield(aLua, -3, aName);
 
     if(lua_pcall(aLua, 2, 1, 0) != LUA_OK)
 	throw std::runtime_error(iScript + ": while entering into '" + aName + "' - " + lua_tostring(aLua, -1));
@@ -292,21 +292,12 @@ void eActor::shiftToState(lua_State* aLua, const std::string& aName)
     lua_pop(aLua, 2);
 }
 
-void eActor::realTimeUpdate(lua_State* aLua, int aModuleRef)
+void eActor::reenterState(lua_State* aLua)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iFsm.getStateRef());
-    const void* currPtr = lua_topointer(aLua, -1);
-    lua_getfield(aLua, -1, "Name");
-    std::string currName = lua_tostring(aLua, -1);
-    lua_pop(aLua, 2);
-
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
-    lua_getfield(aLua, -1, currName.c_str());
-    const void* fromModulePtr = lua_topointer(aLua, -1);
     lua_getfield(aLua, -1, "FullName");
-    std::string fromModuleFullName = lua_tostring(aLua, -1);
-    lua_pop(aLua, 3);
 
-    if (currPtr != fromModulePtr && iFsm.getFullName() == fromModuleFullName)
-        shiftToState(aLua, currName.c_str());
+    shiftToState(aLua, lua_tostring(aLua, -1));
+
+    lua_pop(aLua, 2);
 }

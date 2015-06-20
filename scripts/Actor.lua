@@ -298,6 +298,7 @@ function DefState(this, state)
 
     this[state.Name] = state
     state.FullName = this.Class .. "::" .. state.Name
+    this[state.FullName] = state
 end
 
 DefState(This, {
