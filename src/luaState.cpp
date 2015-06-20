@@ -167,7 +167,9 @@ int eLuaState::loadFile(lua_State* aLua, const std::string& aPath)
 {
     ::memset(iBuf, 0, sizeof(iBuf));
     SDL_RWops* file = SDL_RWFromFile(aPath.c_str(), "r");
-    std::string errorMsg = "eLuaState::loadFile, " + aPath;
+    // "@" meaning is described in 'source' field documentation of 'lua_Debug'
+    // structure in RM
+    std::string errorMsg = "@" + aPath;
 
     if (file == 0)
 	throw std::runtime_error(errorMsg + ": " + SDL_GetError());
