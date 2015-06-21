@@ -20,6 +20,7 @@ struct sModule
     std::string iScript;
     std::string iClass;
     std::list<sModule*> iInheritanceHierarchy;
+    int iChunkRef;
 };
 
 class eLuaModuleMgr
@@ -48,6 +49,9 @@ private:
     sModule* checkClassUniqueness(lua_State* aLua, sModule& aModule);
     bool entryStateExists(lua_State* aLua, sModule& aModule);
     sModule& add(lua_State* aLua, const std::string& aName);
+
+    void saveChunk(lua_State* aLua, sModule& aModule);
+    void callModuleChunk(lua_State* aLua, int aModuleRef);
 
 private:
     static eLuaModuleMgr* iMe;

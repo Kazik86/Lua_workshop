@@ -77,12 +77,14 @@ DEFINE_USERDATA_CLASS(eLuaModuleMgr)
 
 sModule::sModule():
     iRef(LUA_NOREF),
-    iLua(0)
+    iLua(0),
+    iChunkRef(LUA_NOREF)
 {}
 
 sModule::~sModule()
 {
     luaL_unref(iLua, LUA_REGISTRYINDEX, iRef);
+    luaL_unref(iLua, LUA_REGISTRYINDEX, iChunkRef);
 }
 
 eLuaModuleMgr* eLuaModuleMgr::iMe = 0;
@@ -243,6 +245,10 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    if (eGame::getMe()->getLua()->loadFile(aLua, aName) != LUA_OK)
 		throw std::runtime_error(lua_tostring(aLua, -1));
 
+#ifdef KPR_REAL_TIME_UPDATE
+            saveChunk(aLua, m);
+#endif
+
 	    lua_getfield(aLua, -2, "Data");
 	    lua_setupvalue(aLua, -2, 1);
 
@@ -295,23 +301,25 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 
 const sModule* eLuaModuleMgr::realTimeUpdate(lua_State* aLua, const std::string& aModule)
 {
-    auto m = iModules.find(aModule);
+    auto mod = iModules.find(aModule);
 
-    if (m == iModules.end())
+    if (mod == iModules.end())
         throw std::runtime_error("module not found");
 
     if (eGame::getMe()->getLua()->loadFile(aLua, aModule) != LUA_OK)
         throw std::runtime_error(lua_tostring(aLua, -1));
 
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, m->second.iRef);
-    lua_getfield(aLua, -1, "Data");
-    lua_setupvalue(aLua, -3, 1);
-    lua_pop(aLua, 1);
+    saveChunk(aLua, mod->second);
+    callModuleChunk(aLua, mod->second.iRef);
 
-    if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
-        throw std::runtime_error(lua_tostring(aLua, -1));
+    for (const auto& m : iModules) {
+        if (isOnInheritanceList(&m.second, &mod->second)) {
+            lua_rawgeti(aLua, LUA_REGISTRYINDEX, m.second.iChunkRef);
+            callModuleChunk(aLua, m.second.iRef);
+        }
+    }
 
-    return &(m->second);
+    return &(mod->second);
 }
 
 bool eLuaModuleMgr::isOnInheritanceList(const sModule* aModule, const sModule* aFind)
@@ -322,4 +330,21 @@ bool eLuaModuleMgr::isOnInheritanceList(const sModule* aModule, const sModule* a
     }
 
     return false;
+}
+
+void eLuaModuleMgr::saveChunk(lua_State* aLua, sModule& aModule)
+{
+    lua_pushvalue(aLua, -1);
+    aModule.iChunkRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
+}
+
+void eLuaModuleMgr::callModuleChunk(lua_State* aLua, int aModuleRef)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
+    lua_getfield(aLua, -1, "Data");
+    lua_setupvalue(aLua, -3, 1);
+    lua_pop(aLua, 1);
+
+    if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
+        throw std::runtime_error(lua_tostring(aLua, -1));
 }
