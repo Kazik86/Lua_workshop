@@ -6,6 +6,7 @@
 #include "gMove.h"
 #include "gRandomPos.h"
 #include "gTexture.h"
+#include "gTimer.h"
 #include "gUnitTest.h"
 #include "luaState.h"
 
@@ -32,6 +33,7 @@ const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"gMove", gMove::luaOpen},
     {"gRandomPos", gRandomPos::luaOpen},
     {"gTexture", gTexture::luaOpen},
+    {"gTimer", gTimer::luaOpen},
     {"gUnitTest", gUnitTest::luaOpen},
     {NULL, NULL}
 };
