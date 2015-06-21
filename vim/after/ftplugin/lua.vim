@@ -47,13 +47,8 @@ fun! s:Send_To_RTU_Session()
     let l_orig = line('.')
 
     if <SID>Select_State_Or_Fun()
-	let reg = @r
-	keepjumps normal! "ry
-	let file = s:Write_To_Temp_File(@r)
-	let @r = reg
-	normal! gv
 	redraw
-	silent exe '!echo -n ' . shellescape(expand("%") . ";" . file) . ' | socat - UNIX-SENDTO:/tmp/rtu'
+	silent exe '!echo -n ' . shellescape(expand("%")) . ' | socat - UNIX-SENDTO:/tmp/rtu'
 	normal! 
 	call cursor(l_orig, c_orig)
     endif

@@ -130,13 +130,11 @@ void eGame::realTimeUpdate()
         std::cout << "-- RTU info ------------------------------------------------------------\n"
                   << "RTU: received " << n << " bytes." << std::endl;
 
-        const char* delim = ";";
-        std::string module = ::strtok (buf, delim);
-        std::string file   = ::strtok (0, delim);
+        std::string module(buf);
 
-        std::cout << "RTU: module '" << module << "'; file '" << file << "'" << std::endl;
+        std::cout << "RTU: module '" << module << "'" << std::endl;
         try {
-            iRtuModule = eLuaModuleMgr::getMe()->realTimeUpdate(iResources->iLua.getRaw(), module, file);
+            iRtuModule = eLuaModuleMgr::getMe()->realTimeUpdate(iResources->iLua.getRaw(), module);
         } catch (const std::exception& aErr) {
             std::cout << "RTU error: " << aErr.what() << std::endl;
         }

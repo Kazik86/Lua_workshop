@@ -293,14 +293,14 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
     }
 }
 
-const sModule* eLuaModuleMgr::realTimeUpdate(lua_State* aLua, const std::string& aModule, const std::string& aFile)
+const sModule* eLuaModuleMgr::realTimeUpdate(lua_State* aLua, const std::string& aModule)
 {
     auto m = iModules.find(aModule);
 
     if (m == iModules.end())
         throw std::runtime_error("module not found");
 
-    if (eGame::getMe()->getLua()->loadFile(aLua, aFile) != LUA_OK)
+    if (eGame::getMe()->getLua()->loadFile(aLua, aModule) != LUA_OK)
         throw std::runtime_error(lua_tostring(aLua, -1));
 
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, m->second.iRef);
