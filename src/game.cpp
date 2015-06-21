@@ -137,6 +137,7 @@ void eGame::realTimeUpdate()
             iRtuModule = eLuaModuleMgr::getMe()->realTimeUpdate(iResources->iLua.getRaw(), module);
         } catch (const std::exception& aErr) {
             std::cout << "RTU error: " << aErr.what() << std::endl;
+            lua_settop(iResources->iLua.getRaw(), 0);
         }
     }
 }

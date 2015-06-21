@@ -117,6 +117,7 @@ void eActor::update(lua_State* aLua, float aDelta)
 
             if (c == 'a') throw;
             eGame::getMe()->realTimeUpdate();
+            lua_settop(aLua, 0);
         }
     }
 #endif
