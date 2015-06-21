@@ -47,7 +47,10 @@
 #define DECLARE_GADGET_METHOD(aName) \
     DECLARE_USERDATA_METHOD(aName)
 
-#define DEFINE_GADGET_METHOD(aClass, aName)	\
+#define DEFINE_GADGET_METHOD_0(aClass, aName)	\
+    DEFINE_USERDATA_METHOD_0_COMMON(aClass, aName, getGadget)
+
+#define DEFINE_GADGET_METHOD_1(aClass, aName)	\
     DEFINE_USERDATA_METHOD_1_COMMON(aClass, aName, getGadget)
 
 #define REGISTER_GADGET_METHOD(aName)	\

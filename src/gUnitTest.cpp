@@ -5,7 +5,7 @@ DEFINE_GADGET_ACCESSOR(gUnitTest, getVal, setVal, iVal)
 DEFINE_GADGET_WRITER(gUnitTest, notifyWhenEqualTo, iEqualToVal)
 
 // methods
-DEFINE_GADGET_METHOD(gUnitTest, isValGreater)
+DEFINE_GADGET_METHOD_1(gUnitTest, isValGreater)
 
 // events
 DEFINE_GADGET_EVENT(gUnitTest, onEqual)
