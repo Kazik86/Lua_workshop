@@ -184,6 +184,12 @@ inline int getVal(lua_State* aLua, int aIdx)
 }
 
 template <>
+inline unsigned int getVal(lua_State* aLua, int aIdx)
+{
+    return luaL_checkunsigned(aLua, aIdx);
+}
+
+template <>
 inline float getVal(lua_State* aLua, int aIdx)
 {
     return static_cast<float>(luaL_checknumber(aLua, aIdx));
@@ -217,6 +223,12 @@ template <>
 inline void pushVal(lua_State* aLua, int aVal)
 {
     lua_pushinteger(aLua, aVal);
+}
+
+template <>
+inline void pushVal(lua_State* aLua, unsigned int aVal)
+{
+    lua_pushunsigned(aLua, aVal);
 }
 
 template <>
