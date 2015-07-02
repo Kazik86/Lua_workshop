@@ -52,6 +52,15 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+SDL_ttf którego używam do renderingu tekstu jest trochę ciężką biblioteką bo 
+jego zależnością jest FreeType. Gdyby były kiedyś jakieś problemy 
+z przeniesieniem na jakąś platformę, można sięgnąć po lżejszą bibliotekę np.
+'std_truetype'. Do znalezienia (wraz z innym fajnym softem tego kolesia) 
+tutaj:
+https://github.com/nothings/stb
+
+				     ***
+
 Spróbować pozbyć się 'This' jako argumentu 'DefScript'. Zamiast, już w ciele 
 'DefScript' można by użyć _ENV. Ale w tym celu 'DefScript' musiałoby być 
 wywoływane za pośrednictwem metatablicy, żeby zadziałała sztuczka 

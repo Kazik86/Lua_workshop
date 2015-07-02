@@ -13,7 +13,7 @@ test_LDLIBS   := -lUnitTest++
 CXX := g++
 CXXFLAGS += -g -Wall -Wextra -std=c++0x -pedantic -I./src -I./system/include
 LDFLAGS  += -L./system/lib
-LDLIBS   += -llua -lSDL2 -lSDL2_image -ldl
+LDLIBS   += -llua -lSDL2 -lSDL2_image -lSDL2_ttf -ldl
 
 ifdef KPR_REAL_TIME_UPDATE
     CXXFLAGS += -DKPR_REAL_TIME_UPDATE

@@ -1,6 +1,7 @@
 #include "game.h"
 
 #include "actorMgr.h"
+#include "fontMgr.h"
 #include "luaModule.h"
 #include "luaState.h"
 #include "renderer.h"
@@ -28,6 +29,7 @@ struct sGameResources
     eLuaModuleMgr iModuleMgr;
     eActorMgr iActorMgr;
     eRenderer iRenderer;
+    eFontMgr iFontMgr;
     eTextureMgr iTextureMgr;
 };
 
@@ -52,6 +54,7 @@ eGame::eGame():
 
     // move this to eRenderer ctor?
     eRenderer::getMe()->init("Tanki", 0, 0, 800, 600, 0);
+    eFontMgr::getMe()->init();
     eTextureMgr::getMe()->init();
 
     // TODO: the below is only for doing 'doScript' on 'Main' script. Ugly. Get
