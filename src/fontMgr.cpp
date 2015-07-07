@@ -16,14 +16,13 @@ namespace
 
 eFontMgr* eFontMgr::iMe = 0;
 
-eFontMgr::eFontMgr()
+eFontMgr::eFontMgr():
+    iFonts()
 {
     if (iMe)
         throw std::runtime_error("eFontMgr: multiple instances not allowed.");
 
     iMe = this;
-
-    ::memset(iFonts, 0, sizeof(iFonts));
 }
 
 eFontMgr::~eFontMgr()

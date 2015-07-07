@@ -1,11 +1,11 @@
 #include "text.h"
 
 eText::eText(int aX, int aY, eFontMgr::TFontId aFont):
+    iBuffer(),
     iX(aX),
     iY(aY),
     iFont(aFont)
 {
-    ::memset(iBuffer, 0, sizeof(iBuffer));
 }
 
 void eText::draw(SDL_Renderer* aRenderer)

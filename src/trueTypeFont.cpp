@@ -6,9 +6,9 @@
 
 eTrueTypeFont::eTrueTypeFont(const sFontProps& aProps):
     iFont(0),
-    iProps(aProps)
+    iProps(aProps),
+    iGlyphTextures()
 {
-    ::memset(iGlyphTextures, 0, sizeof(iGlyphTextures));
     ::memset(iGlyphMetrics, 0, sizeof(iGlyphMetrics));
 }
 
