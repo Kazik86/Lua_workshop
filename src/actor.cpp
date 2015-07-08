@@ -86,8 +86,14 @@ void eActor::update(lua_State* aLua, float aDelta)
         try {
             const sModule* m = eGame::getMe()->getRtuModule();
             if (m) {
-                if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m))
-                    reenterState(aLua);
+                if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m)) {
+                    const std::string& funName = eGame::getMe()->getRtuFunName();
+
+                    if (funName.empty())
+                        reenterState(aLua);
+                    else
+                        callLuaFuncShallow(aLua, iModule, iMeRef.front(), funName.c_str(), true);
+                }
             }
 #endif
 
@@ -302,3 +308,4 @@ void eActor::reenterState(lua_State* aLua)
 
     lua_pop(aLua, 2);
 }
+

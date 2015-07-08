@@ -133,11 +133,25 @@ void eGame::realTimeUpdate()
         std::cout << "-- RTU info ------------------------------------------------------------\n"
                   << "RTU: received " << n << " bytes." << std::endl;
 
-        std::string module(buf);
+        const char* delim = ";";
 
-        std::cout << "RTU: module '" << module << "'" << std::endl;
+        char* token = ::strtok(buf, delim);
+        std::string module = token ? token : "";
+
+        token = ::strtok(0, delim);
+        std::string file = token ? token : "";
+        
+        token = ::strtok(0, delim);
+        iRtuFunName = token ? token : "";
+
+        std::cout << "RTU: module '" << module  << "', file '" << file << "', function '" << iRtuFunName << "'" << std::endl;
+
         try {
-            iRtuModule = eLuaModuleMgr::getMe()->realTimeUpdate(iResources->iLua.getRaw(), module);
+            if (iRtuFunName.empty())
+                iRtuModule = eLuaModuleMgr::getMe()->reloadModule(iResources->iLua.getRaw(), module);
+            else
+                iRtuModule = eLuaModuleMgr::getMe()->callSnippet(iResources->iLua.getRaw(), module, file);
+
         } catch (const std::exception& aErr) {
             std::cout << "RTU error: " << aErr.what() << std::endl;
             lua_settop(iResources->iLua.getRaw(), 0);

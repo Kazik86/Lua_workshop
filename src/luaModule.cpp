@@ -299,7 +299,7 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
     }
 }
 
-const sModule* eLuaModuleMgr::realTimeUpdate(lua_State* aLua, const std::string& aModule)
+const sModule* eLuaModuleMgr::reloadModule(lua_State* aLua, const std::string& aModule)
 {
     auto mod = iModules.find(aModule);
 
@@ -310,14 +310,29 @@ const sModule* eLuaModuleMgr::realTimeUpdate(lua_State* aLua, const std::string&
         throw std::runtime_error(lua_tostring(aLua, -1));
 
     saveChunk(aLua, mod->second);
-    callModuleChunk(aLua, mod->second.iRef);
+    callChunk(aLua, mod->second.iRef);
 
     for (const auto& m : iModules) {
         if (isOnInheritanceList(&m.second, &mod->second)) {
             lua_rawgeti(aLua, LUA_REGISTRYINDEX, m.second.iChunkRef);
-            callModuleChunk(aLua, m.second.iRef);
+            callChunk(aLua, m.second.iRef);
         }
     }
+
+    return &(mod->second);
+}
+
+const sModule* eLuaModuleMgr::callSnippet(lua_State* aLua, const std::string& aModule, const std::string& aFile)
+{
+    auto mod = iModules.find(aModule);
+
+    if (mod == iModules.end())
+        throw std::runtime_error("module not found");
+
+    if (eGame::getMe()->getLua()->loadFile(aLua, aFile) != LUA_OK)
+        throw std::runtime_error(lua_tostring(aLua, -1));
+
+    callChunk(aLua, mod->second.iRef);
 
     return &(mod->second);
 }
@@ -338,7 +353,7 @@ void eLuaModuleMgr::saveChunk(lua_State* aLua, sModule& aModule)
     aModule.iChunkRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
 }
 
-void eLuaModuleMgr::callModuleChunk(lua_State* aLua, int aModuleRef)
+void eLuaModuleMgr::callChunk(lua_State* aLua, int aModuleRef)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
     lua_getfield(aLua, -1, "Data");

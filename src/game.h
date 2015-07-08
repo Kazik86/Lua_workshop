@@ -33,9 +33,11 @@ private:
 private:
     eSocket iRtuSocket;
     const sModule* iRtuModule;
+    std::string iRtuFunName;
 public:
     void realTimeUpdate();
     const sModule* getRtuModule() const { return iRtuModule; }
+    const std::string& getRtuFunName() const { return iRtuFunName; }
 #endif
 
 private:

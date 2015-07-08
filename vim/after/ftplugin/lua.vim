@@ -42,7 +42,7 @@ fun! s:Write_To_Temp_File(text)
     return s:rtu_tempfile
 endf
 
-fun! s:Send_To_RTU_Session()
+fun! s:Send_Module_Name_To_RTU_Session()
     let c_orig = col('.')
     let l_orig = line('.')
 
@@ -54,4 +54,15 @@ fun! s:Send_To_RTU_Session()
     endif
 endf
 
-nnoremap <buffer> <A-p> :call <SID>Send_To_RTU_Session()<CR>
+fun! s:Send_Selection_To_RTU_Session()
+    let reg = @r
+    keepjumps normal! gv"ry
+    let fun_name = "Init_RTU"
+    let text = "function " . fun_name . "(me)\n" . @r . "\nend"
+    let @r = l:reg
+    let file = s:Write_To_Temp_File(text)
+    silent exe '!echo -n ' . shellescape(expand("%") . ';' .  file . ';' . fun_name) . ' | socat - UNIX-SENDTO:/tmp/rtu'
+endf
+
+nnoremap <buffer> <A-p> :call <SID>Send_Module_Name_To_RTU_Session()<CR>
+vnoremap <buffer> <A-p> :<C-u>call <SID>Send_Selection_To_RTU_Session()<CR>
