@@ -11,10 +11,6 @@
 #include <SDL2/SDL.h>
 #include <stdexcept>
 
-#ifdef KPR_REAL_TIME_UPDATE
-#include <iostream>
-#endif
-
 namespace
 {
     const int KTimeStep = 30;
@@ -38,7 +34,7 @@ sGameResources* eGame::iResources = 0;
 
 eGame::eGame():
 #ifdef KPR_REAL_TIME_UPDATE
-    iRtuSocket("/tmp/rtu"),
+    iRtu("/tmp/rtu"),
 #endif
     iIsRunning(true),
     iAccumulator(0),
@@ -89,7 +85,7 @@ void eGame::mainLoop()
 	{
 	    if (! iPause) {
 #ifdef KPR_REAL_TIME_UPDATE
-                realTimeUpdate();
+                iRtu.update();
 #endif
 
 		handleEvents();
@@ -122,40 +118,3 @@ eLuaState* eGame::getLua()
     return &(iResources->iLua);
 }
 
-#ifdef KPR_REAL_TIME_UPDATE
-void eGame::realTimeUpdate()
-{
-    iRtuModule = 0;
-    char buf[256] = {0};
-    ssize_t n = iRtuSocket.receive(buf, sizeof(buf));
-
-    if (n > 0) {
-        std::cout << "-- RTU info ------------------------------------------------------------\n"
-                  << "RTU: received " << n << " bytes." << std::endl;
-
-        const char* delim = ";";
-
-        char* token = ::strtok(buf, delim);
-        std::string module = token ? token : "";
-
-        token = ::strtok(0, delim);
-        std::string file = token ? token : "";
-        
-        token = ::strtok(0, delim);
-        iRtuFunName = token ? token : "";
-
-        std::cout << "RTU: module '" << module  << "', file '" << file << "', function '" << iRtuFunName << "'" << std::endl;
-
-        try {
-            if (iRtuFunName.empty())
-                iRtuModule = eLuaModuleMgr::getMe()->reloadModule(iResources->iLua.getRaw(), module);
-            else
-                iRtuModule = eLuaModuleMgr::getMe()->callSnippet(iResources->iLua.getRaw(), module, file);
-
-        } catch (const std::exception& aErr) {
-            std::cout << "RTU error: " << aErr.what() << std::endl;
-            lua_settop(iResources->iLua.getRaw(), 0);
-        }
-    }
-}
-#endif

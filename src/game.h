@@ -2,7 +2,7 @@
 #define GAME_H
 
 #ifdef KPR_REAL_TIME_UPDATE
-#include "linux/socket.h"
+#include "linux/realTimeUpdate.h"
 #endif
 
 class eLuaState;
@@ -29,15 +29,12 @@ private:
     void destroyModules();
     void handleEvents();
 
+
 #ifdef KPR_REAL_TIME_UPDATE
-private:
-    eSocket iRtuSocket;
-    const sModule* iRtuModule;
-    std::string iRtuFunName;
 public:
-    void realTimeUpdate();
-    const sModule* getRtuModule() const { return iRtuModule; }
-    const std::string& getRtuFunName() const { return iRtuFunName; }
+    eRealTimeUpdate& getRtu() { return iRtu; }
+private:
+    eRealTimeUpdate iRtu;
 #endif
 
 private:

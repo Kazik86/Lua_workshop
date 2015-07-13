@@ -84,10 +84,10 @@ void eActor::update(lua_State* aLua, float aDelta)
 #ifdef KPR_REAL_TIME_UPDATE
     while (1) {
         try {
-            const sModule* m = eGame::getMe()->getRtuModule();
+            const sModule* m = eGame::getMe()->getRtu().getModule();
             if (m) {
                 if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m)) {
-                    const std::string& funName = eGame::getMe()->getRtuFunName();
+                    const std::string& funName = eGame::getMe()->getRtu().getSnippetName();
 
                     if (funName.empty())
                         reenterState(aLua);
@@ -122,7 +122,7 @@ void eActor::update(lua_State* aLua, float aDelta)
             }
 
             if (c == 'a') throw;
-            eGame::getMe()->realTimeUpdate();
+            eGame::getMe()->getRtu().update();
             lua_settop(aLua, 0);
         }
     }
