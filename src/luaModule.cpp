@@ -363,3 +363,12 @@ void eLuaModuleMgr::callChunk(lua_State* aLua, int aModuleRef)
     if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
         throw std::runtime_error(lua_tostring(aLua, -1));
 }
+
+void eLuaModuleMgr::removeSnippet(lua_State* aLua, int aModuleRef, const char* aSnippetName)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
+    lua_getfield(aLua, -1, "Data");
+    lua_pushnil(aLua);
+    lua_setfield(aLua, -2, aSnippetName);
+    lua_pop(aLua, 2);
+}

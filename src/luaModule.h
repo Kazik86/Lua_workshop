@@ -37,6 +37,7 @@ public:
     int getModule(const std::string& aName) { return iModules[aName].iRef; }
     const sModule* reloadModule(lua_State* aLua, const std::string& aModule);
     const sModule* callSnippet(lua_State* aLua, const std::string& aModule, const std::string& aFile);
+    void removeSnippet(lua_State* aLua, int aModuleRef, const char* aSnippetName);
     bool isOnInheritanceList(const sModule* aModule, const sModule* aFind);
 
 private:

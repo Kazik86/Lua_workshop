@@ -54,15 +54,17 @@ fun! s:Send_Module_Name_To_RTU_Session()
     endif
 endf
 
-fun! s:Send_Selection_To_RTU_Session()
+fun! s:Send_Selection_To_RTU_Session(affect_derived)
     let reg = @r
     keepjumps normal! gv"ry
     let fun_name = "Init_RTU"
     let text = "function " . fun_name . "(me)\n" . @r . "\nend"
     let @r = l:reg
     let file = s:Write_To_Temp_File(text)
-    silent exe '!echo -n ' . shellescape(expand("%") . ';' .  file . ';' . fun_name) . ' | socat - UNIX-SENDTO:/tmp/rtu'
+    let affect_derived = a:affect_derived ? "true" : "false"
+    silent exe '!echo -n ' . shellescape(expand("%") . ';' .  file . ';' . fun_name . ';' . l:affect_derived) . ' | socat - UNIX-SENDTO:/tmp/rtu'
 endf
 
 nnoremap <buffer> <A-p> :call <SID>Send_Module_Name_To_RTU_Session()<CR>
-vnoremap <buffer> <A-p> :<C-u>call <SID>Send_Selection_To_RTU_Session()<CR>
+vnoremap <buffer> <A-p> :<C-u>call <SID>Send_Selection_To_RTU_Session(0)<CR>
+vnoremap <buffer> <A-S-p> :<C-u>call <SID>Send_Selection_To_RTU_Session(1)<CR>

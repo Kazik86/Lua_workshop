@@ -16,9 +16,9 @@ void eRealTimeUpdate::update()
 {
     lua_State* lua = eGame::getMe()->getLua()->getRaw();
 
-    //if (iModule && !iSnippetName.empty()) {
-    //    eLuaModuleMgr::getMe()->removeSnippet(lua, iModule->iRef, iSnippetName.c_str());
-    //}
+    if (iModule && !iSnippetName.empty()) {
+        eLuaModuleMgr::getMe()->removeSnippet(lua, iModule->iRef, iSnippetName.c_str());
+    }
 
     iModule = 0;
     char buf[256] = {0};

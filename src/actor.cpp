@@ -84,15 +84,20 @@ void eActor::update(lua_State* aLua, float aDelta)
 #ifdef KPR_REAL_TIME_UPDATE
     while (1) {
         try {
-            const sModule* m = eGame::getMe()->getRtu().getModule();
-            if (m) {
-                if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m)) {
-                    const std::string& funName = eGame::getMe()->getRtu().getSnippetName();
+            const eRealTimeUpdate& rtu = eGame::getMe()->getRtu();
+            const sModule* m = rtu.getModule();
 
-                    if (funName.empty())
+            if (m) {
+                const std::string& snippetName = rtu.getSnippetName();
+
+                if (snippetName.empty()) {
+                    if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m))
                         reenterState(aLua);
-                    else
-                        callLuaFuncShallow(aLua, iModule, iMeRef.front(), funName.c_str(), true);
+                } else {
+                    if (m == iModule)
+                        callLuaFuncShallow(aLua, iModule, iMeRef.front(), snippetName.c_str(), true);
+                    else if (rtu.isAffectDerived() && eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m))
+                        callLuaFuncDeep(aLua, iModule, iMeRef.front(), snippetName.c_str());
                 }
             }
 #endif
