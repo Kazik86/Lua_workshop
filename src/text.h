@@ -9,7 +9,7 @@ class eText: public eRenderable
 public:
     eText(int aX, int aY, eFontMgr::TFontId aFont);
 
-    void draw(SDL_Renderer* aRenderer);
+    void draw(SDL_Renderer* aRenderer, float aDelta);
     void format(const char* aFmt, ...);
 
 private:

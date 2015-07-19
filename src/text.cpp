@@ -8,7 +8,7 @@ eText::eText(int aX, int aY, eFontMgr::TFontId aFont):
 {
 }
 
-void eText::draw(SDL_Renderer* aRenderer)
+void eText::draw(SDL_Renderer* aRenderer, float /* aDelta */)
 {
     const eFont* f = eFontMgr::getMe()->getFont(iFont);
     int x = iX;

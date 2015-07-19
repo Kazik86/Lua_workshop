@@ -54,12 +54,12 @@ void eRenderer::init(const std::string& aCaption, int aX, int aY, int aWidth, in
     }
 }
 
-void eRenderer::render()
+void eRenderer::render(float aDelta)
 {
     SDL_RenderClear(iRenderer);
 
     for (eRenderable* r : iRenderables)
-	r->draw(iRenderer);
+	r->draw(iRenderer, aDelta);
 
     SDL_RenderPresent(iRenderer);
 }

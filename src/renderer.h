@@ -11,7 +11,7 @@ public:
     eRenderable();
     virtual ~eRenderable() {}
 
-    virtual void draw(SDL_Renderer* aRenderer) = 0;
+    virtual void draw(SDL_Renderer* aRenderer, float aDelta) = 0;
 };
 
 class eRenderer
@@ -23,7 +23,7 @@ public:
     static eRenderer* getMe() { return iMe; }
 
     void init(const std::string& aCaption, int aX, int aY, int aWidth, int aHeight, int aFlags);
-    void render();
+    void render(float aDelta);
     SDL_Renderer* getRaw() { return iRenderer; }
     void addRenderable(eRenderable* aObj);
 

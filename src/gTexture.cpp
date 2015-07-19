@@ -47,7 +47,7 @@ int gTexture::update(lua_State* /* aLua */, float /* aDelta */)
     return 0;
 }
 
-void gTexture::draw(SDL_Renderer* aRenderer)
+void gTexture::draw(SDL_Renderer* aRenderer, float /* aDelta */)
 {
     if (iIsEnabled) {
 	SDL_RenderCopy(aRenderer, iTexture, 0, &iSdlRect);

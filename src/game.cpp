@@ -95,7 +95,7 @@ void eGame::mainLoop()
 	    iAccumulator -= KTimeStep;
 	}
 
-	eRenderer::getMe()->render();
+	eRenderer::getMe()->render( float(iAccumulator) / float(1000) );
     }
 }
 

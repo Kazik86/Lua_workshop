@@ -13,7 +13,7 @@ public:
     ~gTexture();
 
     int  update(lua_State* aLua, float aDelta);
-    void draw(SDL_Renderer* aRenderer);
+    void draw(SDL_Renderer* aRenderer, float aDelta);
     void begin();
 
     // props
