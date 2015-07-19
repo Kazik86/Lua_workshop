@@ -171,10 +171,9 @@ inline T* getGadget(lua_State* aLua, int aIdx)
 template <typename T>
 inline T getVal(lua_State* aLua, int aIdx)
 {
-    // z tego szablonu nigdy nie powinienem korzystać. Wszystkie obsługiwane
-    // typy opędzane są za pomocą wersji specjalizowanych. Celowo pomijam
-    // 'return' aby w razie użycia typu, dla którego nie ma wersji
-    // specjalizowanej, kompilator zgłosił bład.
+    // tu obsługuję przekazywanie gadżetów, pozostałe typy danych opędzane są
+    // przez wersje specjalizowane
+    return static_cast<T>(luaL_checkudata(aLua, aIdx, std::remove_pointer<T>::type::iClassName));
 }
 
 template <>
@@ -216,7 +215,11 @@ inline bool getVal(lua_State* aLua, int aIdx)
 template <typename T>
 inline void pushVal(lua_State* aLua, T aVal)
 {
-    // patrz uwagi w 'getVal'
+    // z tego szablonu nigdy nie powinienem korzystać. Wszystkie obsługiwane
+    // typy opędzane są za pomocą wersji specjalizowanych. Celowo poniżej dodaję
+    // 'return' aby w razie użycia typu, dla którego nie ma wersji
+    // specjalizowanej, kompilator zgłosił bład.
+    return 1;
 }
 
 template <>
