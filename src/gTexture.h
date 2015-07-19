@@ -4,6 +4,8 @@
 #include "gadget.h"
 #include "renderer.h"
 
+class gMove;
+
 class gTexture: public eGadget, public eRenderable
 {
     DECLARE_GADGET_CLASS()
@@ -23,12 +25,14 @@ public:
     DECLARE_GADGET_ACCESSOR(getSdlRectW, setSdlRectW)
     DECLARE_GADGET_ACCESSOR(getSdlRectH, setSdlRectH)
     DECLARE_GADGET_WRITER(setPosFromActor)
+    DECLARE_GADGET_WRITER(setMoveGadget)
 
 private:
     SDL_Texture* iTexture;
     std::string iName;
     SDL_Rect iSdlRect;
     bool iPosFromActor;
+    gMove* i_gMove;
 };
 
 #endif // G_TEXTURE_H

@@ -10,6 +10,8 @@ function Init(me)
     me.gTexture:enable()
 
     me.gMove = _G.gMove.create(me)
+    me.gTexture:setMoveGadget(me.gMove)
+
     me.gRandomPos = _G.gRandomPos.create(me)
 
     me.gTimer = _G.gTimer.create(me)

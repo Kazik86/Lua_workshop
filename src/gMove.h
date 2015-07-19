@@ -14,6 +14,8 @@ public:
     ~gMove();
 
     int update(lua_State* aLua, float aDelta);
+    const glm::vec2& getDir() const { return iDir; }
+    float getSpeed() const { return iSpeed; }
 
     // props
     DECLARE_GADGET_WRITER(setDirX)
