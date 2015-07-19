@@ -3,6 +3,7 @@
 
 #include "actor.h"
 #include "actorMgr.h"
+#include "gFpsCounter.h"
 #include "gMove.h"
 #include "gRandomPos.h"
 #include "gTexture.h"
@@ -30,6 +31,7 @@ const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActor", eActor::luaOpen},
     {"eActorMgr", eActorMgr::luaOpen},
     {"eLuaModuleMgr", eLuaModuleMgr::luaOpen},
+    {"gFpsCounter", gFpsCounter::luaOpen},
     {"gMove", gMove::luaOpen},
     {"gRandomPos", gRandomPos::luaOpen},
     {"gTexture", gTexture::luaOpen},
