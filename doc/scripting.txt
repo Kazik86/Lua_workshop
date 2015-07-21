@@ -52,6 +52,46 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 TODO:
 
+[krytyczne]
+Poniżej kilka spostrzeżeń na czas gdy trzeba będzie zoptymalizować engine.
+
+Poza zlikwidowaniem 'bottleneck' ujawnionych przy użyciu profilera, trzeba 
+będzie też przemyśleć 'memory layout' najbardziej krytyczny struktur danych. 
+Mam tu na myśli przede wszystkim: listę aktorów, listę gadżętów w aktorze oraz 
+być może listę modułów i 'me tables'.
+
+Trzeba będzie zamienić używane przez niektóre z nich 'std::list' na jakieś 
+struktury danych, z których będzie miała pożytek pamięć 'cache' procesora, 
+czyli  na np. 'std::vector' czy wręcz jakiś customowy alokator pamięci.
+
+Najtrudniej będzie z listą gadżetów, jest tu bowiem do rozstrzygnięcia kilka 
+kwestii. Aby jak najlepiej wykorzystać 'cache', trzeba je załadować do 
+ciągłego obszaru pamięci. No i tu mamy dwie możlwiości jak to zrobić - 'per 
+aktor' lub 'per typ gadżetu'.
+
+Z jednej strony aby kod był czytelny, chciałbym aby gadżety należały do aktora 
+('per aktor'). Każdy aktor miałby więc zaalokowany ciagły obszar pamięci na 
+gadżety róznego typu. ALE: cierpi na tym 'instruction cache'. W przypadku 'per 
+typ gadżetu', co chwila wykonujemy tą samą funkcję 'update' tyle że na rzecz 
+innej instacji tego samego gadżetu - 'cache' i 'instruction cache' pięknie 
+wykorzystane. Ale wtedy trudniej ogarnąć zależność między updejtami róznych 
+gadżetów w różnych aktorach. Teraz kolejność jest taka jak kolejność definicji 
+w skrypcie i kolejność tworzenia aktorów. Chyba trzeba jasno postanowić, 
+myśląc o przyszłych optymalizacjach, że pisząc gadżety NIE MOŻNA polegac na 
+kolejności ich updejtów.
+
+Kolejna kwestia to odwołania między gadżetami. Czasem gadżet musi sięgnąć  po 
+dane z innych gadżetów tego samego typu (np. kolizja),  w tym przypadku gdy 
+będę alingnował 'pod aktora' dostanę w dupe i bardziej opłaca alignowac się 
+pod  komponenty. ALE: siegając po dane z gadżetu _innego_ typu lepiej 
+alignować 'pod aktora'.
+
+Na korzyść alignu 'per typ gadżetu' przemawia też pozbycie się w tym wypadku 
+kosztownych wywołań wirtualnych.
+
+No i jeszcze kwestia czy stosować AOS czy SOA (preferowane w paradygmacie DOD).
+				     ***
+
 SDL_ttf którego używam do renderingu tekstu jest trochę ciężką biblioteką bo 
 jego zależnością jest FreeType. Gdyby były kiedyś jakieś problemy 
 z przeniesieniem na jakąś platformę, można sięgnąć po lżejszą bibliotekę np.
