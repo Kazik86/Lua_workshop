@@ -56,7 +56,7 @@ eGame::eGame():
     // TODO: the below is only for doing 'doScript' on 'Main' script. Ugly. Get
     // rid of this.
     eActorMgr* actorMgr = eActorMgr::getMe();
-    actorMgr->doScript(iResources->iLua.getRaw());
+    actorMgr->doMainScript(iResources->iLua.getRaw());
 }
 
 eGame::~eGame()

@@ -9,7 +9,7 @@ namespace
     int newActor(lua_State* aLua)
     {
 	eActorMgr* me = eActorMgr::getMe();
-	eActor* a = me->add(Script::getVal<const char*>(aLua, 1));
+	eActor* a = me->add(aLua, Script::getVal<const char*>(aLua, 1));
 	Script::pushVal<void*>(aLua, a);
 	return 1;
     }
@@ -49,16 +49,15 @@ void eActorMgr::update(lua_State* aLua, float aDelta)
 	a->update(aLua, aDelta);
 }
 
-eActor* eActorMgr::add(const std::string& aScript)
+eActor* eActorMgr::add(lua_State* aLua, const std::string& aScript)
 {
-    iActors.push_front(new eActor(aScript));
-    return iActors.front();
+    eActor* a = new eActor(aScript);
+    iActors.push_front(a);
+    a->doScript(aLua);
+    return a;
 }
 
-void eActorMgr::doScript(lua_State* aLua)
+void eActorMgr::doMainScript(lua_State* aLua)
 {
     iMainActor.doScript(aLua);
-
-    for (eActor* a : iActors)
-	a->doScript(aLua);
 }
