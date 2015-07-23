@@ -66,5 +66,5 @@ void eRenderer::render(float aDelta)
 
 void eRenderer::addRenderable(eRenderable* aObj)
 {
-    iRenderables.push_front(aObj);
+    iRenderables.push_back(aObj);
 }

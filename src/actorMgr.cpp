@@ -52,7 +52,7 @@ void eActorMgr::update(lua_State* aLua, float aDelta)
 eActor* eActorMgr::add(lua_State* aLua, const std::string& aScript)
 {
     eActor* a = new eActor(aScript);
-    iActors.push_front(a);
+    iActors.push_back(a);
     a->doScript(aLua);
     return a;
 }
