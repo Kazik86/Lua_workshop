@@ -1,6 +1,8 @@
 Class = "Main"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
+input = _G.require "scripts/input"
+
 
 function Init(me)
     me.splashScreen = _G.gTexture.create(me)

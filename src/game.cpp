@@ -2,6 +2,7 @@
 
 #include "actorMgr.h"
 #include "fontMgr.h"
+#include "input.h"
 #include "luaModule.h"
 #include "luaState.h"
 #include "renderer.h"
@@ -27,6 +28,7 @@ struct sGameResources
     eRenderer iRenderer;
     eFontMgr iFontMgr;
     eTextureMgr iTextureMgr;
+    eInput iInput;
 };
 
 eGame* eGame::iMe = 0;

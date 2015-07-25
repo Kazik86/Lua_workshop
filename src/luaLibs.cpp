@@ -10,13 +10,14 @@
 #include "gTexture.h"
 #include "gTimer.h"
 #include "gUnitTest.h"
+#include "input.h"
 #include "luaState.h"
 
 #include <lua.hpp>
 
 const luaL_Reg eLuaState::iBaseLibs[] = {
     {"_G", luaopen_base},
-    // {LUA_LOADLIBNAME, luaopen_package},
+    {LUA_LOADLIBNAME, luaopen_package}, // 'require'
     // {LUA_COLIBNAME, luaopen_coroutine},
     {LUA_TABLIBNAME, luaopen_table},
     // {LUA_IOLIBNAME, luaopen_io},
@@ -31,6 +32,7 @@ const luaL_Reg eLuaState::iBaseLibs[] = {
 const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActor", eActor::luaOpen},
     {"eActorMgr", eActorMgr::luaOpen},
+    {"eInput", eInput::luaOpen},
     {"eLuaModuleMgr", eLuaModuleMgr::luaOpen},
     {"gFpsCounter", gFpsCounter::luaOpen},
     {"gMove", gMove::luaOpen},
