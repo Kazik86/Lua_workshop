@@ -10,7 +10,7 @@ function Shift(me, newState)
     end
 
     local oldState = me.State
-    local parentChanged = false
+    local parentChanged = not oldState
     local newStateParent = GetParent(newState)
 
     if oldState ~= nil then
