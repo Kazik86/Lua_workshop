@@ -49,6 +49,7 @@ eGame::eGame():
     iResources = new sGameResources();
 
     // move this to eRenderer ctor?
+    eActorMgr::getMe()->init();
     eRenderer::getMe()->init("Tanki", 0, 0, 800, 600, 0);
     eFontMgr::getMe()->init();
     eTextureMgr::getMe()->init();

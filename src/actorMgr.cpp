@@ -24,7 +24,9 @@ DEFINE_USERDATA_API(eActorMgr)
 DEFINE_USERDATA_CLASS(eActorMgr)
 
 eActorMgr::eActorMgr():
-    iMainActor("scripts/Main.lua")
+    iMainActor("scripts/Main.lua"),
+    iActors(0),
+    iActorsNum(0)
 {
     if (iMe)
 	throw std::runtime_error("eActorMgr: multiple instances not allowed.");
@@ -32,12 +34,20 @@ eActorMgr::eActorMgr():
     iMe = this;
 }
 
+void eActorMgr::init()
+{
+    iActors = static_cast<eActor*>(::operator new(EActorsCapacity * sizeof(eActor)));
+}
+
 eActorMgr::~eActorMgr()
 {
-    for (eActor* a : iActors)
-	delete a;
+    for (size_t i = iActorsNum; i > 0; --i)
+        iActors[i - 1].~eActor();
 
-    iActors.clear();
+    ::operator delete((void*)iActors);
+
+    iActorsNum = 0;
+    iActors = 0;
     iMe = 0;
 }
 
@@ -45,15 +55,25 @@ void eActorMgr::update(lua_State* aLua, float aDelta)
 {
     iMainActor.update(aLua, aDelta);
 
-    for (eActor* a : iActors)
-	a->update(aLua, aDelta);
+    for (size_t i = 0; i < iActorsNum; ++i)
+	iActors[i].update(aLua, aDelta);
 }
 
 eActor* eActorMgr::add(lua_State* aLua, const std::string& aScript)
 {
-    eActor* a = new eActor(aScript);
-    iActors.push_back(a);
-    a->doScript(aLua);
+    if (iActorsNum == EActorsCapacity)
+        throw std::runtime_error("eActorMgr: too much actors");
+
+    eActor* a = new((void*)(iActors + iActorsNum)) eActor(aScript);
+
+    try {
+        a->doScript(aLua);
+    } catch (const std::exception& aErr) {
+        a->~eActor();
+        throw;
+    }
+
+    iActorsNum += 1;
     return a;
 }
 

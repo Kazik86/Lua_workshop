@@ -4,7 +4,6 @@
 #include "actor.h"
 #include "userdata.h"
 
-#include <list>
 #include <lua.hpp>
 #include <string>
 
@@ -15,16 +14,19 @@ class eActorMgr
 {
     DECLARE_USERDATA_CLASS()
 
+    enum { EActorsCapacity = 64 };
+
 public:
     eActorMgr();
     ~eActorMgr();
 
     static eActorMgr* getMe() { return iMe; }
 
+    void init();
     void update(lua_State* aLua, float aDelta);
     void doMainScript(lua_State* aLua);
     eActor* add(lua_State* aLua, const std::string& aScript);
-    std::list<eActor*>::size_type getActorsNum() const { return iActors.size(); }
+    unsigned int getActorsNum() const { return iActorsNum; }
 
 private:
     eActorMgr(const eActorMgr& aOther);
@@ -33,7 +35,8 @@ private:
 private:
     static eActorMgr* iMe;
     eActor iMainActor;
-    std::list<eActor*> iActors;
+    eActor* iActors;
+    unsigned int iActorsNum;
 };
 
 #endif // ACTOR_MGR_H
