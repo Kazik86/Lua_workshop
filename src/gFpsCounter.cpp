@@ -18,15 +18,15 @@ gFpsCounter::gFpsCounter():
 int gFpsCounter::update(lua_State* /* aLua */, float aDelta)
 {
     iDelta += aDelta;
-    static int fps = 0;
+    static float fps = 0;
 
     if (iDelta > 1) {
-        fps = int( (float(iFrameCntr) / iDelta) + 0.5f );
+        fps = float(iFrameCntr)/iDelta;
         iFrameCntr = 0;
-        iDelta -= 1;
+        iDelta = 0;
     }
 
-    iText.format("fps: %d", fps);
+    iText.format("fps: %.2f", fps);
 
     return 0;
 }
