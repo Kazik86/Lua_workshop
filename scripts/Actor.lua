@@ -28,9 +28,6 @@ function Shift(me, newState)
 	end
     end
 
-    _G.eActor.shift(me.eActor, newState)
-    me.State = newState
-
     if (me.DumpState ~= nil) then
 	_G.print(Class .. " is about to enter " .. newState.FullName)
     end
@@ -40,6 +37,9 @@ function Shift(me, newState)
     end
 
     ReplaceEnv(newState.EnterEx)(me)
+
+    _G.eActor.shift(me.eActor, newState)
+    me.State = newState
 
     return 1
 end
