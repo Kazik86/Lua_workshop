@@ -65,15 +65,16 @@ eActor* eActorMgr::add(lua_State* aLua, const std::string& aScript)
         throw std::runtime_error("eActorMgr: too much actors");
 
     eActor* a = new((void*)(iActors + iActorsNum)) eActor(aScript);
+    iActorsNum += 1;
 
     try {
         a->doScript(aLua);
     } catch (const std::exception& aErr) {
+        iActorsNum -= 1;
         a->~eActor();
         throw;
     }
 
-    iActorsNum += 1;
     return a;
 }
 
