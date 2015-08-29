@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 
 namespace
@@ -200,6 +201,10 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 		throw std::runtime_error("Circular inheritance detected!");
 	    }
 
+            // needed for rtu after one of the following exceptions thrown
+            auto resetGuardFn = [&](sModule*) { auto it = iModules.find(aName); iModules.erase(it); };
+            std::unique_ptr<sModule, decltype(resetGuardFn)> resetGuard(&m, resetGuardFn);
+
 	    m.iLua = aLua;
 
 	    /* główna tablica Aktora, zawiera pola:
@@ -290,6 +295,8 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 
 	    if (! entryStateExists(aLua, m))
 		throw std::runtime_error(m.iScript + ": 'EntryState' not defined or not a table (or you just forgot to derive from Actor.lua).");
+
+            resetGuard.release();
 	}
 
 	return m;
