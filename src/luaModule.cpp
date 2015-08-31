@@ -285,6 +285,7 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    lua_pop(aLua, 1);
 
 	    setClass(aLua, m);
+            registerInGlobalEnv(aLua); // must be called after 'setClass' because relies on data validated in 'setClass'
 
 	    m.iRef = luaL_ref(aLua, LUA_REGISTRYINDEX);
 	    m.iScript = aName;
@@ -378,4 +379,15 @@ void eLuaModuleMgr::removeSnippet(lua_State* aLua, int aModuleRef, const char* a
     lua_pushnil(aLua);
     lua_setfield(aLua, -2, aSnippetName);
     lua_pop(aLua, 2);
+}
+
+void eLuaModuleMgr::registerInGlobalEnv(lua_State* aLua)
+{
+    // na stosie leżą:
+    // -1: tablica główna;
+    lua_pushglobaltable(aLua);
+    lua_getfield(aLua, -2, "Class");
+    lua_pushvalue(aLua, -3);
+    lua_settable(aLua, -3); // _G.MyClass = tablica główna
+    lua_pop(aLua, 1);
 }

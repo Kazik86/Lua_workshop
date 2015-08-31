@@ -459,3 +459,15 @@ TEST_FIXTURE(sFixture, ParentState_extendParentAndChild)
 
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, ScriptNamespaceInGlobalEnv)
+{
+    eActor a("tests/scripts/scriptNamespaceInGlobalEnv.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+

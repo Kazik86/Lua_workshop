@@ -48,6 +48,8 @@ private:
     void setGlobal(lua_State* aLua);
     void setScript(lua_State* aLua, const std::string& aScript);
 
+    void registerInGlobalEnv(lua_State* aLua);
+
     sModule* checkClassUniqueness(lua_State* aLua, sModule& aModule);
     bool entryStateExists(lua_State* aLua, sModule& aModule);
     sModule& add(lua_State* aLua, const std::string& aName);
