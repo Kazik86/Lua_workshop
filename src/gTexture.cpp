@@ -52,25 +52,31 @@ int gTexture::update(lua_State* /* aLua */, float /* aDelta */)
 {
     return 0;
 }
-
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_mouse.h>
 void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
 {
     if (iIsEnabled) {
+        double angle = getActor()->getRotate();
         if (iPosFromActor && i_gMove->isEnabled()) {
             glm::vec2 pos = getActor()->getPos();
+
             const glm::vec2& dir = i_gMove->getDir();
             float speed =  i_gMove->getSpeed();
             pos += dir * speed * aDelta;
             iSdlRect.x = pos.x + 0.5f;
             iSdlRect.y = pos.y + 0.5f;
+            int x_mouse, y_mouse;
+            SDL_PumpEvents();
+            SDL_GetMouseState(&x_mouse, &y_mouse);
+            angle = atan2(y_mouse-iSdlRect.y, x_mouse-iSdlRect.x)*57.29578 + 90;
         }
 
-        double angle = getActor()->getRotate();
-        if (iRotFromActor && i_gRotate->isEnabled()) {
-            int dir = i_gRotate->getDir();
-            float speed =  i_gRotate->getOmega();
-            angle += dir * speed * aDelta;
-        }
+        //if (iRotFromActor && i_gRotate->isEnabled()) {
+            //int dir = i_gRotate->getDir();
+            //float speed =  i_gRotate->getOmega();
+            //angle += dir * speed * aDelta;
+        //}
 
         SDL_RenderCopyEx(aRenderer, iTexture, 0, &iSdlRect, angle, NULL, SDL_FLIP_NONE);
     }

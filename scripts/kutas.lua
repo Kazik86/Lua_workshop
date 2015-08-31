@@ -39,7 +39,7 @@ Super.DefState(This, {
     Parent = state_moveDown_parent,
 
     Enter = function(me)
-	me.gMove:setSpeed(_G.math.random(100, 200))
+	me.gMove:setSpeed(_G.math.random(100, 400))
 	me.gRotate:setOmega(_G.math.random(100, 400))
 
         if _G.math.random(1,20)>10 then
@@ -55,9 +55,9 @@ Super.DefState(This, {
     end,
 
     Update = function(me)
-	if (_G.eActor.getY(me.eActor) > 300) then
-	    return Shift(me, state_sleep)
-	end
+        if (_G.eActor.getY(me.eActor) > 600) then
+	    return Shift(me, state_main)
+        end
     end
 })
 
