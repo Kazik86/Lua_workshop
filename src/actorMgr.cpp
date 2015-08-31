@@ -9,8 +9,8 @@ namespace
     int newActor(lua_State* aLua)
     {
 	eActorMgr* me = eActorMgr::getMe();
-	eActor* a = me->add(aLua, Script::getVal<const char*>(aLua, 1));
-	Script::pushVal<void*>(aLua, a);
+	int meRef = me->add(aLua, Script::getVal<const char*>(aLua, 1));
+        lua_rawgeti(aLua, LUA_REGISTRYINDEX, meRef);
 	return 1;
     }
 }
@@ -59,7 +59,7 @@ void eActorMgr::update(lua_State* aLua, float aDelta)
 	iActors[i].update(aLua, aDelta);
 }
 
-eActor* eActorMgr::add(lua_State* aLua, const std::string& aScript)
+int eActorMgr::add(lua_State* aLua, const std::string& aScript)
 {
     if (iActorsNum == EActorsCapacity)
         throw std::runtime_error("eActorMgr: too much actors");
@@ -75,7 +75,7 @@ eActor* eActorMgr::add(lua_State* aLua, const std::string& aScript)
         throw;
     }
 
-    return a;
+    return a->getMeRef();
 }
 
 void eActorMgr::doMainScript(lua_State* aLua)

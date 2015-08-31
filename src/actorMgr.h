@@ -25,7 +25,7 @@ public:
     void init();
     void update(lua_State* aLua, float aDelta);
     void doMainScript(lua_State* aLua);
-    eActor* add(lua_State* aLua, const std::string& aScript);
+    int add(lua_State* aLua, const std::string& aScript);
     unsigned int getActorsNum() const { return iActorsNum; }
 
 private:
