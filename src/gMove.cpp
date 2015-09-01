@@ -30,6 +30,8 @@ int gMove::update(lua_State* /* aLua */, float aDelta)
 {
     eActor* actor = getActor();
     const auto& oldPos = actor->getPos();
+    iSpeedVec += (iForce/iMass)*iSpeed*aDelta +
+      glm::normalize(iSpeedVec)*(-1)*iFriction*glm::length(iSpeedVec);
     actor->setPos(oldPos + iDir * iSpeed * aDelta);
 
     return 0;

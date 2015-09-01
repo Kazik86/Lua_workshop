@@ -25,6 +25,10 @@ public:
 private:
     glm::vec2 iDir;
     float iSpeed;
+    float iMass;
+    glm::vec2 iSpeedVec;
+    float iFriction;
+    glm::vec2  iForce;
 };
 
 #endif // G_MOVE_H
