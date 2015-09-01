@@ -13,7 +13,7 @@
 
 namespace
 {
-    const int KTimeStep = 30;
+    const int KTimeStep = 12;
     const int KMaxAccumulatedTime = 1000;
     const float KDelta = float(KTimeStep) / float(1000);
 }

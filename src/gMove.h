@@ -24,11 +24,12 @@ public:
 
 private:
     glm::vec2 iDir;
+    glm::vec2 iSpeedVec;
+    glm::vec2 iForce;
     float iSpeed;
     float iMass;
-    glm::vec2 iSpeedVec;
     float iFriction;
-    glm::vec2  iForce;
+    glm::vec2 friction();
 };
 
 #endif // G_MOVE_H
