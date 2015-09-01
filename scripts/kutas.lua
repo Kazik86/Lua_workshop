@@ -10,7 +10,9 @@ function Init(me)
     me.gTexture:enable()
 
     me.gMove = _G.gMove.create(me)
+    me.gRotate = _G.gRotate.create(me)
     me.gTexture:setMoveGadget(me.gMove)
+    me.gTexture:setRotateGadget(me.gRotate)
 
     me.gRandomPos = _G.gRandomPos.create(me)
 
@@ -29,7 +31,7 @@ Super.DefState(This, {
 
 Super.DefState(This, {
     Name = "state_moveDown_parent",
-    Gadgets = { "gMove" },
+    Gadgets = { "gMove", "gRotate" },
 })
 
 Super.DefState(This, {
@@ -38,6 +40,14 @@ Super.DefState(This, {
 
     Enter = function(me)
 	me.gMove:setSpeed(_G.math.random(100, 200))
+	me.gRotate:setOmega(_G.math.random(100, 400))
+
+        if _G.math.random(1,20)>10 then
+          me.gRotate:setDir(1)
+        else
+          me.gRotate:setDir(-1)
+        end
+
 	me.gTimer:setInterval(1000)
 	me.gTimer:onElapsed(function()
 				return Shift(me, state_moveDown_over)

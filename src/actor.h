@@ -45,6 +45,9 @@ public:
     const glm::vec2& getPos() const { return iPos; }
     void setPos(const glm::vec2& aPos) { iPos = aPos; }
 
+    double getRotate() const { return iRot; }
+    void setRotate(double aRot) { iRot = aRot; }
+
 private:
     eActor(const eActor& aOther);
     eActor& operator=(const eActor& aOther);
@@ -67,6 +70,7 @@ private:
     const sModule* iModule;
     std::list<eGadget*> iGadgets;
     glm::vec2 iPos;
+    double iRot;
 };
 
 #endif // ACTOR_H

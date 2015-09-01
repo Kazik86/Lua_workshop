@@ -1,5 +1,6 @@
 #include "gTexture.h"
 
+#include "gRotate.h"
 #include "gMove.h"
 #include "textureMgr.h"
 
@@ -13,6 +14,8 @@ DEFINE_GADGET_ACCESSOR(gTexture, getSdlRectW, setSdlRectW, iSdlRect.w)
 DEFINE_GADGET_ACCESSOR(gTexture, getSdlRectH, setSdlRectH, iSdlRect.h)
 DEFINE_GADGET_WRITER(gTexture, setPosFromActor, iPosFromActor)
 DEFINE_GADGET_WRITER(gTexture, setMoveGadget, i_gMove)
+DEFINE_GADGET_WRITER(gTexture, setRotFromActor, iRotFromActor)
+DEFINE_GADGET_WRITER(gTexture, setRotateGadget, i_gRotate)
 
 DEFINE_GADGET_API(gTexture)
 {
@@ -23,6 +26,8 @@ DEFINE_GADGET_API(gTexture)
     REGISTER_GADGET_ACCESSOR(getSdlRectH, setSdlRectH)
     REGISTER_GADGET_WRITER(setPosFromActor)
     REGISTER_GADGET_WRITER(setMoveGadget)
+    REGISTER_GADGET_WRITER(setRotFromActor)
+    REGISTER_GADGET_WRITER(setRotateGadget)
     {0, 0}
 };
 
@@ -31,7 +36,9 @@ DEFINE_GADGET_CLASS(gTexture)
 gTexture::gTexture():
     iTexture(0),
     iPosFromActor(true),
-    i_gMove(0)
+    iRotFromActor(true),
+    i_gMove(0),
+    i_gRotate()
 {
 
 }
@@ -58,7 +65,14 @@ void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
             iSdlRect.y = pos.y + 0.5f;
         }
 
-        SDL_RenderCopy(aRenderer, iTexture, 0, &iSdlRect);
+        double angle = getActor()->getRotate();
+        if (iRotFromActor && i_gRotate->isEnabled()) {
+            int dir = i_gRotate->getDir();
+            float speed =  i_gRotate->getOmega();
+            angle += dir * speed * aDelta;
+        }
+
+        SDL_RenderCopyEx(aRenderer, iTexture, 0, &iSdlRect, angle, NULL, SDL_FLIP_NONE);
     }
 }
 

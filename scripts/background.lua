@@ -8,6 +8,7 @@ function Init(me)
     me.gTexture:setSdlRectW(800)
     me.gTexture:setSdlRectH(600)
     me.gTexture:setPosFromActor(false)
+    me.gTexture:setRotFromActor(false)
     me.gTexture:enable()
 end
 
