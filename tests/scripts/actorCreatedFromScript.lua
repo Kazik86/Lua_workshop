@@ -2,7 +2,7 @@ Class = "Foo"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function Init(me)
-    me.child = _G.eActorMgr.add("tests/scripts/meTable.lua")
+    me.child = CreateActor(me, "tests/scripts/meTable.lua")
 end
 
 Super.DefState(This, {

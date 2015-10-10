@@ -1,6 +1,7 @@
 Class = "Actor"
 
 function Init(me)
+    me.Children = {}
     --me.DumpState = 1
 end
 
@@ -318,5 +319,11 @@ DefState(This, {
 	_G.eActor.enable(me.eActor)
     end
 })
+
+function CreateActor(me, script)
+    local newActor = _G.eActorMgr.add(script)
+    me.Children[#me.Children + 1] = newActor
+    return newActor
+end
 
 EntryState = state_main
