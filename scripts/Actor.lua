@@ -312,6 +312,7 @@ DefState(This, {
     Name = "state_Disabled",
 
     Enter = function(me)
+	me.StateBeforeDisable = me.State
 	_G.eActor.disable(me.eActor)
     end,
 
@@ -319,6 +320,20 @@ DefState(This, {
 	_G.eActor.enable(me.eActor)
     end
 })
+
+function Disable(me)
+    for i = 1, #me.Children do
+	Disable(me.Children[i])
+    end
+    return Shift(me, state_Disabled)
+end
+
+function Enable(me)
+    Shift(me, me.StateBeforeDisable)
+    for i = 1, #me.Children do
+	Enable(me.Children[i])
+    end
+end
 
 function CreateActor(me, script)
     local newActor = _G.eActorMgr.add(script)

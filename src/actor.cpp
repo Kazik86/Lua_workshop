@@ -122,6 +122,8 @@ void eActor::update(lua_State* aLua, float aDelta)
 #endif
 
 
+            if (! iEnabled) return;
+
             for (eGadget* g : iGadgets) {
                 if (g->isEnabled())
                     if (g->update(aLua, aDelta) == KStateShift)

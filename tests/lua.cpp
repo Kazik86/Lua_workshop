@@ -504,3 +504,16 @@ TEST_FIXTURE(sFixture, ActorsApi_replacingEnvWasABadIdea)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, DisableActor)
+{
+    eActor a("tests/scripts/disableActor/parent.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
