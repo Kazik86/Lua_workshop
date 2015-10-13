@@ -493,3 +493,14 @@ TEST_FIXTURE(sFixture, ActorsApi_virtualCall)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, ActorsApi_replaceEnv)
+{
+    eActor a("tests/scripts/actorsApi/replaceEnv/A.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
