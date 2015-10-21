@@ -504,3 +504,14 @@ TEST_FIXTURE(sFixture, ActorsApi_replaceEnv)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, MeEnv)
+{
+    eActor a("tests/scripts/meEnv.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+

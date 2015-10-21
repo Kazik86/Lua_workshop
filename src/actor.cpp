@@ -157,8 +157,13 @@ void eActor::createMeTables(lua_State* aLua)
 {
     // me
     lua_newtable(aLua);
+
     lua_pushvalue(aLua, -1);
     lua_setfield(aLua, -1, iModule->iClass.c_str()); // me.MyClass = me
+
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, iModule->iRef);
+    lua_setfield(aLua, -2, "Env"); // me.Env = module
+
     lua_pushvalue(aLua, -1);
 
     // from inheritance
