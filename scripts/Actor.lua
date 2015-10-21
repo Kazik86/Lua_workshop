@@ -18,10 +18,10 @@ function Shift(me, newState)
 	parentChanged = oldStateParent ~= newStateParent 
 
 	if oldStateParent ~= nil and parentChanged then
-	    ReplaceEnv(oldStateParent.LeaveEx)(me)
+	    oldStateParent.LeaveEx(me)
 	end
 
-	ReplaceEnv(oldState.LeaveEx)(me)
+	oldState.LeaveEx(me)
 
 	if (me.DumpState ~= nil) then
 	    _G.print(Class .. " left " .. oldState.FullName)
@@ -33,10 +33,10 @@ function Shift(me, newState)
     end
 
     if newStateParent ~= nil and parentChanged then
-	ReplaceEnv(newStateParent.EnterEx)(me)
+	newStateParent.EnterEx(me)
     end
 
-    ReplaceEnv(newState.EnterEx)(me)
+    newState.EnterEx(me)
 
     _G.eActor.shift(me.eActor, newState)
     me.State = newState
@@ -71,22 +71,22 @@ end
 function GenEnterEx_enter(state)
     return function(me)
 	EnableGadgets(me, state.Gadgets)
-	ReplaceEnv(state.Enter)(me)
+	state.Enter(me)
     end
 end
 
 function GenEnterEx_extends(state)
     return function(me)
-	ReplaceEnv(GetExtended(state).EnterEx)(me)
+	GetExtended(state).EnterEx(me)
 	EnableGadgets(me, state.Gadgets)
     end
 end
 
 function GenEnterEx_extends_enter(state)
     return function(me)
-	ReplaceEnv(GetExtended(state).EnterEx)(me)
+	GetExtended(state).EnterEx(me)
 	EnableGadgets(me, state.Gadgets)
-	ReplaceEnv(state.Enter)(me)
+	state.Enter(me)
     end
 end
 
@@ -116,22 +116,22 @@ end
 
 function GenLeaveEx_leave(state)
     return function(me)
-	ReplaceEnv(state.Leave)(me)
+	state.Leave(me)
 	DisableGadgets(me, state.Gadgets)
     end
 end
 
 function GenLeaveEx_extends(state)
     return function(me)
-	ReplaceEnv(GetExtended(state).LeaveEx)(me)
+	GetExtended(state).LeaveEx(me)
 	DisableGadgets(me, state.Gadgets)
     end
 end
 
 function GenLeaveEx_extends_leave(state)
     return function(me)
-	ReplaceEnv(GetExtended(state).LeaveEx)(me)
-	ReplaceEnv(state.Leave)(me)
+	GetExtended(state).LeaveEx(me)
+	state.Leave(me)
 	DisableGadgets(me, state.Gadgets)
     end
 end
@@ -165,15 +165,15 @@ end
 
 function GenUpdateEx_extends(state)
     return function(me)
-	return ReplaceEnv(GetExtended(state).UpdateEx)(me)
+	return GetExtended(state).UpdateEx(me)
     end
 end
 
 function GenUpdateEx_extends_update(state)
     return function(me)
-	local ret = ReplaceEnv(GetExtended(state).UpdateEx)(me)
+	local ret = GetExtended(state).UpdateEx(me)
 	if ret == nil then
-	    return ReplaceEnv(state.Update)(me)
+	    return state.Update(me)
 	else
 	    return ret
 	end
@@ -182,15 +182,15 @@ end
 
 function GenUpdateEx_parent(state)
     return function(me)
-	return ReplaceEnv(GetParent(state).UpdateEx)(me)
+	return GetParent(state).UpdateEx(me)
     end
 end
 
 function GenUpdateEx_parent_update(state)
     return function(me)
-	local ret = ReplaceEnv(GetParent(state).UpdateEx)(me)
+	local ret = GetParent(state).UpdateEx(me)
 	if ret == nil then
-	    return ReplaceEnv(state.Update)(me)
+	    return state.Update(me)
 	else
 	    return ret
 	end
@@ -304,23 +304,5 @@ end
 DefState(This, {
     Name = "state_main"
 })
-
-function ReplaceEnv(f)
-    local name, upvalueIdx
-
-    for i = 1, _G.math.huge do
-	name = _G.debug.getupvalue(f, i)
-	if (name == "_ENV") then
-	    upvalueIdx = i
-	    break
-	elseif (name == nil) then
-	    return f
-	end
-    end
-
-    _G.debug.setupvalue(f, upvalueIdx, _ENV)
-
-    return f
-end
 
 EntryState = state_main
