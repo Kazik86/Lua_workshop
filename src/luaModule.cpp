@@ -106,8 +106,7 @@ eLuaModuleMgr::~eLuaModuleMgr()
 void eLuaModuleMgr::setClass(lua_State* aLua, sModule& aModule)
 {
     // na stosie leżą:
-    // -2: tablica główna;
-    // -1: tablica 'Data'
+    // -1: tablica główna;
     lua_getfield(aLua, -1, "Class");
 
     if (! lua_isstring(aLua, -1))
@@ -126,9 +125,8 @@ void eLuaModuleMgr::setClass(lua_State* aLua, sModule& aModule)
 
     aModule.iClass = lua_tostring(aLua, -1);
 
-    lua_pushvalue(aLua, -3);
-    lua_settable(aLua, -4);
-    lua_pop(aLua, 1);
+    lua_pushvalue(aLua, -2);
+    lua_settable(aLua, -3);
 }
 
 void eLuaModuleMgr::setGlobal(lua_State* aLua)
@@ -208,41 +206,21 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    m.iLua = aLua;
 
 	    /* główna tablica Aktora, zawiera pola:
-	     *     Data - tablica do której będzie za chwilę ładowany skrypt;
 	     *     __index - bo tablica główna będzie jednocześnie swoją metatablicą;
 	     *     Script - ścieżka skryptu;
 	     *     'NazwaKlasy' - ponownie adres samej siebie
-	     *
-	     * W tablicy 'Data':
 	     *     - wszystko to co zdefiniowano z poziomu skryptu;
 	     *     - namespace'y używane w skryptach np.: _G
 	     *     - wskaźnik na samą siebie 'This';
-	     * W tablicy głównej wszystkie inne dodatkowe dane.
-	     *
-	     * Podział na tablicę 'główną' i 'Data' jest podyktowany
-	     * koniecznością podmiany _ENV dla każdego wywołania funkcji. Aby
-	     * tą podmianę uczynić, muszę wiedzieć kiedy następuje to
-	     * wywołanie. Jedynym sposobem aby się tego dowiedzieć jest
-	     * umieszczenie zawartości skrytpu, a więc również definicji funkcji, w
-	     * oddzielnej tablicy. Dostęp do tej tablicy odbywa się za pomocą funkcji
-	     * zapisanej w '__index', a w niej sprawdzam czy poszukiwany
-	     * identyfikator jest funkcją. Jeśli tak - podmieniam _ENV.
 	     */
 	    lua_newtable(aLua);
 	    setScript(aLua, aName);
-
-	    // do tablicy 'Data' załadowane zostaną wszystkie dane ze skryptu
-	    lua_newtable(aLua);
 
 	    lua_pushvalue(aLua, -1);
 	    lua_setfield(aLua, -2, "This");
 
 	    setGlobal(aLua);
-	    lua_setfield(aLua, -2, "Data");
 
-	    lua_pushcfunction(aLua, replaceEnv);
-	    lua_setfield(aLua, -2, "__index");
-	    
 	    // główna tablica jest jednocześnie swoją metatablicą
 	    lua_pushvalue(aLua, -1);
 	    lua_setmetatable(aLua, -2);
@@ -254,22 +232,17 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
             saveChunk(aLua, m);
 #endif
 
-	    lua_getfield(aLua, -2, "Data");
+	    lua_pushvalue(aLua, -2);
 	    lua_setupvalue(aLua, -2, 1);
 
 	    if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
 		throw std::runtime_error(lua_tostring(aLua, -1));
 
 	    // hierarchia dziedziczenia
-	    lua_getfield(aLua, -1, "Data");
 	    lua_getfield(aLua, -1, "Super");
 
 	    if (lua_istable(aLua, -1)) {
-		// 'Data' jest swoją własną metatablicą
-		lua_pushvalue(aLua, -2);
-		lua_setmetatable(aLua, -3);
-
-		// Data[__index] = Super
+		// Env[__index] = Super
 		lua_pushvalue(aLua, -1);
 		lua_setfield(aLua, -3, "__index");
 
@@ -364,9 +337,7 @@ void eLuaModuleMgr::saveChunk(lua_State* aLua, sModule& aModule)
 void eLuaModuleMgr::callChunk(lua_State* aLua, int aModuleRef)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
-    lua_getfield(aLua, -1, "Data");
-    lua_setupvalue(aLua, -3, 1);
-    lua_pop(aLua, 1);
+    lua_setupvalue(aLua, -2, 1);
 
     if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
         throw std::runtime_error(lua_tostring(aLua, -1));
@@ -375,10 +346,9 @@ void eLuaModuleMgr::callChunk(lua_State* aLua, int aModuleRef)
 void eLuaModuleMgr::removeSnippet(lua_State* aLua, int aModuleRef, const char* aSnippetName)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
-    lua_getfield(aLua, -1, "Data");
     lua_pushnil(aLua);
     lua_setfield(aLua, -2, aSnippetName);
-    lua_pop(aLua, 2);
+    lua_pop(aLua, 1);
 }
 
 void eLuaModuleMgr::registerInGlobalEnv(lua_State* aLua)

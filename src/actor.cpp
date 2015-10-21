@@ -217,13 +217,11 @@ bool eActor::funcExistsInModule(lua_State* aLua, int aModuleRef, const char* aFu
      * tylko moduł na samym dole hierarchii.
      */
     
-    // tutaj 'lua_getfield' jest bezpieczne, bo każdy moduł ma tablice 'Data'
-    lua_getfield(aLua, -1, "Data");
     lua_pushstring(aLua, aFunctionName);
     lua_rawget(aLua, -2);
 
     bool isFun = lua_isfunction(aLua, -1);
-    lua_pop(aLua, 3);
+    lua_pop(aLua, 2);
 
     return isFun;
 }
