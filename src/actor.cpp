@@ -213,40 +213,25 @@ void eActor::callLuaFuncDeep(lua_State* aLua, const sModule* aModule, int aMeRef
     lua_pop(aLua, 1);
 }
 
-bool eActor::funcExistsInModule(lua_State* aLua, int aModuleRef, const char* aFunctionName)
-{
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
-
-    /* Do odnalezienia funkcji nie mogę posłużyć się 'lua_getfield', bo ta
-     * funkcja przeszukuje całą hierarchię dziedziczenia, a mnie interesuje
-     * tylko moduł na samym dole hierarchii.
-     */
-    
-    lua_pushstring(aLua, aFunctionName);
-    lua_rawget(aLua, -2);
-
-    bool isFun = lua_isfunction(aLua, -1);
-    lua_pop(aLua, 2);
-
-    return isFun;
-}
-
 /* 'shallow' oznacza, że interesuje nas tylko i wyłącznie funkcja zdefiniowana
  * w module na samym dole hierarchii dziedziczenia. Jeśli jej tam nie ma
  * zgłaszam błąd bez szukania jej w klasach bazowych.
  */
 void eActor::callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName, bool aThrow)
 {
-    if (funcExistsInModule(aLua, aModule->iRef, aFunctionName))
-	/* funkcja istnieje w module głównym, wywołam ją za pomocą wersji
-	 * 'deep' tzn. za pośrednictwem metatablicy aby ustawić jej odpowiednie
-	 * _ENV
-	 */
-	callLuaFuncDeep(aLua, aModule, aMeRef, aFunctionName);
-    else { 
-	if (aThrow)
-	    throw std::runtime_error(aModule->iScript + ": no function with name '" + aFunctionName + "'");
-    }
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModule->iRef);
+    lua_pushstring(aLua, aFunctionName);
+    lua_rawget(aLua, -2);
+
+    if (! lua_isfunction(aLua, -1) && aThrow)
+        throw std::runtime_error(aModule->iScript + ": no function with name '" + aFunctionName + "'");
+
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
+
+    if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+        throw std::runtime_error(lua_tostring(aLua, -1));
+
+    lua_pop(aLua, 1);
 }
 
 void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName)
