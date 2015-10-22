@@ -42,7 +42,7 @@ int eGadget::emit(lua_State* aLua, const sEvent& aEvent)
 
     if (evRef != LUA_NOREF) {
 	lua_rawgeti(aLua, LUA_REGISTRYINDEX, evRef);
-	return eLuaState::callLuaFunWithEnv(aLua, iActor->getModuleRef(), iActor->getMeRef());
+	return eLuaState::callLuaFun(aLua, iActor->getMeRef());
     }
 
     return 0;

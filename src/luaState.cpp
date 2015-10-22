@@ -124,18 +124,9 @@ void eLuaState::printValue(lua_State* aLua, int aIdx)
     }
 }
 
-// it presumes that function is already on the top of the stack and needs
-// environment change. Using this function only makes sense for calling lua
-// functions via registry index i.e:
-//	lua_rawgeti(aLua, LUA_REGISTRYINDEX, iFunctionRef);
-// If you want to call function using its name i.e:
-//	lua_getfield(aLua, -1, aFunctionName);
-// use plain 'lua_pcall' instead. In this case environment
-// replacement is already done thanks to metatables. There is no point in
-// doing this twice.
-int eLuaState::callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef)
+// it presumes that function is already on top of the stack
+int eLuaState::callLuaFun(lua_State* aLua, int aMeRef)
 {
-    replaceEnv(aLua, aEnvRef);
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
     if (lua_pcall(aLua, 1, 1, 0) != LUA_OK)
 	throw std::runtime_error(lua_tostring(aLua, -1));
@@ -144,23 +135,6 @@ int eLuaState::callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef)
     lua_pop(aLua, 1);
 
     return ret;
-}
-
-void eLuaState::replaceEnv(lua_State* aLua, int aEnvRef)
-{
-    for (int i = 1; ; ++i) {
-	const char* upvalueName = lua_getupvalue(aLua, -1, i);
-	if (upvalueName == 0)
-	    break;
-	else if(strcmp(upvalueName, "_ENV") == 0) {
-	    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aEnvRef);
-	    lua_setupvalue(aLua, -3, i);
-	    lua_pop(aLua, 1);
-	    break;
-	}
-
-	lua_pop(aLua, 1);
-    }
 }
 
 int eLuaState::loadFile(lua_State* aLua, const std::string& aPath)

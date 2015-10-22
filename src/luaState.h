@@ -14,8 +14,7 @@ public:
     static void stackDump(lua_State* aLua);
     static void tableDump(lua_State* aLua, int aIdx);
     static void printValue(lua_State* aLua, int aIdx);
-    static int callLuaFunWithEnv(lua_State* aLua, int aEnvRef, int aMeRef);
-    static void replaceEnv(lua_State* aLua, int aEnvRef);
+    static int callLuaFun(lua_State* aLua, int aMeRef);
     int loadFile(lua_State* aLua, const std::string& aPath);
 
 private:

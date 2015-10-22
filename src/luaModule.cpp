@@ -12,50 +12,6 @@
 namespace
 {
 
-int replaceEnv(lua_State* aLua)
-{
-    lua_getfield(aLua, 1, "Data");
-
-    if (! lua_isnil(aLua, -1)) {
-	lua_pushvalue(aLua, 2);
-	lua_gettable(aLua, -2);
-
-	if (lua_isfunction(aLua, -1)) {
-	    /* nie każda funkcja musi posiadać jako upvalue swoje _ENV. Z tego co widzę
-	     * z eksperymentów, _ENV nie mają np. funkcje, które operują tylko na
-	     * przesłanych jej argumentach (brak odwołań do jakichkolwiek danych spoza
-	     * zakresu funkcji). W dodatku nawet jeśli mamy _ENV to niekoniecznie jako
-	     * upvalue na pozycji 1.
-	     */
-	    for (int i = 1; ; ++i) {
-		const char* upvalueName = lua_getupvalue(aLua, -1, i);
-		if (upvalueName == 0)
-		    break;
-		else if(strcmp(upvalueName, "_ENV") == 0) {
-		    lua_pushvalue(aLua, 1);
-		    lua_setupvalue(aLua, -3, i);
-		    lua_pop(aLua, 1);
-		    break;
-		}
-
-		lua_pop(aLua, 1);
-	    }
-	} else if (lua_isnil(aLua, -1)) {
-	    // tu wystarczy log bo za chwilę gdzieś dalej i tak posypie się
-	    // błąd w rodzaju 'attempt to index local 'foo' (a nil value)'
-	    // i program zostanie przerwany. Poza tym dzięki temu, że nie
-	    // przerywam programu poniżej, dostaję coś w rodzaju
-	    // 'callstack' dla kolejnych poziomów dziedziczenia i ostatni
-	    // log przed wystąpieniem błędu będzie wskazywał na winnego.
-	    lua_getfield(aLua, 1, "Script");
-	    std::cerr << "Uninitialized variable: '" << lua_tostring(aLua, 2)  << "' in script: " << lua_tostring(aLua, -1) << std::endl;
-	    lua_pop(aLua, 1);
-	}
-    }
-
-    return 1;
-}
-
 int derive(lua_State* aLua)
 {
     luaL_checkstring(aLua, 1);

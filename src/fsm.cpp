@@ -56,7 +56,7 @@ void eFsm::saveStage(lua_State* aLua, const char* aName, /* in/out */ int& aRef)
 void eFsm::update(lua_State* aLua)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iUpdateRef);
-    eLuaState::callLuaFunWithEnv(aLua, iActor.getModuleRef(), iActor.getMeRef());
+    eLuaState::callLuaFun(aLua, iActor.getMeRef());
 }
 
 void eFsm::setName(lua_State* aLua)
