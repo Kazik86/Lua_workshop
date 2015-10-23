@@ -6,6 +6,8 @@ function fun1(me)
 end
 
 function fun(me, child)
+    -- with _ENV replacing implemented we had the following scenario:
+
     -- we start with _ENV == A
     if child ~= nil then
 	-- but this call will set _ENV == B
@@ -20,5 +22,5 @@ function test(me)
     local child = _G.eActorMgr.add("tests/scripts/actorsApi/replacingEnvWasABadIdea/B.lua")
     fun(me, child)
     _G.assert(me.val == "actor A")
-    _G.assert(child.val == "actor B")
+    _G.assert(child.val == "actor A")
 end
