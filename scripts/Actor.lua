@@ -4,17 +4,19 @@ function Init(me)
     --me.DumpState = 1
 end
 
-function Shift(me, newState)
+function Shift(me, newStateRaw)
+    local newState = me.Env[newStateRaw.Name]
+
     if newState == nil then
 	_G.error("In state '" .. me.State.FullName .. "': 'Shift' to non existent state.")
     end
 
     local oldState = me.State
     local parentChanged = not oldState
-    local newStateParent = GetParent(newState)
+    local newStateParent = GetParent(me, newState)
 
     if oldState ~= nil then
-	local oldStateParent = GetParent(oldState)
+	local oldStateParent = GetParent(me, oldState)
 	parentChanged = oldStateParent ~= newStateParent 
 
 	if oldStateParent ~= nil and parentChanged then
@@ -77,14 +79,14 @@ end
 
 function GenEnterEx_extends(state)
     return function(me)
-	GetExtended(state).EnterEx(me)
+	GetExtended(me, state).EnterEx(me)
 	EnableGadgets(me, state.Gadgets)
     end
 end
 
 function GenEnterEx_extends_enter(state)
     return function(me)
-	GetExtended(state).EnterEx(me)
+	GetExtended(me, state).EnterEx(me)
 	EnableGadgets(me, state.Gadgets)
 	state.Enter(me)
     end
@@ -123,14 +125,14 @@ end
 
 function GenLeaveEx_extends(state)
     return function(me)
-	GetExtended(state).LeaveEx(me)
+	GetExtended(me, state).LeaveEx(me)
 	DisableGadgets(me, state.Gadgets)
     end
 end
 
 function GenLeaveEx_extends_leave(state)
     return function(me)
-	GetExtended(state).LeaveEx(me)
+	GetExtended(me, state).LeaveEx(me)
 	state.Leave(me)
 	DisableGadgets(me, state.Gadgets)
     end
@@ -165,13 +167,13 @@ end
 
 function GenUpdateEx_extends(state)
     return function(me)
-	return GetExtended(state).UpdateEx(me)
+	return GetExtended(me, state).UpdateEx(me)
     end
 end
 
 function GenUpdateEx_extends_update(state)
     return function(me)
-	local ret = GetExtended(state).UpdateEx(me)
+	local ret = GetExtended(me, state).UpdateEx(me)
 	if ret == nil then
 	    return state.Update(me)
 	else
@@ -182,13 +184,13 @@ end
 
 function GenUpdateEx_parent(state)
     return function(me)
-	return GetParent(state).UpdateEx(me)
+	return GetParent(me, state).UpdateEx(me)
     end
 end
 
 function GenUpdateEx_parent_update(state)
     return function(me)
-	local ret = GetParent(state).UpdateEx(me)
+	local ret = GetParent(me, state).UpdateEx(me)
 	if ret == nil then
 	    return state.Update(me)
 	else
@@ -230,24 +232,24 @@ end
 
 -----------------------------------------------------------------------
 
-function GetParent(state)
+function GetParent(me, state)
     if state.DisableParentVirtualCall then
 	return state.Parent
     else
 	if state.Parent ~= nil then
-	    return _ENV[state.Parent.Name]
+	    return me.Env[state.Parent.Name]
 	else
 	    return nil
 	end
     end
 end
 
-function GetExtended(state)
+function GetExtended(me, state)
     if state.DisableExtendedVirtualCall then
 	return state.Extends
     else
 	if state.Extends ~= nil then
-	    local e = _ENV[state.Extends.Name]
+	    local e = me.Env[state.Extends.Name]
 	    -- guard agains recursive call when state is in module at the
 	    -- bottom of inheritance hierarchy
 	    if e == state then
