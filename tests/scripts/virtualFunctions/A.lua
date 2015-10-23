@@ -2,7 +2,7 @@ Class = "A"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function callVirtuallFun(me)
-    return virtualFun(me)
+    return me.Env.virtualFun(me)
 end
 
 function virtualFun(me)
