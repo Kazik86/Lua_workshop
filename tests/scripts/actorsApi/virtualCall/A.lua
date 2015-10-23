@@ -6,5 +6,5 @@ function fun1(me)
 end
 
 function fun(me)
-    fun1(me)
+    me.Env.fun1(me)
 end
