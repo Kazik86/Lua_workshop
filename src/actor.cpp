@@ -223,13 +223,16 @@ void eActor::callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMe
     lua_pushstring(aLua, aFunctionName);
     lua_rawget(aLua, -2);
 
-    if (! lua_isfunction(aLua, -1) && aThrow)
-        throw std::runtime_error(aModule->iScript + ": no function with name '" + aFunctionName + "'");
+    if (lua_isfunction(aLua, -1)) {
+        lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
 
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
+        if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+            throw std::runtime_error(lua_tostring(aLua, -1));
 
-    if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
-        throw std::runtime_error(lua_tostring(aLua, -1));
+    } else {
+        if (aThrow)
+            throw std::runtime_error(aModule->iScript + ": no function with name '" + aFunctionName + "'");
+    }
 
     lua_pop(aLua, 1);
 }
