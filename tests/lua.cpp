@@ -138,6 +138,17 @@ TEST_FIXTURE(sFixture, MeTable)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, MeEnv)
+{
+    eActor a("tests/scripts/meEnv.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
 TEST_FIXTURE(sFixture, VirtualFunctions)
 {
     eActor a("tests/scripts/virtualFunctions/A.lua");
@@ -485,17 +496,6 @@ TEST_FIXTURE(sFixture, ActorsApi_virtualCall)
 TEST_FIXTURE(sFixture, ActorsApi_replacingEnvWasABadIdea)
 {
     eActor a("tests/scripts/actorsApi/replacingEnvWasABadIdea/A.lua");
-
-    lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
-    a.callLuaFunc(lua, "test");
-
-    CHECK(true);
-}
-
-TEST_FIXTURE(sFixture, MeEnv)
-{
-    eActor a("tests/scripts/meEnv.lua");
 
     lua_State* lua = iGame.getLua()->getRaw();
     a.doScript(lua);
