@@ -17,7 +17,7 @@ function fun(me, child)
 end
 
 function test(me)
-    local child = _G.eActorMgr.add("tests/scripts/actorsApi/replaceEnv/B.lua")
+    local child = _G.eActorMgr.add("tests/scripts/actorsApi/replacingEnvWasABadIdea/B.lua")
     fun(me, child)
     _G.assert(me.val == "actor A")
     _G.assert(child.val == "actor B")
