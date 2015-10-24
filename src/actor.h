@@ -41,6 +41,9 @@ public:
     int getMeRef() const { return iMeRef.front(); }
     int getModuleRef() const { return iModule->iRef; }
     void addGadget(eGadget* aGadget);
+    void enable() { iEnabled = true; }
+    void disable() { iEnabled = false; }
+    bool isEnabled() const { return iEnabled; }
 
     const glm::vec2& getPos() const { return iPos; }
     void setPos(const glm::vec2& aPos) { iPos = aPos; }
@@ -70,6 +73,7 @@ private:
     std::list<eGadget*> iGadgets;
     glm::vec2 iPos;
     double iRot;
+    bool iEnabled;
 };
 
 #endif // ACTOR_H

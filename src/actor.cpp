@@ -43,10 +43,27 @@ namespace
 	lua_pushnumber(aLua, me->getPos().y);
 	return 1;
     }
+
+    int enable(lua_State* aLua)
+    {
+        eActor* me = Script::getUdata<eActor>(aLua);
+        me->enable();
+        return 0;
+    }
+
+    int disable(lua_State* aLua)
+    {
+        eActor* me = Script::getUdata<eActor>(aLua);
+        me->disable();
+        return 0;
+    }
+
 }
 
 DEFINE_USERDATA_API(eActor)
 {
+    {"disable", ::disable},
+    {"enable", ::enable},
     {"getScript", ::scriptName},
     {"getGadgetsNum", ::gadgetsNum},
     {"getY", ::getY},
@@ -60,7 +77,8 @@ eActor::eActor(const std::string& aScript):
     iFsm(*this),
     iScript(aScript),
     iPos(0, 0),
-    iRot(0)
+    iRot(0),
+    iEnabled(true)
 {
 }
 
