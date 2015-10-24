@@ -307,4 +307,16 @@ DefState(This, {
     Name = "state_main"
 })
 
+DefState(This, {
+    Name = "state_Disabled",
+
+    Enter = function(me)
+	_G.eActor.disable(me.eActor)
+    end,
+
+    Leave = function(me)
+	_G.eActor.enable(me.eActor)
+    end
+})
+
 EntryState = state_main
