@@ -1,5 +1,6 @@
 app_NAME := lua_test.exe
 app_SRC  := $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
+app_SRC  := $(filter-out src/fontMgr.cpp src/fontMgr.h src/gFpsCounter.cpp src/text.cpp src/trueTypeFont.cpp, $(app_SRC))
 app_OBJ  := $(app_SRC:.cpp=.o)
 app_DEP  := $(app_SRC:.cpp=.d)
 
@@ -13,7 +14,7 @@ test_LDLIBS   := -lUnitTest++
 CXX := g++
 CXXFLAGS += -g -Wall -Wextra -std=c++0x -pedantic -I./src -I./system/include
 LDFLAGS  += -L./system/lib
-LDLIBS   += -llua -lSDL2 -lSDL2_image -lSDL2_ttf -ldl
+LDLIBS   += -llua -lSDL2 -lSDL2_image -ldl
 
 ifdef KPR_REAL_TIME_UPDATE
     CXXFLAGS += -DKPR_REAL_TIME_UPDATE
