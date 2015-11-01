@@ -8,7 +8,8 @@ int main(int /* aArgc */, char** /* aArgv */)
     int result = EXIT_SUCCESS;
 
     try {
-	eGame game;
+        sGameProps gameProps;
+	eGame game(gameProps);
 	game.mainLoop();
     } catch (const std::exception& aError) {
 	eGame::cleanup();

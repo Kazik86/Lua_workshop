@@ -32,7 +32,8 @@ struct sGameResources
 eGame* eGame::iMe = 0;
 sGameResources* eGame::iResources = 0;
 
-eGame::eGame():
+eGame::eGame(const sGameProps& aProps):
+    iGameProps(aProps),
 #ifdef KPR_REAL_TIME_UPDATE
     iRtu("/tmp/rtu"),
 #endif

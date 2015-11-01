@@ -1,5 +1,7 @@
 #include "actorMgr.h"
 
+#include "game.h"
+
 #include <stdexcept>
 
 eActorMgr* eActorMgr::iMe = 0;
@@ -24,7 +26,7 @@ DEFINE_USERDATA_API(eActorMgr)
 DEFINE_USERDATA_CLASS(eActorMgr)
 
 eActorMgr::eActorMgr():
-    iMainActor("scripts/Main.lua"),
+    iMainActor(eGame::getMe()->getGameProps().iMainActorScript),
     iActors(0),
     iActorsNum(0)
 {

@@ -13,8 +13,23 @@ namespace
 {
     const float KDelta = float(30) / float(1000);
 
+    // wrapper provides ability to customize _specific_ members from sGameProps
+    const struct sGamePropsWrapper
+    {
+        sGamePropsWrapper()
+        {
+            iGameProps.iMainActorScript = "tests/Main.lua";
+        }
+
+        sGameProps iGameProps;
+
+    } KGamePropsWrapper;
+
     struct sFixture
     {
+        sFixture():
+            iGame(KGamePropsWrapper.iGameProps) {}
+
 	eGame iGame;
     };
 

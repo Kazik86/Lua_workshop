@@ -5,14 +5,25 @@
 #include "linux/realTimeUpdate.h"
 #endif
 
+#include <string>
+
 class eLuaState;
 struct sGameResources;
 class sModule;
 
+struct sGameProps
+{
+    sGameProps():
+        iMainActorScript("scripts/Main.lua")
+    {}
+
+    std::string iMainActorScript;
+};
+
 class eGame
 {
 public:
-    eGame();
+    eGame(const sGameProps& aProps);
     ~eGame();
 
     static eGame* getMe() { return iMe; }
@@ -20,8 +31,10 @@ public:
 
     eLuaState* getLua();
     void mainLoop();
+    const sGameProps& getGameProps() const { return iGameProps; }
 
 private:
+    eGame();
     eGame(const eGame& aOther);
     eGame& operator=(const eGame& aOther);
 
@@ -38,6 +51,7 @@ private:
 #endif
 
 private:
+    const sGameProps iGameProps;
     static eGame* iMe;
     bool iIsRunning;
     int iAccumulator;
