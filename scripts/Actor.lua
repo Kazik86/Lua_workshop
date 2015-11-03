@@ -341,4 +341,23 @@ function CreateActor(me, script)
     return newActor
 end
 
+function Connect(sender, signal, recv, fun)
+    if sender.Signals == nil then sender.Signals = {} end
+    local s = sender.Signals
+
+    if s.signal == nil then s.signal = {} end
+    local t = s.signal
+
+    t[#t + 1] = function() fun(recv) end
+end
+
+function Emit(me, signal)
+    if me.Signals and me.Signals.signal then
+	local s = me.Signals.signal
+	for i = 1, #s do
+	    s[i]()
+	end
+    end
+end
+
 EntryState = state_main

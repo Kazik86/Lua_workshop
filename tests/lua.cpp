@@ -532,3 +532,15 @@ TEST_FIXTURE(sFixture, DisableActor)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, Signals)
+{
+    eActor a("tests/scripts/signals/emit/sender.lua");
+
+    lua_State* lua = iGame.getLua()->getRaw();
+    a.doScript(lua);
+    a.update(lua, KDelta);
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
