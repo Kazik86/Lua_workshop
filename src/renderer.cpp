@@ -37,7 +37,7 @@ void eRenderer::init(const std::string& aCaption, int aX, int aY, int aWidth, in
 	throw std::runtime_error(msg);
     }
 
-    iWindow = SDL_CreateWindow(aCaption.c_str(), aX, aY, aWidth, aHeight, aFlags);
+    iWindow = SDL_CreateWindow(aCaption.c_str(), aX, aY, aWidth, aHeight, SDL_WINDOW_FULLSCREEN);
 
     if (iWindow == 0) {
 	std::string msg = "SDL_CreateWindow: ";
