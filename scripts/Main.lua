@@ -9,8 +9,8 @@ function Init(me)
     --    _G.eActorMgr.add("scripts/bigKutas.lua")
     end
 
-    --me.gFpsCounter = _G.gFpsCounter.create(me)
-    --me.gFpsCounter:enable()
+    me.gFpsCounter = _G.gFpsCounter.create(me)
+    me.gFpsCounter:enable()
 end
 
 Super.DefState(This, {

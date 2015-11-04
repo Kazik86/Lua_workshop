@@ -8,7 +8,7 @@ DEFINE_GADGET_API(gFpsCounter)
 DEFINE_GADGET_CLASS(gFpsCounter)
 
 gFpsCounter::gFpsCounter():
-    iText(0, 0, eFontMgr::ETtfMedium),
+    //iText(0, 0, eFontMgr::ETtfMedium),
     iFrameCntr(0),
     iDelta(0)
 {
@@ -24,9 +24,8 @@ int gFpsCounter::update(lua_State* /* aLua */, float aDelta)
         fps = float(iFrameCntr)/iDelta;
         iFrameCntr = 0;
         iDelta = 0;
+        printf("fps: %.2f\n", fps);
     }
-
-    iText.format("fps: %.2f", fps);
 
     return 0;
 }

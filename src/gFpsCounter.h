@@ -3,7 +3,7 @@
 
 #include "gadget.h"
 #include "renderer.h"
-#include "text.h"
+//#include "text.h"
 
 class gFpsCounter: public eGadget, public eRenderable
 {
@@ -16,7 +16,7 @@ public:
     void draw(SDL_Renderer* aRenderer, float aDelta);
 
 private:
-    eText iText;
+    //eText iText;
     int iFrameCntr;
     float iDelta;
 };

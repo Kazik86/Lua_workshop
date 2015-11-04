@@ -1,6 +1,6 @@
 app_NAME := lua_test.exe
 app_SRC  := $(wildcard src/*.cpp) $(wildcard src/*/*.cpp)
-app_SRC  := $(filter-out src/fontMgr.cpp src/fontMgr.h src/gFpsCounter.cpp src/text.cpp src/trueTypeFont.cpp, $(app_SRC))
+app_SRC  := $(filter-out src/fontMgr.cpp src/fontMgr.h src/text.cpp src/trueTypeFont.cpp, $(app_SRC))
 app_OBJ  := $(app_SRC:.cpp=.o)
 app_DEP  := $(app_SRC:.cpp=.d)
 
