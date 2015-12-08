@@ -52,6 +52,12 @@ void eRenderer::init(const std::string& aCaption, int aX, int aY, int aWidth, in
 	msg += SDL_GetError();
 	throw std::runtime_error(msg);
     }
+
+    /*
+    SDL_SetRenderDrawColor(iRenderer, 0, 0, 0, 0);
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    SDL_RenderSetLogicalSize(iRenderer, aWidth, aHeight);
+    */
 }
 
 void eRenderer::render(float aDelta)
