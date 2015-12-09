@@ -33,6 +33,11 @@ public:
     void mainLoop();
     const sGameProps& getGameProps() const { return iGameProps; }
 
+#ifdef KPR_REAL_TIME_UPDATE
+    public:
+        eRealTimeUpdate& getRtu() { return iRtu; }
+#endif
+
 private:
     eGame();
     eGame(const eGame& aOther);
@@ -42,16 +47,11 @@ private:
     void destroyModules();
     void handleEvents();
 
-
-#ifdef KPR_REAL_TIME_UPDATE
-public:
-    eRealTimeUpdate& getRtu() { return iRtu; }
-private:
-    eRealTimeUpdate iRtu;
-#endif
-
 private:
     const sGameProps iGameProps;
+#ifdef KPR_REAL_TIME_UPDATE
+    eRealTimeUpdate iRtu;
+#endif
     static eGame* iMe;
     bool iIsRunning;
     int iAccumulator;
