@@ -48,6 +48,14 @@ gTexture::~gTexture()
 
 }
 
+void gTexture::begin()
+{
+    iTexture = eTextureMgr::getMe()->getTexture(iName);
+
+    if ( iPosFromActor && (i_gMove == 0) )
+        std::cout << "gTexture ERROR: "<< iActor->getScript() << "; gMove gadget not set" << std::endl;
+}
+
 int gTexture::update(lua_State* /* aLua */, float /* aDelta */)
 {
     return 0;
@@ -74,12 +82,4 @@ void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
 
         SDL_RenderCopyEx(aRenderer, iTexture, 0, &iSdlRect, angle, NULL, SDL_FLIP_NONE);
     }
-}
-
-void gTexture::begin()
-{
-    iTexture = eTextureMgr::getMe()->getTexture(iName);
-
-    if ( iPosFromActor && (i_gMove == 0) )
-        std::cout << "gTexture ERROR: "<< iActor->getScript() << "; gMove gadget not set" << std::endl;
 }

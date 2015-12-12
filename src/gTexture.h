@@ -15,9 +15,9 @@ public:
     gTexture();
     ~gTexture();
 
+    void begin();
     int  update(lua_State* aLua, float aDelta);
     void draw(SDL_Renderer* aRenderer, float aDelta);
-    void begin();
 
     // props
     DECLARE_GADGET_ACCESSOR(getName, setName)
