@@ -30,6 +30,17 @@ public:
     DECLARE_GADGET_WRITER(setRotFromActor)
     DECLARE_GADGET_WRITER(setRotateGadget)
 
+    DECLARE_GADGET_METHOD(fadeIn)
+    DECLARE_GADGET_METHOD(fadeOut)
+    DECLARE_GADGET_METHOD(isFadeCompleted)
+    DECLARE_GADGET_WRITER(setFadeDuration)
+    DECLARE_GADGET_WRITER(setAlpha)
+
+private:
+    void fadeIn(lua_State* aLua);
+    void fadeOut(lua_State* aLua);
+    bool isFadeCompleted(lua_State* aLua);
+
 private:
     SDL_Texture* iTexture;
     std::string iName;
@@ -38,6 +49,12 @@ private:
     bool iRotFromActor;
     gMove* i_gMove;
     gRotate* i_gRotate;
+
+    enum TFade { ENone = 0, EIn, EOut};
+    TFade iFade;
+    float iFadeDuration;
+    float iFadeDelta;
+    unsigned int iAlpha;
 };
 
 #endif // G_TEXTURE_H

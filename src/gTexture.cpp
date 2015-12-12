@@ -17,6 +17,12 @@ DEFINE_GADGET_WRITER(gTexture, setMoveGadget, i_gMove)
 DEFINE_GADGET_WRITER(gTexture, setRotFromActor, iRotFromActor)
 DEFINE_GADGET_WRITER(gTexture, setRotateGadget, i_gRotate)
 
+DEFINE_GADGET_METHOD_0(gTexture, fadeIn)
+DEFINE_GADGET_METHOD_0(gTexture, fadeOut)
+DEFINE_GADGET_METHOD_1(gTexture, isFadeCompleted)
+DEFINE_GADGET_WRITER(gTexture, setFadeDuration, iFadeDuration)
+DEFINE_GADGET_WRITER(gTexture, setAlpha, iAlpha)
+
 DEFINE_GADGET_API(gTexture)
 {
     REGISTER_GADGET_ACCESSOR(getName, setName)
@@ -28,6 +34,12 @@ DEFINE_GADGET_API(gTexture)
     REGISTER_GADGET_WRITER(setMoveGadget)
     REGISTER_GADGET_WRITER(setRotFromActor)
     REGISTER_GADGET_WRITER(setRotateGadget)
+
+    REGISTER_GADGET_METHOD(fadeIn)
+    REGISTER_GADGET_METHOD(fadeOut)
+    REGISTER_GADGET_METHOD(isFadeCompleted)
+    REGISTER_GADGET_WRITER(setFadeDuration)
+    REGISTER_GADGET_WRITER(setAlpha)
     {0, 0}
 };
 
@@ -38,7 +50,11 @@ gTexture::gTexture():
     iPosFromActor(true),
     iRotFromActor(true),
     i_gMove(0),
-    i_gRotate()
+    i_gRotate(),
+    iFade(ENone),
+    iFadeDuration(1),
+    iFadeDelta(0),
+    iAlpha(1)
 {
 
 }
@@ -56,8 +72,15 @@ void gTexture::begin()
         std::cout << "gTexture ERROR: "<< iActor->getScript() << "; gMove gadget not set" << std::endl;
 }
 
-int gTexture::update(lua_State* /* aLua */, float /* aDelta */)
+int gTexture::update(lua_State* /* aLua */, float aDelta)
 {
+    if (iFade) {
+        iFadeDelta += aDelta;
+        iFadeDelta = glm::clamp(iFadeDelta, 0.f, iFadeDuration);
+        iAlpha = iFade == EOut ? (1.f - iFadeDelta/iFadeDuration) * 255 : /* fade in */ iFadeDelta/iFadeDuration * 255;
+        SDL_SetTextureAlphaMod(iTexture, iAlpha);
+    }
+
     return 0;
 }
 
@@ -82,4 +105,24 @@ void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
 
         SDL_RenderCopyEx(aRenderer, iTexture, 0, &iSdlRect, angle, NULL, SDL_FLIP_NONE);
     }
+}
+
+void gTexture::fadeIn(lua_State*)
+{
+    iFade = EIn;
+    SDL_SetTextureBlendMode(iTexture, SDL_BLENDMODE_BLEND);
+}
+
+void gTexture::fadeOut(lua_State*)
+{
+    iFade = EOut;
+    SDL_SetTextureBlendMode(iTexture, SDL_BLENDMODE_BLEND);
+}
+
+bool gTexture::isFadeCompleted(lua_State*)
+{
+    if (iFade == EIn) return iAlpha == 0;
+    if (iFade == EOut) return iAlpha == 255;
+
+    return true;
 }
