@@ -6,11 +6,11 @@ function Init(me)
 end
 
 function Shift(me, newStateRaw)
-    local newState = me.Env[newStateRaw.Name]
-
-    if newState == nil then
+    if newStateRaw == nil then
 	_G.error("In state '" .. me.State.FullName .. "': 'Shift' to non existent state.")
     end
+
+    local newState = me.Env[newStateRaw.Name]
 
     local oldState = me.State
     local parentChanged = not oldState
