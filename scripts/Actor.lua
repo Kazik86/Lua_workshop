@@ -27,12 +27,12 @@ function Shift(me, newStateRaw)
 	oldState.LeaveEx(me)
 
 	if (me.DumpState ~= nil) then
-	    _G.print(Class .. " left " .. oldState.FullName)
+	    _G.print(me.Env.Class .. " left " .. oldState.FullName)
 	end
     end
 
     if (me.DumpState ~= nil) then
-	_G.print(Class .. " is about to enter " .. newState.FullName)
+	_G.print(me.Env.Class .. " is about to enter " .. newState.FullName)
     end
 
     if newStateParent ~= nil and parentChanged then
