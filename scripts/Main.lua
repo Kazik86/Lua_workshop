@@ -52,7 +52,7 @@ Super.DefState(This, {
 
 
 Super.DefState(This, {
-    Name = "state_idle"
+    Name = "state_menu"
 })
 
 
