@@ -7,8 +7,6 @@ function Init(me)
     me.splashScreen:setName("textures/engine.png")
     me.splashScreen:setPosFromActor(false)
     me.splashScreen:setRotFromActor(false)
-    me.splashScreen:setSdlRectW(800)
-    me.splashScreen:setSdlRectH(480)
     me.splashScreen:setSdlRectX(0) me.splashScreen:setSdlRectY(0)
     me.splashScreen:setFadeDuration(1)
 

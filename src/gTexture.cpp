@@ -47,6 +47,7 @@ DEFINE_GADGET_CLASS(gTexture)
 
 gTexture::gTexture():
     iTexture(0),
+    iSdlRect(),
     iPosFromActor(true),
     iRotFromActor(true),
     i_gMove(0),
@@ -67,6 +68,13 @@ gTexture::~gTexture()
 void gTexture::begin()
 {
     iTexture = eTextureMgr::getMe()->getTexture(iName);
+
+    if (iSdlRect.w == 0 || iSdlRect.h == 0) {
+        int w, h;
+        SDL_QueryTexture(iTexture, 0, 0, &w, &h);
+        if (iSdlRect.w == 0) iSdlRect.w = w;
+        if (iSdlRect.h == 0) iSdlRect.h = h;
+    }
 
     if ( iPosFromActor && (i_gMove == 0) )
         std::cout << "gTexture ERROR: "<< iActor->getScript() << "; gMove gadget not set" << std::endl;
