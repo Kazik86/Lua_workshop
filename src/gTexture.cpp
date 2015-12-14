@@ -51,7 +51,7 @@ gTexture::gTexture():
     iPosFromActor(true),
     iRotFromActor(true),
     i_gMove(0),
-    i_gRotate(),
+    i_gRotate(0),
     iFade(ENone),
     iFadeDuration(1),
     iFadeDelta(0),
@@ -78,6 +78,9 @@ void gTexture::begin()
 
     if ( iPosFromActor && (i_gMove == 0) )
         std::cout << "gTexture ERROR: "<< iActor->getScript() << "; gMove gadget not set" << std::endl;
+
+    if ( iRotFromActor && (i_gRotate == 0) )
+        std::cout << "gTexture ERROR: "<< iActor->getScript() << "; gRotate gadget not set" << std::endl;
 }
 
 int gTexture::update(lua_State* /* aLua */, float aDelta)
@@ -95,7 +98,7 @@ int gTexture::update(lua_State* /* aLua */, float aDelta)
 void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
 {
     if (iIsEnabled) {
-        if (iPosFromActor && i_gMove->isEnabled()) {
+        if (iPosFromActor && i_gMove && i_gMove->isEnabled()) {
             glm::vec2 pos = getActor()->getPos();
             const glm::vec2& dir = i_gMove->getDir();
             float speed =  i_gMove->getSpeed();
@@ -105,7 +108,7 @@ void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
         }
 
         double angle = getActor()->getRotate();
-        if (iRotFromActor && i_gRotate->isEnabled()) {
+        if (iRotFromActor && i_gRotate && i_gRotate->isEnabled()) {
             int dir = i_gRotate->getDir();
             float speed =  i_gRotate->getOmega();
             angle += dir * speed * aDelta;
