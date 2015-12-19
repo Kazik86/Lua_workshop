@@ -12,8 +12,8 @@ int main(int /* aArgc */, char** /* aArgv */)
 	eGame game(gameProps);
 	game.mainLoop();
     } catch (const std::exception& aError) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, aError.what());
 	eGame::cleanup();
-	SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, aError.what());
 	result = EXIT_FAILURE;
     }
 
