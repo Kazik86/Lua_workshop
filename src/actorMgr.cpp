@@ -26,7 +26,6 @@ DEFINE_USERDATA_API(eActorMgr)
 DEFINE_USERDATA_CLASS(eActorMgr)
 
 eActorMgr::eActorMgr():
-    iMainActor(eGame::getMe()->getGameProps().iMainActorScript),
     iActors(0),
     iActorsNum(0)
 {
@@ -55,8 +54,6 @@ eActorMgr::~eActorMgr()
 
 void eActorMgr::update(lua_State* aLua, float aDelta)
 {
-    iMainActor.update(aLua, aDelta);
-
     for (size_t i = 0; i < iActorsNum; ++i)
 	iActors[i].update(aLua, aDelta);
 }
@@ -80,7 +77,3 @@ int eActorMgr::add(lua_State* aLua, const std::string& aScript)
     return a->getMeRef();
 }
 
-void eActorMgr::doMainScript(lua_State* aLua)
-{
-    iMainActor.doScript(aLua);
-}

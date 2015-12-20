@@ -55,10 +55,8 @@ eGame::eGame(const sGameProps& aProps):
     eFontMgr::getMe()->init();
     eTextureMgr::getMe()->init();
 
-    // TODO: the below is only for doing 'doScript' on 'Main' script. Ugly. Get
-    // rid of this.
-    eActorMgr* actorMgr = eActorMgr::getMe();
-    actorMgr->doMainScript(iResources->iLua.getRaw());
+    // actor "Main"
+    eActorMgr::getMe()->add(iResources->iLua.getRaw(), iGameProps.iMainActorScript);
 }
 
 eGame::~eGame()
