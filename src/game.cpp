@@ -56,7 +56,7 @@ eGame::eGame(const sGameProps& aProps):
     eTextureMgr::getMe()->init();
 
     // actor "Main"
-    eActorMgr::getMe()->add(iResources->iLua.getRaw(), iGameProps.iMainActorScript);
+    eActorMgr::getMe()->add(iResources->iLua.getRaw(), iGameProps.iMainActorScript, 0);
 }
 
 eGame::~eGame()

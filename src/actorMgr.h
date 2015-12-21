@@ -24,12 +24,17 @@ public:
 
     void init();
     void update(lua_State* aLua, float aDelta);
-    int add(lua_State* aLua, const std::string& aScript);
+    int add(lua_State* aLua, const std::string& aScript, size_t aParentId);
     unsigned int getActorsNum() const { return iActorsNum; }
 
 private:
     eActorMgr(const eActorMgr& aOther);
     eActorMgr& operator=(const eActorMgr& aOther);
+
+    void incChildNum(size_t aId);
+    void decChildNum(size_t aId);
+    void destroyChildren(const eActor* aActor);
+    void destroyActor(const eActor* aActor);
 
 private:
     static eActorMgr* iMe;

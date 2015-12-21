@@ -26,9 +26,15 @@ class eActor
 {
     DECLARE_USERDATA_CLASS()
 
+    friend class eActorMgr;
+
 public:
-    eActor(const std::string& aScript);
+    eActor(const std::string& aScript, size_t aId, size_t aParentId);
     ~eActor();
+
+    size_t getId() const { return iId; }
+    size_t getChildNum() const { return iChildNum; }
+    size_t getParentId() const { return iParentId; }
 
     void doScript(lua_State* aLua);
     void update(lua_State* aLua, float aDelta);
@@ -66,6 +72,10 @@ private:
     void reenterState(lua_State* aLua);
 
 private:
+    size_t iId;
+    size_t iChildNum;
+    size_t iParentId;
+
     eFsm iFsm;
     std::list<int> iMeRef;
     std::string iScript;

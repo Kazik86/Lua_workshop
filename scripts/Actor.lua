@@ -336,7 +336,7 @@ function Enable(me)
 end
 
 function CreateActor(me, script)
-    local newActor = _G.eActorMgr.add(script)
+    local newActor = _G.eActorMgr.add(script, me.Id)
     me.Children[#me.Children + 1] = newActor
     return newActor
 end

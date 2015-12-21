@@ -11,7 +11,7 @@ namespace
     int newActor(lua_State* aLua)
     {
 	eActorMgr* me = eActorMgr::getMe();
-	int meRef = me->add(aLua, Script::getVal<const char*>(aLua, 1));
+	int meRef = me->add(aLua, Script::getVal<const char*>(aLua, 1), Script::getVal<unsigned int>(aLua, 2));
         lua_rawgeti(aLua, LUA_REGISTRYINDEX, meRef);
 	return 1;
     }
@@ -58,22 +58,64 @@ void eActorMgr::update(lua_State* aLua, float aDelta)
 	iActors[i].update(aLua, aDelta);
 }
 
-int eActorMgr::add(lua_State* aLua, const std::string& aScript)
+int eActorMgr::add(lua_State* aLua, const std::string& aScript, size_t aParentId)
 {
     if (iActorsNum == EActorsCapacity)
         throw std::runtime_error("eActorMgr: too much actors");
 
-    eActor* a = new((void*)(iActors + iActorsNum)) eActor(aScript);
+    eActor* a = new((void*)(iActors + iActorsNum)) eActor(aScript, iActorsNum, aParentId);
+
+    // forbid "Main.lua" to register itself as its own child
+    if (iActorsNum)
+        incChildNum(aParentId);
+
     iActorsNum += 1;
 
     try {
         a->doScript(aLua);
     } catch (const std::exception& aErr) {
-        iActorsNum -= 1;
-        a->~eActor();
+
+        destroyActor(a);
         throw;
     }
 
     return a->getMeRef();
 }
 
+void eActorMgr::incChildNum(size_t aId)
+{
+    for (eActor* a = &iActors[aId]; a->getId() != a->getParentId(); a = &iActors[a->getParentId()])
+        a->iChildNum += 1;
+
+    iActors[0].iChildNum += 1;
+}
+
+void eActorMgr::decChildNum(size_t aId)
+{
+    for (eActor* a = &iActors[aId]; a->getId() != a->getParentId(); a = &iActors[a->getParentId()])
+        a->iChildNum -= 1;
+
+    iActors[0].iChildNum -= 1;
+}
+
+void eActorMgr::destroyChildren(const eActor* aActor)
+{
+    size_t n = aActor->getChildNum();
+    size_t idx = aActor->getId();
+
+    for (size_t i = n; i > 0; --i) {
+        eActor& a = iActors[idx + i];
+        decChildNum(a.getParentId());
+        a.~eActor();
+    }
+
+    iActorsNum -= n;
+}
+
+void eActorMgr::destroyActor(const eActor* aActor)
+{
+    destroyChildren(aActor);
+    decChildNum(aActor->getParentId());
+    aActor->~eActor();
+    --iActorsNum;
+}

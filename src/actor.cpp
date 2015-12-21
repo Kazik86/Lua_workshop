@@ -73,7 +73,10 @@ DEFINE_USERDATA_API(eActor)
 
 DEFINE_USERDATA_CLASS(eActor)
 
-eActor::eActor(const std::string& aScript):
+eActor::eActor(const std::string& aScript, size_t aId, size_t aParentId):
+    iId(aId),
+    iChildNum(0),
+    iParentId(aParentId),
     iFsm(*this),
     iScript(aScript),
     iPos(0, 0),
@@ -183,6 +186,9 @@ void eActor::createMeTables(lua_State* aLua)
 
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iModule->iRef);
     lua_setfield(aLua, -2, "Env"); // me.Env = module
+
+    lua_pushunsigned(aLua, iId);
+    lua_setfield(aLua, -2, "Id"); // me.Id = iId
 
     lua_pushvalue(aLua, -1);
 
