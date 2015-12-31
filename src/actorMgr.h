@@ -33,8 +33,8 @@ private:
 
     void incChildNum(size_t aId);
     void decChildNum(size_t aId);
-    void destroyChildren(const eActor* aActor);
-    void destroyActor(const eActor* aActor);
+    void destroyChildren(eActor* aActor);
+    void destroyActor(eActor* aActor);
 
 private:
     static eActorMgr* iMe;

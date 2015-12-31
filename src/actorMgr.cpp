@@ -98,7 +98,7 @@ void eActorMgr::decChildNum(size_t aId)
     iActors[0].iChildNum -= 1;
 }
 
-void eActorMgr::destroyChildren(const eActor* aActor)
+void eActorMgr::destroyChildren(eActor* aActor)
 {
     size_t n = aActor->getChildNum();
     size_t idx = aActor->getId();
@@ -112,7 +112,7 @@ void eActorMgr::destroyChildren(const eActor* aActor)
     iActorsNum -= n;
 }
 
-void eActorMgr::destroyActor(const eActor* aActor)
+void eActorMgr::destroyActor(eActor* aActor)
 {
     destroyChildren(aActor);
     decChildNum(aActor->getParentId());
