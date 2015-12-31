@@ -26,6 +26,9 @@ public:
     void update(lua_State* aLua, float aDelta);
     eActor& add(lua_State* aLua, const std::string& aScript, size_t aParentId);
     unsigned int getActorsNum() const { return iActorsNum; }
+    void destroyChildren(eActor* aActor);
+    void destroyActor(eActor* aActor);
+    eActor& getActor(size_t aId) { return iActors[aId]; }
 
 private:
     eActorMgr(const eActorMgr& aOther);
@@ -33,8 +36,6 @@ private:
 
     void incChildNum(size_t aId);
     void decChildNum(size_t aId);
-    void destroyChildren(eActor* aActor);
-    void destroyActor(eActor* aActor);
 
 private:
     static eActorMgr* iMe;

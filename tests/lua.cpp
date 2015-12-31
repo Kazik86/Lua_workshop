@@ -571,3 +571,35 @@ TEST_FIXTURE(sFixture, Signals)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, ActorHasChildrenInCpp)
+{
+    eActorMgr* am = eActorMgr::getMe();
+    lua_State* lua = iGame.getLua()->getRaw();
+
+    eActor& a0 = am->getActor(0);
+    eActor& a1 = am->getActor(1);
+    eActor& a2 = am->getActor(2);
+
+    CHECK(am->getActorsNum() == 1); // "Main"
+    CHECK(a0.getChildNum() == 0);
+
+    am->add(lua, "tests/scripts/actorHasChildrenInCpp/parent.lua", 0);
+
+    CHECK(a1.getId() == 1);
+    CHECK(a1.getChildNum() == 3);
+    CHECK(a1.getParentId() == 0);
+    CHECK(a2.getParentId() == 1);
+    CHECK(a2.getChildNum() == 1);
+    CHECK(a0.getChildNum() == 4);
+    CHECK(am->getActorsNum() == 5);
+
+    am->destroyChildren(&a1);
+    CHECK(a1.getChildNum() == 0);
+    CHECK(a0.getChildNum() == 1);
+    CHECK(am->getActorsNum() == 2);
+
+    am->destroyActor(&a1);
+
+    CHECK(a0.getChildNum() == 0);
+    CHECK(am->getActorsNum() == 1);
+}
