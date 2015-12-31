@@ -132,13 +132,11 @@ TEST_FIXTURE(sFixture, ClassNameUsedAsIdentifier)
 
 TEST_FIXTURE(sFixture, MeTable)
 {
-    eActor a1("tests/scripts/meTable.lua");
-    eActor a2("tests/scripts/meTable.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
 
-    a1.doScript(lua);
-    a2.doScript(lua);
+    eActor& a1 = am->add(lua, "tests/scripts/meTable.lua", 0);
+    eActor& a2 = am->add(lua, "tests/scripts/meTable.lua", 0);
 
     a1.callLuaFunc(lua, "setAttribs1");
     a2.callLuaFunc(lua, "setAttribs1");
@@ -155,10 +153,11 @@ TEST_FIXTURE(sFixture, MeTable)
 
 TEST_FIXTURE(sFixture, MeEnv)
 {
-    eActor a("tests/scripts/meEnv.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/meEnv.lua", 0);
+
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -166,39 +165,42 @@ TEST_FIXTURE(sFixture, MeEnv)
 
 TEST_FIXTURE(sFixture, VirtualFunctions)
 {
-    eActor a("tests/scripts/virtualFunctions/A.lua");
-    eActor b("tests/scripts/virtualFunctions/B.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    b.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/virtualFunctions/A.lua", 0);
+    eActor& b = am->add(lua, "tests/scripts/virtualFunctions/B.lua", 0);
+
     b.callLuaFunc(lua, "test");
-    a.doScript(lua);
     a.callLuaFunc(lua, "test");
+
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, MeTableInheritance)
 {
-    eActor a("tests/scripts/meTableInheritance/C.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/meTableInheritance/C.lua", 0);
+
     a.callLuaFunc(lua, "testInA_1");
     a.callLuaFunc(lua, "testInB_1");
     a.callLuaFunc(lua, "testInC_1");
     a.callLuaFunc(lua, "testInC_2");
     a.callLuaFunc(lua, "testInB_2");
     a.callLuaFunc(lua, "testInA_2");
+
     CHECK(true);
 }
 
 TEST_FIXTURE(sFixture, ScriptSupport)
 {
-    eActor a("tests/scripts/scriptSupport.lua");
-    eActor b("tests/scripts/scriptSupport.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
 
-    a.doScript(lua);
-    b.doScript(lua);
+    eActor& a = am->add(lua, "tests/scripts/scriptSupport.lua", 0);
+    eActor& b = am->add(lua, "tests/scripts/scriptSupport.lua", 0);
 
     a.callLuaFunc(lua, "setActorFoo");
     b.callLuaFunc(lua, "setActorBar");
@@ -210,9 +212,10 @@ TEST_FIXTURE(sFixture, ScriptSupport)
 
 TEST_FIXTURE(sFixture, GadgetTest)
 {
-    eActor a("tests/scripts/gadgetTest.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/gadgetTest.lua", 0);
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -220,9 +223,11 @@ TEST_FIXTURE(sFixture, GadgetTest)
 
 TEST_FIXTURE(sFixture, StateShift)
 {
-    eActor a("tests/scripts/stateShift.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/stateShift.lua", 0);
+
     a.update(lua, KDelta);
     a.update(lua, KDelta);
     a.callLuaFunc(lua, "test");
@@ -232,9 +237,11 @@ TEST_FIXTURE(sFixture, StateShift)
 
 TEST_FIXTURE(sFixture, GadgetAndState)
 {
-    eActor a("tests/scripts/gadgetAndState.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/gadgetAndState.lua", 0);
+    
     a.update(lua, KDelta);
     a.update(lua, KDelta);
     a.callLuaFunc(lua, "test");
@@ -244,24 +251,22 @@ TEST_FIXTURE(sFixture, GadgetAndState)
 
 TEST_FIXTURE(sFixture, ActorCreatedFromScript)
 {
-    auto num = eActorMgr::getMe()->getActorsNum();
-
-    eActor a("tests/scripts/actorCreatedFromScript.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
 
-    CHECK(eActorMgr::getMe()->getActorsNum() == num + 1);
+    auto num = am->getActorsNum();
+    am->add(lua, "tests/scripts/actorCreatedFromScript.lua", 0);
+
+    CHECK(am->getActorsNum() == num + 2);
 }
 
 TEST_FIXTURE(sFixture, VirtualFunctionInsideState)
 {
-    eActor a("tests/scripts/virtualFunctionInsideState/a.lua");
-    eActor b("tests/scripts/virtualFunctionInsideState/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
 
-    a.doScript(lua);
-    b.doScript(lua);
+    eActor& a = am->add(lua, "tests/scripts/virtualFunctionInsideState/a.lua", 0);
+    eActor& b = am->add(lua, "tests/scripts/virtualFunctionInsideState/b.lua", 0);
 
     b.update(lua, KDelta);
     b.update(lua, KDelta);
@@ -276,9 +281,10 @@ TEST_FIXTURE(sFixture, VirtualFunctionInsideState)
 
 TEST_FIXTURE(sFixture, ExtendingState)
 {
-    eActor b("tests/scripts/extendingState/b.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    b.doScript(lua);
+
+    eActor& b = am->add(lua, "tests/scripts/extendingState/b.lua", 0);
     b.update(lua, KDelta);
     b.callLuaFunc(lua, "test");
 
@@ -287,9 +293,10 @@ TEST_FIXTURE(sFixture, ExtendingState)
 
 TEST_FIXTURE(sFixture, RedefineStateBeingExtended)
 {
-    eActor b("tests/scripts/extendingState/redefineStateBeingExtended/b.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    b.doScript(lua);
+
+    eActor& b = am->add(lua, "tests/scripts/extendingState/redefineStateBeingExtended/b.lua", 0);
     b.update(lua, KDelta);
     b.callLuaFunc(lua, "test");
 
@@ -298,9 +305,10 @@ TEST_FIXTURE(sFixture, RedefineStateBeingExtended)
 
 TEST_FIXTURE(sFixture, DontSearchInitInBase)
 {
-    eActor a("tests/scripts/dontSearchInitInBase/b.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/dontSearchInitInBase/b.lua", 0);
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -308,9 +316,10 @@ TEST_FIXTURE(sFixture, DontSearchInitInBase)
 
 TEST_FIXTURE(sFixture, AutoEnableDisableGadgets1)
 {
-    eActor a("tests/scripts/autoEnableDisableGadgets/a.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/autoEnableDisableGadgets/a.lua", 0);
     a.update(lua, KDelta);
     a.update(lua, KDelta);
 
@@ -321,9 +330,10 @@ TEST_FIXTURE(sFixture, AutoEnableDisableGadgets1)
 
 TEST_FIXTURE(sFixture, AutoEnableDisableGadgets2)
 {
-    eActor b("tests/scripts/autoEnableDisableGadgets/b.lua");
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    b.doScript(lua);
+
+    eActor& b = am->add(lua, "tests/scripts/autoEnableDisableGadgets/b.lua", 0);
     b.update(lua, KDelta);
     b.update(lua, KDelta);
 
@@ -334,10 +344,11 @@ TEST_FIXTURE(sFixture, AutoEnableDisableGadgets2)
 
 TEST_FIXTURE(sFixture, GadgetStatus)
 {
-    eActor a("tests/scripts/gadgetStatus.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/gadgetStatus.lua", 0);
+
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -345,10 +356,11 @@ TEST_FIXTURE(sFixture, GadgetStatus)
 
 TEST_FIXTURE(sFixture, GadgetEvent)
 {
-    eActor a("tests/scripts/gadgetEvent/a.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/gadgetEvent/a.lua", 0);
+
     a.update(lua, KDelta);
     a.update(lua, KDelta);
 
@@ -359,10 +371,11 @@ TEST_FIXTURE(sFixture, GadgetEvent)
 
 TEST_FIXTURE(sFixture, BreakUpdateWhenShiftInExtended)
 {
-    eActor a("tests/scripts/breakUpdateWhenShiftInExtended/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/breakUpdateWhenShiftInExtended/b.lua", 0);
+
     a.update(lua, KDelta);
     a.callLuaFunc(lua, "test");
 
@@ -371,10 +384,11 @@ TEST_FIXTURE(sFixture, BreakUpdateWhenShiftInExtended)
 
 TEST_FIXTURE(sFixture, StateShiftInEventHandlerBreaksGadgetsAndStateUpdate)
 {
-    eActor a("tests/scripts/stateShiftInEventHandlerBreaksGadgetsAndStateUpdate.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/stateShiftInEventHandlerBreaksGadgetsAndStateUpdate.lua", 0);
+
     a.update(lua, KDelta);
 
     a.callLuaFunc(lua, "test");
@@ -384,10 +398,11 @@ TEST_FIXTURE(sFixture, StateShiftInEventHandlerBreaksGadgetsAndStateUpdate)
 
 TEST_FIXTURE(sFixture, ParentState)
 {
-    eActor a("tests/scripts/parentState/parentState.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/parentState/parentState.lua", 0);
+
     a.update(lua, KDelta);
     a.update(lua, KDelta);
 
@@ -398,10 +413,11 @@ TEST_FIXTURE(sFixture, ParentState)
 
 TEST_FIXTURE(sFixture, ParentState_redefineParent)
 {
-    eActor a("tests/scripts/parentState/redefineParent/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/parentState/redefineParent/b.lua", 0);
+
     a.update(lua, KDelta);
 
     a.callLuaFunc(lua, "test");
@@ -411,10 +427,11 @@ TEST_FIXTURE(sFixture, ParentState_redefineParent)
 
 TEST_FIXTURE(sFixture, ParentState_redefineChild)
 {
-    eActor a("tests/scripts/parentState/redefineChild/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/parentState/redefineChild/b.lua", 0);
+
     a.update(lua, KDelta);
 
     a.callLuaFunc(lua, "test");
@@ -424,10 +441,11 @@ TEST_FIXTURE(sFixture, ParentState_redefineChild)
 
 TEST_FIXTURE(sFixture, ParentState_extendParent)
 {
-    eActor a("tests/scripts/parentState/extendParent/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/parentState/extendParent/b.lua", 0);
+
     a.update(lua, KDelta);
 
     a.callLuaFunc(lua, "test");
@@ -437,10 +455,11 @@ TEST_FIXTURE(sFixture, ParentState_extendParent)
 
 TEST_FIXTURE(sFixture, ParentState_extendChild)
 {
-    eActor a("tests/scripts/parentState/extendChild/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/parentState/extendChild/b.lua", 0);
+
     a.update(lua, KDelta);
 
     a.callLuaFunc(lua, "test");
@@ -450,10 +469,11 @@ TEST_FIXTURE(sFixture, ParentState_extendChild)
 
 TEST_FIXTURE(sFixture, ParentState_redefineParentAndChild)
 {
-    eActor a("tests/scripts/parentState/redefineParentAndChild/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/parentState/redefineParentAndChild/b.lua", 0);
+
     a.update(lua, KDelta);
     a.update(lua, KDelta);
 
@@ -464,10 +484,11 @@ TEST_FIXTURE(sFixture, ParentState_redefineParentAndChild)
 
 TEST_FIXTURE(sFixture, ParentState_extendParentAndChild)
 {
-    eActor a("tests/scripts/parentState/extendParentAndChild/b.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/parentState/extendParentAndChild/b.lua", 0);
+
     a.update(lua, KDelta);
 
     a.callLuaFunc(lua, "test");
@@ -477,10 +498,11 @@ TEST_FIXTURE(sFixture, ParentState_extendParentAndChild)
 
 TEST_FIXTURE(sFixture, ScriptNamespaceInGlobalEnv)
 {
-    eActor a("tests/scripts/scriptNamespaceInGlobalEnv.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/scriptNamespaceInGlobalEnv.lua", 0);
+
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -488,10 +510,11 @@ TEST_FIXTURE(sFixture, ScriptNamespaceInGlobalEnv)
 
 TEST_FIXTURE(sFixture, ActorsApi)
 {
-    eActor a("tests/scripts/actorsApi/B.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/actorsApi/B.lua", 0);
+
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -499,10 +522,11 @@ TEST_FIXTURE(sFixture, ActorsApi)
 
 TEST_FIXTURE(sFixture, ActorsApi_virtualCall)
 {
-    eActor a("tests/scripts/actorsApi/virtualCall/main.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/actorsApi/virtualCall/main.lua", 0);
+
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -510,10 +534,11 @@ TEST_FIXTURE(sFixture, ActorsApi_virtualCall)
 
 TEST_FIXTURE(sFixture, ActorsApi_replacingEnvWasABadIdea)
 {
-    eActor a("tests/scripts/actorsApi/replacingEnvWasABadIdea/A.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/actorsApi/replacingEnvWasABadIdea/A.lua", 0);
+
     a.callLuaFunc(lua, "test");
 
     CHECK(true);
@@ -521,10 +546,11 @@ TEST_FIXTURE(sFixture, ActorsApi_replacingEnvWasABadIdea)
 
 TEST_FIXTURE(sFixture, DisableActor)
 {
-    eActor a("tests/scripts/disableActor/parent.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/disableActor/parent.lua", 0);
+
     a.update(lua, KDelta);
     a.update(lua, KDelta);
     a.callLuaFunc(lua, "test");
@@ -534,10 +560,11 @@ TEST_FIXTURE(sFixture, DisableActor)
 
 TEST_FIXTURE(sFixture, Signals)
 {
-    eActor a("tests/scripts/signals/emit/sender.lua");
-
+    eActorMgr* am = eActorMgr::getMe();
     lua_State* lua = iGame.getLua()->getRaw();
-    a.doScript(lua);
+
+    eActor& a = am->add(lua, "tests/scripts/signals/emit/sender.lua", 0);
+
     a.update(lua, KDelta);
     a.callLuaFunc(lua, "test");
 
