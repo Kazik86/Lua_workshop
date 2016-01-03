@@ -61,10 +61,15 @@ private:
     eActor(const eActor& aOther);
     eActor& operator=(const eActor& aOther);
 
+    typedef bool (eActor::*TLuaCaller)(lua_State*, const sModule*, int, const char*);
+
     void createMeTables(lua_State* aLua);
-    void callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName, bool aThrow);
+
+    bool callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName);
+    bool callLuaFuncShallow_2(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName);
     void callLuaFuncDeep(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName);
-    void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName);
+    void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName, TLuaCaller aFun);
+
     void shareInternalsWithScript(lua_State* aLua, int aRef);
     void beginGadget();
     void shiftToState(lua_State* aLua, const char* aName);

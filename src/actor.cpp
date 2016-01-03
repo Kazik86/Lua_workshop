@@ -89,7 +89,7 @@ eActor::~eActor()
 {
     lua_State* lua = eGame::getMe()->getLua()->getRaw();
     for (int ref : iMeRef)
-	luaL_unref(lua, LUA_REGISTRYINDEX, ref);
+        luaL_unref(lua, LUA_REGISTRYINDEX, ref);
 }
 
 void eActor::doScript(lua_State* aLua)
@@ -116,8 +116,10 @@ void eActor::update(lua_State* aLua, float aDelta)
                     if (m == iModule || eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m))
                         reenterState(aLua);
                 } else {
-                    if (m == iModule)
-                        callLuaFuncShallow(aLua, iModule, iMeRef.front(), snippetName.c_str(), true);
+                    if (m == iModule) {
+                        if (! callLuaFuncShallow(aLua, iModule, iMeRef.front(), snippetName.c_str()))
+                            throw std::runtime_error(iModule->iScript + ": no function with name '" + snippetName.c_str() + "'");
+                    }
                     else if (rtu.isAffectDerived() && eLuaModuleMgr::getMe()->isOnInheritanceList(iModule, m))
                         callLuaFuncDeep(aLua, iModule, iMeRef.front(), snippetName.c_str());
                 }
@@ -243,27 +245,50 @@ void eActor::callLuaFuncDeep(lua_State* aLua, const sModule* aModule, int aMeRef
  * w module na samym dole hierarchii dziedziczenia. Jeśli jej tam nie ma
  * zgłaszam błąd bez szukania jej w klasach bazowych.
  */
-void eActor::callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName, bool aThrow)
+bool eActor::callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModule->iRef);
     lua_pushstring(aLua, aFunctionName);
     lua_rawget(aLua, -2);
 
+    bool funExists = false;
+
     if (lua_isfunction(aLua, -1)) {
+        funExists = true;
         lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
 
         if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
             throw std::runtime_error(lua_tostring(aLua, -1));
-
-    } else {
-        if (aThrow)
-            throw std::runtime_error(aModule->iScript + ": no function with name '" + aFunctionName + "'");
     }
 
     lua_pop(aLua, 1);
+
+    return funExists;
 }
 
-void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName)
+bool eActor::callLuaFuncShallow_2(lua_State* aLua, const sModule* aModule, int aMeRef, const char* aFunctionName)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModule->iRef);
+    lua_pushstring(aLua, aFunctionName);
+    lua_rawget(aLua, -2);
+
+    bool funExists = false;
+
+    if (lua_isfunction(aLua, -1)) {
+        funExists = true;
+        lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
+        lua_pushvalue(aLua, 3);
+
+        if(lua_pcall(aLua, 2, 0, 0) != LUA_OK)
+            throw std::runtime_error(lua_tostring(aLua, -1));
+    }
+
+    lua_pop(aLua, 1);
+
+    return funExists;
+}
+
+void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName, TLuaCaller aFun)
 {
     const std::list<sModule*>& ih = iModule->iInheritanceHierarchy;
 
@@ -274,22 +299,22 @@ void eActor::callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, con
 
     for (auto it = moduleItBeg; it != moduleItEnd; ++it, ++envIt) {
 	sModule* m = *it;
-	callLuaFuncShallow(aLua, m, *envIt, aFunctionName, false);
+	(this->*aFun)(aLua, m, *envIt, aFunctionName);
     }
 
-    callLuaFuncShallow(aLua, iModule, *envIt, aFunctionName, false);
+    (this->*aFun)(aLua, iModule, *envIt, aFunctionName);
 
     assert(++envIt == iMeRef.crend());
 }
 
 void eActor::callInit(lua_State* aLua)
 {
-    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "Init");
+    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "Init", &eActor::callLuaFuncShallow_2);
 }
 
 void eActor::callRestart(lua_State* aLua)
 {
-    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "Restart");
+    callLuaFuncThroughInheritanceHierarchyBackward(aLua, "Restart", &eActor::callLuaFuncShallow);
 }
 
 

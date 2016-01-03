@@ -335,8 +335,8 @@ function Enable(me)
     end
 end
 
-function CreateActor(me, script)
-    local newActor = _G.eActorMgr.add(script, me.Id)
+function CreateActor(me, script, props)
+    local newActor = _G.eActorMgr.add(script, me.Id, props or {})
     me.Children[#me.Children + 1] = newActor
     return newActor
 end
