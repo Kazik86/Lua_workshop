@@ -92,6 +92,8 @@ int gTexture::update(lua_State* /* aLua */, float aDelta)
         SDL_SetTextureAlphaMod(iTexture, iAlpha);
     }
 
+    addToRenderingQueue();
+
     return 0;
 }
 

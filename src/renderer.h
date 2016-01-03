@@ -1,9 +1,9 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include <list>
 #include <SDL2/SDL.h>
 #include <string>
+#include <vector>
 
 class eRenderable
 {
@@ -12,6 +12,7 @@ public:
     virtual ~eRenderable() {}
 
     virtual void draw(SDL_Renderer* aRenderer, float aDelta) = 0;
+    void addToRenderingQueue();
 };
 
 class eRenderer
@@ -26,6 +27,8 @@ public:
     void render(float aDelta);
     SDL_Renderer* getRaw() { return iRenderer; }
     void addRenderable(eRenderable* aObj);
+    void incRenderables() { ++iRenderablesNum; }
+    void clearRenderingQueue() { iRenderables.clear(); }
 
 private:
     eRenderer(const eRenderer& aOther);
@@ -35,7 +38,8 @@ private:
     static eRenderer* iMe;
     SDL_Window* iWindow;
     SDL_Renderer* iRenderer;
-    std::list<eRenderable*> iRenderables;
+    std::vector<eRenderable*> iRenderables;
+    decltype(iRenderables)::size_type iRenderablesNum;
 };
 
 #endif // RENDERER_H

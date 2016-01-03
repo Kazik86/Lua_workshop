@@ -4,6 +4,11 @@
 
 eRenderable::eRenderable()
 {
+    eRenderer::getMe()->incRenderables();
+}
+
+void eRenderable::addToRenderingQueue()
+{
     eRenderer::getMe()->addRenderable(this);
 }
 
@@ -13,7 +18,8 @@ eRenderer* eRenderer::iMe = 0;
 
 eRenderer::eRenderer():
     iWindow(0),
-    iRenderer(0)
+    iRenderer(0),
+    iRenderablesNum(0)
 {
     if (iMe)
 	throw std::runtime_error("eRenderer: multiple instances not allowed.");
@@ -74,3 +80,4 @@ void eRenderer::addRenderable(eRenderable* aObj)
 {
     iRenderables.push_back(aObj);
 }
+

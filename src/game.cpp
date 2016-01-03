@@ -73,9 +73,13 @@ void eGame::cleanup()
 
 void eGame::mainLoop()
 {
+    unsigned int current;
+    int dt;
+    eRenderer* renderer = eRenderer::getMe();
+
     while (iIsRunning) {
-	unsigned int current = SDL_GetTicks();
-	int dt = current - iLastUpdateTime;
+	current = SDL_GetTicks();
+	dt = current - iLastUpdateTime;
 	iLastUpdateTime = current;
 	dt = glm::max(0, dt);
 	iAccumulator += dt;
@@ -89,13 +93,14 @@ void eGame::mainLoop()
 #endif
 
 		handleEvents();
+                renderer->clearRenderingQueue();
 		iResources->iActorMgr.update(iResources->iLua.getRaw(), KDelta);
 	    }
 
 	    iAccumulator -= KTimeStep;
 	}
 
-	eRenderer::getMe()->render( float(iAccumulator) / float(1000) );
+	renderer->render( float(iAccumulator) / float(1000) );
     }
 }
 

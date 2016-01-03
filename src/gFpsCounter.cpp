@@ -28,6 +28,9 @@ int gFpsCounter::update(lua_State* /* aLua */, float aDelta)
 
     iText.format("fps: %.2f", fps);
 
+    iText.addToRenderingQueue();
+    addToRenderingQueue();
+
     return 0;
 }
 
