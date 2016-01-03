@@ -603,3 +603,11 @@ TEST_FIXTURE(sFixture, ActorHasChildrenInCpp)
     CHECK(a0.getChildNum() == 0);
     CHECK(am->getActorsNum() == 1);
 }
+
+TEST_FIXTURE(sFixture, SendParamsToInit)
+{
+    eActorMgr* am = eActorMgr::getMe();
+    lua_State* lua = iGame.getLua()->getRaw();
+    am->add(lua, "tests/scripts/sendParamsToInit/parent.lua", 0);
+    CHECK(true);
+}
