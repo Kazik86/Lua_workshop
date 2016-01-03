@@ -132,8 +132,8 @@ void gTexture::fadeOut(lua_State*)
 
 bool gTexture::isFadeCompleted(lua_State*)
 {
-    if (iFade == EIn) return iAlpha == 0;
-    if (iFade == EOut) return iAlpha == 255;
+    if (iFade == EIn) return iAlpha == 255;
+    if (iFade == EOut) return iAlpha == 0;
 
     return true;
 }
