@@ -346,6 +346,14 @@ function CreateActor(me, script, props)
     return newActor
 end
 
+function DestroyActor(me, field)
+    local actor = me[field]
+    if _G.eActorMgr.remove(actor.Id) then
+	_G.table.remove(me.Children)
+	me[field] = nil
+    end
+end
+
 function Connect(sender, signal, recv, fun)
     if sender.Signals == nil then sender.Signals = {} end
     local s = sender.Signals
