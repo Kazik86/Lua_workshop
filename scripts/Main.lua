@@ -1,10 +1,11 @@
 Class = "Main"
 Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
-input = _G.require "scripts/input"
+--input = _G.require "scripts/input"
 
 
 function Init(me)
+    me.DumpState = 1
     me.splashScreen = _G.gTexture.create(me)
     me.splashScreen:setName("textures/engine.png")
     me.splashScreen:setPosFromActor(false)
@@ -16,6 +17,10 @@ function Init(me)
     me.gFpsCounter:enable()
 
     me.gTimer = _G.gTimer.create(me)
+
+    -- Menu
+    me.menu = CreateActor(me, "scripts/Menu.lua")
+    Disable(me.menu)
 end
 
 
@@ -45,14 +50,18 @@ Super.DefState(This, {
 
     Update = function(me)
 	if (me.splashScreen:isFadeCompleted()) then
-	    return Shift(me, state_idle)
+	    return Shift(me, state_menu)
 	end
     end
 })
 
 
 Super.DefState(This, {
-    Name = "state_menu"
+    Name = "state_menu",
+
+    Enter = function(me)
+	Enable(me.menu)
+    end
 })
 
 
