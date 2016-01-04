@@ -329,6 +329,11 @@ function Disable(me)
 end
 
 function Enable(me)
+    if me.StateBeforeDisable == nil then
+	_G.print("WARNING: attempt to 'Enable' actor '" .. me.Env.Class .. "' defined in " .. me.Env.Script .. " without maching 'Disable'")
+	return
+    end
+
     Shift(me, me.StateBeforeDisable)
     for i = 1, #me.Children do
 	Enable(me.Children[i])
