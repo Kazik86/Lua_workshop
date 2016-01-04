@@ -15,11 +15,28 @@ namespace
         lua_rawgeti(aLua, LUA_REGISTRYINDEX, a.getMeRef());
 	return 1;
     }
+
+    int removeActor(lua_State* aLua)
+    {
+        eActorMgr* me = eActorMgr::getMe();
+        unsigned int id = Script::getVal<unsigned int>(aLua, 1);
+        eActor& a = me->getActor(id);
+
+        // don't remove actor from the middle!
+        if (id + a.getChildNum() + 1 == me->getActorsNum()) {
+            me->destroyActor(&a);
+            lua_pushboolean(aLua, 1);
+        } else
+            lua_pushboolean(aLua, 0);
+
+        return 1;
+    }
 }
 
 DEFINE_USERDATA_API(eActorMgr)
 {
     {"add", ::newActor},
+    {"remove", ::removeActor},
     {0, 0}
 };
 
