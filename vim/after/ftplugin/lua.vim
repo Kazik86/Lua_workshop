@@ -65,6 +65,6 @@ fun! s:Send_Selection_To_RTU_Session(affect_derived)
     silent exe '!echo -n ' . shellescape(expand("%") . ';' .  file . ';' . fun_name . ';' . l:affect_derived) . ' | socat - UNIX-SENDTO:/tmp/rtu'
 endf
 
-nnoremap <buffer> <A-p> :call <SID>Send_Module_Name_To_RTU_Session()<CR>
-vnoremap <buffer> <A-p> :<C-u>call <SID>Send_Selection_To_RTU_Session(0)<CR>
-vnoremap <buffer> <A-S-p> :<C-u>call <SID>Send_Selection_To_RTU_Session(1)<CR>
+nnoremap <buffer> <A-p> :call <SID>Send_Module_Name_To_RTU_Session()<CR><C-l>
+vnoremap <buffer> <A-p> :<C-u>call <SID>Send_Selection_To_RTU_Session(0)<CR><C-l>
+vnoremap <buffer> <A-S-p> :<C-u>call <SID>Send_Selection_To_RTU_Session(1)<CR><C-l>
