@@ -611,3 +611,11 @@ TEST_FIXTURE(sFixture, SendParamsToInit)
     am->add(lua, "tests/scripts/sendParamsToInit/parent.lua", 0);
     CHECK(true);
 }
+
+TEST_FIXTURE(sFixture, DestroyActor)
+{
+    eActorMgr* am = eActorMgr::getMe();
+    lua_State* lua = iGame.getLua()->getRaw();
+    am->add(lua, "tests/scripts/destroyActor/parent.lua", 0);
+    CHECK(true);
+}
