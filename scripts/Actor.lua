@@ -321,22 +321,22 @@ DefState(This, {
     end
 })
 
-function Disable(me)
-    for i = 1, #me.Children do
-	Disable(me.Children[i])
+function Disable(actor)
+    for i = 1, #actor.Children do
+	Disable(actor.Children[i])
     end
-    return Shift(me, state_Disabled)
+    return Shift(actor, state_Disabled)
 end
 
-function Enable(me)
-    if me.StateBeforeDisable == nil then
+function Enable(actor)
+    if actor.StateBeforeDisable == nil then
 	_G.error("ERROR: attempt to 'Enable' actor without maching 'Disable'", 2)
 	return
     end
 
-    Shift(me, me.StateBeforeDisable)
-    for i = 1, #me.Children do
-	Enable(me.Children[i])
+    Shift(actor, actor.StateBeforeDisable)
+    for i = 1, #actor.Children do
+	Enable(actor.Children[i])
     end
 end
 
