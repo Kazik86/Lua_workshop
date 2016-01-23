@@ -571,6 +571,19 @@ TEST_FIXTURE(sFixture, Signals)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, SignalsAndGC)
+{
+    eActorMgr* am = eActorMgr::getMe();
+    lua_State* lua = iGame.getLua()->getRaw();
+
+    eActor& a = am->add(lua, "tests/scripts/signals/gc/main.lua", 0);
+
+    a.update(lua, KDelta);
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
 TEST_FIXTURE(sFixture, ActorHasChildrenInCpp)
 {
     eActorMgr* am = eActorMgr::getMe();

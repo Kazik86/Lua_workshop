@@ -346,9 +346,25 @@ function CreateActor(me, script, props)
     return newActor
 end
 
+local function disconnect(actor)
+    if actor.Connections == nil then return end
+
+    for k, v in _G.pairs(actor.Connections) do
+	for i = 1, #k do
+	    if k[i] == v then _G.table.remove(k, i) end
+	end
+    end
+end
+
 function DestroyActor(me, field)
     local actor = me[field]
     if _G.eActorMgr.remove(actor.Id) then
+	-- disconnect from signals emitters
+	for i = 1, #actor.Children do
+	    disconnect(actor.Children[i])
+	end
+	disconnect(actor)
+
 	_G.table.remove(me.Children)
 	me[field] = nil
     end
@@ -362,6 +378,11 @@ function Connect(sender, signal, recv, fun)
     local t = s[signal]
 
     t[#t + 1] = function() fun(recv) end
+
+    --remeber connections to clean up in 'DestroyActor'
+    if recv.Connections == nil then recv.Connections = {} end
+    if recv.Connections[t] ~= nil then _G.print("WARNING: actor of class '" .. recv.Env.Class .. "' is already connected to signal. ") return end
+    recv.Connections[t] = t[#t]
 end
 
 function Emit(me, signal)
