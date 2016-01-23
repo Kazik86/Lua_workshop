@@ -382,7 +382,10 @@ function Connect(sender, signal, recv, fun)
 
     local t = sender.Signals[signal]
 
-    t[#t + 1] = function() fun(recv) end
+    t[#t + 1] = function() if recv.State ~= state_Disabled then
+			       fun(recv)
+			   end
+	        end
 
     --remeber connections to clean up in 'DestroyActor'
     if recv.Connections == nil then recv.Connections = {} end
