@@ -330,7 +330,7 @@ end
 
 function Enable(me)
     if me.StateBeforeDisable == nil then
-	_G.print("WARNING: attempt to 'Enable' actor '" .. me.Env.Class .. "' defined in " .. me.Env.Script .. " without maching 'Disable'")
+	_G.error("ERROR: attempt to 'Enable' actor without maching 'Disable'", 2)
 	return
     end
 
@@ -386,7 +386,7 @@ function Connect(sender, signal, recv, fun)
 
     --remeber connections to clean up in 'DestroyActor'
     if recv.Connections == nil then recv.Connections = {} end
-    if recv.Connections[t] ~= nil then _G.print("WARNING: actor of class '" .. recv.Env.Class .. "' is already connected to signal. ") return end
+    if recv.Connections[t] ~= nil then _G.error("ERROR: actor already connected to signal.", 2) return end
     recv.Connections[t] = t[#t]
 end
 
