@@ -370,12 +370,17 @@ function DestroyActor(me, field)
     end
 end
 
-function Connect(sender, signal, recv, fun)
-    if sender.Signals == nil then sender.Signals = {} end
-    local s = sender.Signals
+function DefSignal(me, signal)
+    if me.Signals == nil then me.Signals = {} end
+    if me.Signals[signal] == nil then me.Signals[signal] = {} else _G.error("ERROR: signal already defined", 2) return end
+end
 
-    if s[signal] == nil then s[signal] = {} end
-    local t = s[signal]
+function Connect(sender, signal, recv, fun)
+    if sender.Signals == nil or sender.Signals[signal] == nil then
+	_G.error("ERROR: signal doesn't exist", 2)
+    end
+
+    local t = sender.Signals[signal]
 
     t[#t + 1] = function() fun(recv) end
 
@@ -391,6 +396,8 @@ function Emit(me, signal)
 	for i = 1, #s do
 	    s[i]()
 	end
+    else
+	_G.error("ERROR: emitting non-existent signal.", 2)
     end
 end
 

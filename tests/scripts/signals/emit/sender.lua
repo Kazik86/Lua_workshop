@@ -5,6 +5,9 @@ function Init(me)
     me.foo = CreateActor(me, "tests/scripts/signals/emit/foo.lua")
     me.bar = CreateActor(me, "tests/scripts/signals/emit/bar.lua")
 
+    DefSignal(me, "stateEnter")
+    DefSignal(me, "stateLeave")
+
     Connect(me, "stateEnter", me.foo, _G.Foo.enterHandler)
     Connect(me, "stateLeave", me.foo, _G.Foo.leaveHandler)
     Connect(me, "stateEnter", me.bar, _G.Bar.enterHandler)
