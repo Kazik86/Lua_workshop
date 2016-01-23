@@ -235,7 +235,7 @@ void eActor::callLuaFuncDeep(lua_State* aLua, const sModule* aModule, int aMeRef
 
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
 
-    if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+    if(eLuaState::pcall(aLua, 1, 0) != LUA_OK)
 	throw std::runtime_error(lua_tostring(aLua, -1));
 
     lua_pop(aLua, 1);
@@ -257,7 +257,7 @@ bool eActor::callLuaFuncShallow(lua_State* aLua, const sModule* aModule, int aMe
         funExists = true;
         lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
 
-        if(lua_pcall(aLua, 1, 0, 0) != LUA_OK)
+        if(eLuaState::pcall(aLua, 1, 0) != LUA_OK)
             throw std::runtime_error(lua_tostring(aLua, -1));
     }
 
@@ -279,7 +279,7 @@ bool eActor::callLuaFuncShallow_2(lua_State* aLua, const sModule* aModule, int a
         lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
         lua_pushvalue(aLua, 3);
 
-        if(lua_pcall(aLua, 2, 0, 0) != LUA_OK)
+        if(eLuaState::pcall(aLua, 2, 0) != LUA_OK)
             throw std::runtime_error(lua_tostring(aLua, -1));
     }
 
@@ -341,7 +341,7 @@ void eActor::shiftToState(lua_State* aLua, const char* aName)
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, iMeRef.front());
     lua_getfield(aLua, -3, aName);
 
-    if(lua_pcall(aLua, 2, 1, 0) != LUA_OK)
+    if(eLuaState::pcall(aLua, 2, 1) != LUA_OK)
 	throw std::runtime_error(iScript + ": while entering into '" + aName + "' - " + lua_tostring(aLua, -1));
     
     lua_pop(aLua, 2);

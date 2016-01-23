@@ -16,6 +16,8 @@ public:
     static void printValue(lua_State* aLua, int aIdx);
     static int callLuaFun(lua_State* aLua, int aMeRef);
     int loadFile(lua_State* aLua, const std::string& aPath);
+    static int traceback(lua_State* aLua);
+    static int pcall(lua_State* aLua, int aNarg, int aNres);
 
 private:
     eLuaState(const eLuaState& aOther);

@@ -128,7 +128,7 @@ void eLuaState::printValue(lua_State* aLua, int aIdx)
 int eLuaState::callLuaFun(lua_State* aLua, int aMeRef)
 {
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
-    if (lua_pcall(aLua, 1, 1, 0) != LUA_OK)
+    if (eLuaState::pcall(aLua, 1, 1) != LUA_OK)
 	throw std::runtime_error(lua_tostring(aLua, -1));
 
     int ret = static_cast<int>(lua_tointeger(aLua, -1));
@@ -161,4 +161,30 @@ int eLuaState::loadFile(lua_State* aLua, const std::string& aPath)
     
     SDL_RWclose(file);
     return luaL_loadbuffer(aLua, iBuf, fileSize, errorMsg.c_str());
+}
+
+// this function is copied from 'lua.c'
+int eLuaState::traceback(lua_State* aLua)
+{
+    const char* msg = lua_tostring(aLua, 1);
+
+    if (msg)
+        luaL_traceback(aLua, aLua, msg, 1);
+    else if (!lua_isnoneornil(aLua, 1)) {  /* is there an error object? */
+        if (!luaL_callmeta(aLua, 1, "__tostring"))  /* try its 'tostring' metamethod */
+            lua_pushliteral(aLua, "(no error message)");
+    }
+
+    return 1;
+}
+
+// based on 'docall' from 'lua.c'
+int eLuaState::pcall(lua_State* aLua, int aNarg, int aNres)
+{
+    int base = lua_gettop(aLua) - aNarg;  /* function index */
+    lua_pushcfunction(aLua, eLuaState::traceback);  /* push traceback function */
+    lua_insert(aLua, base);  /* put it under chunk and args */
+    int status = lua_pcall(aLua, aNarg, aNres, base);
+    lua_remove(aLua, base);  /* remove traceback function */
+    return status;
 }

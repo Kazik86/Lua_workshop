@@ -191,7 +191,7 @@ sModule& eLuaModuleMgr::add(lua_State* aLua, const std::string& aName)
 	    lua_pushvalue(aLua, -2);
 	    lua_setupvalue(aLua, -2, 1);
 
-	    if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
+	    if (eLuaState::pcall(aLua, 0, 0) != LUA_OK)
 		throw std::runtime_error(lua_tostring(aLua, -1));
 
 	    // hierarchia dziedziczenia
@@ -295,7 +295,7 @@ void eLuaModuleMgr::callChunk(lua_State* aLua, int aModuleRef)
     lua_rawgeti(aLua, LUA_REGISTRYINDEX, aModuleRef);
     lua_setupvalue(aLua, -2, 1);
 
-    if (lua_pcall(aLua, 0, 0, 0) != LUA_OK)
+    if (eLuaState::pcall(aLua, 0, 0) != LUA_OK)
         throw std::runtime_error(lua_tostring(aLua, -1));
 }
 
