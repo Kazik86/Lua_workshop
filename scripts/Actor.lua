@@ -382,9 +382,10 @@ function Connect(sender, signal, recv, fun)
 
     local t = sender.Signals[signal]
 
-    t[#t + 1] = function() if recv.State ~= state_Disabled then
-			       fun(recv)
-			   end
+    t[#t + 1] = function(params)
+	            if recv.State ~= state_Disabled then
+		        fun(recv, params)
+		    end
 	        end
 
     --remeber connections to clean up in 'DestroyActor'
@@ -393,11 +394,11 @@ function Connect(sender, signal, recv, fun)
     recv.Connections[t] = t[#t]
 end
 
-function Emit(me, signal)
+function Emit(me, signal, params)
     if me.Signals and me.Signals[signal] then
 	local s = me.Signals[signal]
 	for i = 1, #s do
-	    s[i]()
+	    s[i](params)
 	end
     else
 	_G.error("ERROR: emitting non-existent signal.", 2)
