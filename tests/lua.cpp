@@ -363,6 +363,9 @@ TEST_FIXTURE(sFixture, GadgetEvent)
 
     a.update(lua, KDelta);
     a.update(lua, KDelta);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
+    a.update(lua, KDelta);
 
     a.callLuaFunc(lua, "test");
 

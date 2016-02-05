@@ -9,6 +9,8 @@ DEFINE_GADGET_METHOD_1(gUnitTest, isValGreater)
 
 // events
 DEFINE_GADGET_EVENT(gUnitTest, onEqual)
+DEFINE_GADGET_EVENT(gUnitTest, onEven)
+DEFINE_GADGET_EVENT(gUnitTest, onGreater)
 
 DEFINE_GADGET_API(gUnitTest)
 {
@@ -21,6 +23,8 @@ DEFINE_GADGET_API(gUnitTest)
 
     // events
     REGISTER_GADGET_EVENT(onEqual)
+    REGISTER_GADGET_EVENT(onEven)
+    REGISTER_GADGET_EVENT(onGreater)
     {0, 0}
 };
 
@@ -36,8 +40,18 @@ int gUnitTest::update(lua_State* aLua, float /* aDelta */)
 {
     ++iVal;
 
+    if (iVal % 2 == 0)
+        return emit(aLua, onEven, iVal);
+
     if (iVal == iEqualToVal)
 	return emit(aLua, onEqual);
+
+    if (iVal > iEqualToVal) {
+        Script::setField(aLua, iOnGreaterReturn, "currentVal", iVal);
+        Script::setField(aLua, iOnGreaterReturn, "delta", iVal - iEqualToVal);
+
+        return emit(aLua, onGreater, iOnGreaterReturn);
+    }
 
     return 0;
 }

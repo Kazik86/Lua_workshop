@@ -20,7 +20,13 @@ public:
     DECLARE_GADGET_METHOD(isValGreater)
 
     // events
-    DECLARE_GADGET_EVENT(onEqual)
+    DECLARE_GADGET_EVENT(onEqual)   // doesn't return any value
+    DECLARE_GADGET_EVENT(onEven)    // returns single value
+    DECLARE_GADGET_EVENT(onGreater) // returns multiple values via table
+
+private: 
+    eLuaTable iOnGreaterReturn;     // always create as a data member!
+
 
 private:
     bool isValGreater(lua_State* aLua);
