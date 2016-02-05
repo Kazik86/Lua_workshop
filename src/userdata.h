@@ -107,6 +107,26 @@
     {#aName, aName##_lua},
 
 
+// return multiple values stuff ///////////////////////////////////////
+
+class eLuaTable
+{
+    public:
+        eLuaTable();
+        ~eLuaTable();
+
+    private:
+        eLuaTable(const eLuaTable& aOther);
+        eLuaTable& operator=(const eLuaTable& aOther);
+
+    public:
+        int getRef() const { return iRef; }
+
+    private:
+        int iRef;
+};
+
+
 // event //////////////////////////////////////////////////////////////
 
 struct sEvent
@@ -262,6 +282,22 @@ template <>
 inline void pushVal(lua_State* aLua, void* const& aVal)
 {
     lua_pushlightuserdata(aLua, aVal);
+}
+
+template <>
+inline void pushVal(lua_State* aLua, const eLuaTable& aVal)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aVal.getRef());
+}
+
+template <typename T>
+void setField(lua_State* aLua, const eLuaTable& aTable, const char* aField, const T& aVal)
+{
+    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aTable.getRef());
+    lua_pushstring(aLua, aField);
+    pushVal(aLua, aVal);
+    lua_rawset(aLua, -3);
+    lua_pop(aLua, 1);
 }
 
 }
