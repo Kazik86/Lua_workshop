@@ -213,7 +213,7 @@ inline bool getVal(lua_State* aLua, int aIdx)
 }
 
 template <typename T>
-inline void pushVal(lua_State* aLua, T aVal)
+inline void pushVal(lua_State* aLua, const T& aVal)
 {
     // z tego szablonu nigdy nie powinienem korzystać. Wszystkie obsługiwane
     // typy opędzane są za pomocą wersji specjalizowanych. Celowo poniżej dodaję
@@ -223,43 +223,43 @@ inline void pushVal(lua_State* aLua, T aVal)
 }
 
 template <>
-inline void pushVal(lua_State* aLua, int aVal)
+inline void pushVal(lua_State* aLua, const int& aVal)
 {
     lua_pushinteger(aLua, aVal);
 }
 
 template <>
-inline void pushVal(lua_State* aLua, unsigned int aVal)
+inline void pushVal(lua_State* aLua, const unsigned int& aVal)
 {
     lua_pushunsigned(aLua, aVal);
 }
 
 template <>
-inline void pushVal(lua_State* aLua, float aVal)
+inline void pushVal(lua_State* aLua, const float& aVal)
 {
     lua_pushnumber(aLua, aVal);
 }
 
 template <>
-inline void pushVal(lua_State* aLua, const char* aVal)
+inline void pushVal(lua_State* aLua, const char* const& aVal)
 {
     lua_pushstring(aLua, aVal);
 }
 
 template <>
-inline void pushVal(lua_State* aLua, std::string aVal)
+inline void pushVal(lua_State* aLua, const std::string& aVal)
 {
     lua_pushstring(aLua, aVal.c_str());
 }
 
 template <>
-inline void pushVal(lua_State* aLua, bool aVal)
+inline void pushVal(lua_State* aLua, const bool& aVal)
 {
     lua_pushboolean(aLua, aVal);
 }
 
 template <>
-inline void pushVal(lua_State* aLua, void* aVal)
+inline void pushVal(lua_State* aLua, void* const& aVal)
 {
     lua_pushlightuserdata(aLua, aVal);
 }
