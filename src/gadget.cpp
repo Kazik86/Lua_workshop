@@ -1,8 +1,5 @@
 #include "gadget.h"
 
-#include "actor.h"
-#include "luaState.h"
-
 const struct luaL_Reg eGadget::iCommonMethods[] = 
 { 
     {"enable", eGadget::enable},

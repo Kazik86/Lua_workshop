@@ -2,6 +2,7 @@
 #define GADGET_H
 
 #include "actor.h"
+#include "luaState.h"
 #include "userdata.h"
 
 #include <new>
@@ -142,8 +143,6 @@ int aClass::luaOpen(lua_State* aLua)                                    \
     return 1;								\
 }
 
-class sEvent;
-
 class eGadget
 {
 public:
@@ -158,7 +157,23 @@ protected:
 
     static void registerCommonMethods(lua_State* aLua);
     eActor* getActor() { return iActor; }
+
     int emit(lua_State* aLua, const sEvent& aEvent);
+
+    template <typename T>
+    int emit(lua_State* aLua, const sEvent& aEvent, const T& aVal)
+    {
+        const int& evRef = aEvent.iEventRef;
+
+        if (evRef != LUA_NOREF) {
+            lua_rawgeti(aLua, LUA_REGISTRYINDEX, evRef);
+            lua_rawgeti(aLua, LUA_REGISTRYINDEX, iActor->getMeRef());
+            Script::pushVal(aLua, aVal);
+            return eLuaState::callLuaFun<2>(aLua);
+        }
+
+        return 0;
+    }
 
 private:
     eGadget(const eGadget& aOther);
