@@ -124,19 +124,6 @@ void eLuaState::printValue(lua_State* aLua, int aIdx)
     }
 }
 
-// it presumes that function is already on top of the stack
-int eLuaState::callLuaFun(lua_State* aLua, int aMeRef)
-{
-    lua_rawgeti(aLua, LUA_REGISTRYINDEX, aMeRef);
-    if (eLuaState::pcall(aLua, 1, 1) != LUA_OK)
-	throw std::runtime_error(lua_tostring(aLua, -1));
-
-    int ret = static_cast<int>(lua_tointeger(aLua, -1));
-    lua_pop(aLua, 1);
-
-    return ret;
-}
-
 int eLuaState::loadFile(lua_State* aLua, const std::string& aPath)
 {
     ::memset(iBuf, 0, sizeof(iBuf));
