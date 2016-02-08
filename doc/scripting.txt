@@ -50,6 +50,64 @@ o 'foo' z klasy "A": me.A.foo = 1
 
 				     ***
 
+[dobre praktyki]
+Kod szczególnie "ciężki" obliczeniowo czyli np. różnej maści 'malloc', 
+ładowanie z pliku itp. (c++) albo tworzenie nowych aktorów, gadżetów itp. 
+(lua), powinien być umieszczany w konstruktorze (c++), lub funkcji 'Init' 
+(lua). O ile w przypadku C++ programiści mają to już nieźle wpojone, to od 
+strony Lua trzeba się tego nauczyć.
+
+Podobnie jak w C++ tak i w Lua nie mam żadnego mechanizmu wymuszającego 
+umieszczanie "cięzkiego" kodu w 'Init', więc nic nie stoi na przeszkodzie aby 
+jakiś niechluj umieścił taką inicjalizację np. w 'Update' stanu. Powody są 
+dwa:
+1. Nie mam dedykowanego parsera do mojego języka, korzystam tylko z parsera 
+   czystego Lua, a więc nie jestem w stanie wychwycić tego typu przypadków;
+2. preferuję konwencję niż sztywne ograniczenia ze strony kompilatora.
+
+Bywają jednakże sytuacje nieoczywiste np. inicjalizacja 'eLuaTable' czyli typu 
+odpowiedzialnego za jednoczesne przesłanie kilku wartości do skryptu. 
+_Pierwsze_ wywołanie w run time:
+
+Script::setField(aLua, iEventData, "foo", iFooVal);
+
+w 'update' gadżetu, może skutkować przydzieleniem w tablicy 'iEventData' 
+dodatkowej przestrzeni na obsługę hasza 'foo'. Lepiej aby to _pierwsze_ 
+wywołanie i związany z nim ewentualny narzut przenieść do konstruktora, np. 
+tak:
+
+Script::setField(aLua, iEventData, "foo", int());
+
+				     ***
+
+[obsługa wejścia]
+Eventy urządzeń wejściowych podzieliłem na dwa typy: dyskretne (wciśnięcie 
+klawisza na klawiaturze, przycisku myszy, tapnięcie na ekranie dotykowym) 
+i ciągłe (ruch myszką). Obsługą tego pierwszego typu zajmuje się Lua za pomocą 
+mechanizmu tzw. "akcji", zaś to drugie powinno byc realizowane tylko po 
+stronie C++.
+
+Ten podział wymuszony jest przez wzgląd na wydajność. Event 'SDL_MOUSEMOVE' 
+może byc generowany kilkadziesiąt (albo i więcej) razy na sekundę. Jeśli 
+uwzględnić fakt, że każdy taki event pociągałby za sobą rozesłanie sygnałów do 
+wszystkich zainteresowanych aktorów po stronie Lua, to narzut może okazać się 
+zbyt duży. Co prawda nie testowałem tego w praktyce, ale intuicja podpowiada 
+mi najgorsze scenariusze.
+
+Poza tym nie bardzo widzę sens obsługi tego rodzaju eventu od strony logiki 
+skryptu. No bo załóżmy, że chcemy zmienić stan aktora na 'mysz_sie_porusza' 
+w reakcji na event 'ruch myszą'. W odpowiedzi na jaki event wyjdziemy z tego 
+stanu? SDL nie ma czegoś w rodzaju 'SDL_MOUSEMOVESTOPPED'. Eventy dyskretne 
+jak najbardziej takie "dopełniające" eventy posiadają np. 'SDL_KEYDOWN' 
+i 'SDL_KEYUP'.
+
+Realizacja obsługi takiego eventu ciągłego może mieć postać gadżetu, który 
+w konstruktorze ma wywołanie 'SDL_AddEventWatch', a w destruktorze 
+'SDL_DelEventWatch' i odpowiedni handler jako funkcję w anonimowym 
+nejmspejsie. 
+
+				     ***
+
 TODO:
 
 [krytyczne]
