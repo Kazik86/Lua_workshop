@@ -149,7 +149,7 @@ public:
     bool isEnabled() const { return iIsEnabled; }
     virtual int  update(lua_State* /* aLua */, float /* aDelta */) { return 0; }
     virtual void restart() {}
-    virtual void begin() {}
+    virtual void begin(lua_State* /* aLua */) {}
 
 protected:
     eGadget();

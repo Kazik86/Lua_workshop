@@ -15,7 +15,7 @@ public:
     gTexture();
     ~gTexture();
 
-    void begin();
+    void begin(lua_State* /* aLua */);
     int  update(lua_State* aLua, float aDelta);
     void draw(SDL_Renderer* aRenderer, float aDelta);
 

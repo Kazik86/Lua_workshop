@@ -65,7 +65,7 @@ gTexture::~gTexture()
 
 }
 
-void gTexture::begin()
+void gTexture::begin(lua_State* /* aLua */)
 {
     iTexture = eTextureMgr::getMe()->getTexture(iName);
 

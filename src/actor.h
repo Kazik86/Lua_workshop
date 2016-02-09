@@ -71,7 +71,7 @@ private:
     void callLuaFuncThroughInheritanceHierarchyBackward(lua_State* aLua, const char* aFunctionName, TLuaCaller aFun);
 
     void shareInternalsWithScript(lua_State* aLua, int aRef);
-    void beginGadget();
+    void beginGadget(lua_State* aLua);
     void shiftToState(lua_State* aLua, const char* aName);
     void shiftToEntryState(lua_State* aLua);
     void reenterState(lua_State* aLua);

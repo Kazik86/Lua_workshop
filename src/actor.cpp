@@ -97,7 +97,7 @@ void eActor::doScript(lua_State* aLua)
     iModule = &eLuaModuleMgr::getMe()->load(aLua, iScript);
     createMeTables(aLua);
     callInit(aLua);
-    beginGadget();
+    beginGadget(aLua);
     shiftToEntryState(aLua);
 }
 
@@ -323,10 +323,10 @@ void eActor::addGadget(eGadget* aGadget)
     iGadgets.push_back(aGadget);
 }
 
-void eActor::beginGadget()
+void eActor::beginGadget(lua_State* aLua)
 {
     for (eGadget* g : iGadgets)
-	g->begin();
+	g->begin(aLua);
 }
 
 void eActor::shiftToEntryState(lua_State* aLua)
