@@ -4,6 +4,8 @@ Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function Init(me)
     me.input = CreateActor(me, "scripts/input.lua")
+    me.inputTest = CreateActor(me, "scripts/inputTest.lua")
+
     me.splashScreen = _G.gTexture.create(me)
     me.splashScreen:setName("textures/engine.png")
     me.splashScreen:setPosFromActor(false)
