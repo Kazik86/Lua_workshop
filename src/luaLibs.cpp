@@ -4,6 +4,7 @@
 #include "actor.h"
 #include "actorMgr.h"
 #include "gFpsCounter.h"
+#include "gSdlInput.h"
 #include "gMove.h"
 #include "gRotate.h"
 #include "gRandomPos.h"
@@ -33,6 +34,7 @@ const luaL_Reg eLuaState::iGadgetLibs[] = {
     {"eActorMgr", eActorMgr::luaOpen},
     {"eLuaModuleMgr", eLuaModuleMgr::luaOpen},
     {"gFpsCounter", gFpsCounter::luaOpen},
+    {"gSdlInput", gSdlInput::luaOpen},
     {"gMove", gMove::luaOpen},
     {"gRotate", gRotate::luaOpen},
     {"gRandomPos", gRandomPos::luaOpen},

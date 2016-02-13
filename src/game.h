@@ -32,6 +32,7 @@ public:
     eLuaState* getLua();
     void mainLoop();
     const sGameProps& getGameProps() const { return iGameProps; }
+    void shutdown() { iIsRunning = false; }
 
 #ifdef KPR_REAL_TIME_UPDATE
     public:
@@ -45,7 +46,6 @@ private:
 
     void createModules();
     void destroyModules();
-    void handleEvents();
 
 private:
     const sGameProps iGameProps;

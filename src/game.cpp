@@ -88,7 +88,6 @@ void eGame::mainLoop()
                 iRtu.update();
 #endif
 
-		handleEvents();
 		iResources->iActorMgr.update(iResources->iLua.getRaw(), KDelta);
 	    }
 
@@ -96,20 +95,6 @@ void eGame::mainLoop()
 	}
 
 	eRenderer::getMe()->render( float(iAccumulator) / float(1000) );
-    }
-}
-
-void eGame::handleEvents()
-{
-    SDL_Event event;
-    while (SDL_PollEvent(&event)) {
-	switch (event.type) {
-	    case SDL_QUIT:
-		iIsRunning = false;
-		break;
-	    default:
-		break;
-	}
     }
 }
 
