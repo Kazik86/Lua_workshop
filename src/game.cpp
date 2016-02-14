@@ -92,6 +92,7 @@ void eGame::mainLoop()
                 iRtu.update();
 #endif
 
+                renderer->clearRenderingQueue();
 		iResources->iActorMgr.update(iResources->iLua.getRaw(), KDelta);
 	    }
 

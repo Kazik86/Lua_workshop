@@ -1,8 +1,16 @@
 #include "renderer.h"
 
+#include "actorMgr.h"
+
+#include <iostream>
 #include <stdexcept>
 
 eRenderable::eRenderable()
+{
+    eRenderer::getMe()->incRenderables();
+}
+
+void eRenderable::addToRenderingQueue()
 {
     eRenderer::getMe()->addRenderable(this);
 }
@@ -13,7 +21,9 @@ eRenderer* eRenderer::iMe = 0;
 
 eRenderer::eRenderer():
     iWindow(0),
-    iRenderer(0)
+    iRenderer(0),
+    iRenderables(eActorMgr::EActorsCapacity),
+    iRenderablesNum(0)
 {
     if (iMe)
 	throw std::runtime_error("eRenderer: multiple instances not allowed.");
@@ -73,4 +83,12 @@ void eRenderer::render(float aDelta)
 void eRenderer::addRenderable(eRenderable* aObj)
 {
     iRenderables.push_back(aObj);
+}
+
+void eRenderer::incRenderables()
+{
+    ++iRenderablesNum;
+
+    if (iRenderablesNum > eActorMgr::EActorsCapacity)
+        std::cout << "WARNING: eRenderer::iRenderablesNum > eActorMgr::EActorsCapacity" << std::endl;
 }

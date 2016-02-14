@@ -14,6 +14,7 @@ class eActorMgr
 {
     DECLARE_USERDATA_CLASS()
 
+public:
     enum { EActorsCapacity = 64 };
 
 public:
