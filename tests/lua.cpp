@@ -600,6 +600,23 @@ TEST_FIXTURE(sFixture, SignalParams)
     CHECK(true);
 }
 
+TEST_FIXTURE(sFixture, MuteSignal)
+{
+    eActorMgr* am = eActorMgr::getMe();
+    lua_State* lua = iGame.getLua()->getRaw();
+
+    eActor& a = am->add(lua, "tests/scripts/signals/mute/receiver.lua", 0);
+
+    am->update(lua, KDelta);
+    am->update(lua, KDelta);
+    am->update(lua, KDelta);
+    am->update(lua, KDelta);
+
+    a.callLuaFunc(lua, "test");
+
+    CHECK(true);
+}
+
 TEST_FIXTURE(sFixture, ActorHasChildrenInCpp)
 {
     eActorMgr* am = eActorMgr::getMe();
