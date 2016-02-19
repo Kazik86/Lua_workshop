@@ -382,26 +382,38 @@ function Connect(sender, signal, recv, fun)
 
     local t = sender.Signals[signal]
 
-    t[#t + 1] = function(params)
-	            if recv.State ~= state_Disabled then
-		        fun(recv, params)
-		    end
-	        end
+    t[#t + 1] = { mute = false, actor = recv, fun = fun }
 
     --remeber connections to clean up in 'DestroyActor'
     if recv.Connections == nil then recv.Connections = {} end
     if recv.Connections[t] ~= nil then _G.error("ERROR: actor already connected to signal.", 2) return end
     recv.Connections[t] = t[#t]
+    return t[#t]
 end
 
 function Emit(me, signal, params)
     if me.Signals and me.Signals[signal] then
-	local s = me.Signals[signal]
-	for i = 1, #s do
-	    s[i](params)
+	local ss = me.Signals[signal]
+	for i = 1, #ss do
+	    local s = ss[i]
+	    if not s.mute and s.actor.State ~= state_Disabled then
+		s.fun(s.actor, params)
+	    end
 	end
     else
 	_G.error("ERROR: emitting non-existent signal.", 2)
+    end
+end
+
+function MuteSignal(s, flag)
+    s.mute = flag
+end
+
+function MuteAllSignals(actor, flag)
+    if actor.Connections == nil then return end
+
+    for _, v in _G.pairs(actor.Connections) do
+	v.mute = flag
     end
 end
 
