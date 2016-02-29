@@ -73,7 +73,7 @@ Script::setField(aLua, iEventData, "foo", iFooVal);
 
 w 'update' gadżetu, może skutkować przydzieleniem w tablicy 'iEventData' 
 dodatkowej przestrzeni na obsługę hasza 'foo'. Lepiej aby to _pierwsze_ 
-wywołanie i związany z nim ewentualny narzut przenieść do konstruktora, np. 
+wywołanie i związany z nim ewentualny narzut przenieść do 'begin', np. 
 tak:
 
 Script::setField(aLua, iEventData, "foo", int());
