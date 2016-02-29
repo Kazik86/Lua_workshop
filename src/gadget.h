@@ -74,6 +74,7 @@
 public:								    \
     static int luaOpen (lua_State* aLua);			    \
     static const char* iClassName;				    \
+    const char* getClassName() const { return iClassName; }         \
 								    \
 private:                                                            \
     static int create(lua_State* aLua);                             \
@@ -150,6 +151,7 @@ public:
     virtual int  update(lua_State* /* aLua */, float /* aDelta */) { return 0; }
     virtual void restart() {}
     virtual void begin(lua_State* /* aLua */) {}
+    virtual const char* getClassName() const = 0;
 
 protected:
     eGadget();

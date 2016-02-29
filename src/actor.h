@@ -50,6 +50,7 @@ public:
     void enable() { iEnabled = true; }
     void disable() { iEnabled = false; }
     bool isEnabled() const { return iEnabled; }
+    eGadget* findGadgetByClass(const char* aClass) const;
 
     const glm::vec2& getPos() const { return iPos; }
     void setPos(const glm::vec2& aPos) { iPos = aPos; }

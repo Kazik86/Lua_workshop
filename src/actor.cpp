@@ -5,6 +5,8 @@
 #include "luaState.h"
 
 #include <cassert>
+#include <cstring>
+#include <limits>
 #include <stdexcept>
 #include <vector>
 
@@ -357,3 +359,12 @@ void eActor::reenterState(lua_State* aLua)
     lua_pop(aLua, 2);
 }
 
+eGadget* eActor::findGadgetByClass(const char* aClass) const
+{
+    for (eGadget* g : iGadgets) {
+        if (::strcmp(g->getClassName(), aClass) == 0)
+            return g;
+    }
+
+    return 0;
+}
