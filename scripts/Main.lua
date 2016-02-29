@@ -4,12 +4,9 @@ Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
 
 function Init(me)
     me.input = CreateActor(me, "scripts/input.lua")
-    me.splashScreen = _G.gTexture.create(me)
-    me.splashScreen:setName("textures/engine.png")
-    me.splashScreen:setPosFromActor(false)
-    me.splashScreen:setRotFromActor(false)
-    me.splashScreen:setSdlRectX(0) me.splashScreen:setSdlRectY(0)
-    me.splashScreen:setFadeDuration(1)
+
+    me.splashScreen = CreateActor(me, "scripts/splashScreen.lua")
+    Connect(me.splashScreen, "finished", me, function(me) return Shift(me, state_idle) end)
 
     me.gFpsCounter = _G.gFpsCounter.create(me)
     me.gFpsCounter:enable()
@@ -17,35 +14,11 @@ function Init(me)
     me.gTimer = _G.gTimer.create(me)
 end
 
-
 Super.DefState(This, {
     Name = "state_splashScreen",
-    Gadgets = { "gTimer", "splashScreen" },
 
     Enter = function(me)
-	me.gTimer:start()
-    end,
-
-    Update = function(me)
-	if (me.gTimer:isElapsed(2000)) then
-	    return Shift(me, state_splashScreen_fadeOut)
-	end
-    end
-})
-
-
-Super.DefState(This, {
-    Name = "state_splashScreen_fadeOut",
-    Gadgets = { "splashScreen" },
-
-    Enter = function(me)
-	me.splashScreen:fadeOut()
-    end,
-
-    Update = function(me)
-	if (me.splashScreen:isFadeCompleted()) then
-	    return Shift(me, state_idle)
-	end
+	me.splashScreen.Env.start(me.splashScreen)
     end
 })
 
