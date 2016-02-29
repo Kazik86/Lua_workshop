@@ -32,6 +32,7 @@ public:
 
     DECLARE_GADGET_METHOD(fadeIn)
     DECLARE_GADGET_METHOD(fadeOut)
+    DECLARE_GADGET_METHOD(fadeOff)
     DECLARE_GADGET_METHOD(isFadeCompleted)
     DECLARE_GADGET_WRITER(setFadeDuration)
     DECLARE_GADGET_WRITER(setAlpha)
@@ -39,6 +40,7 @@ public:
 private:
     void fadeIn(lua_State* aLua);
     void fadeOut(lua_State* aLua);
+    void fadeOff(lua_State* aLua);
     bool isFadeCompleted(lua_State* aLua);
 
 private:
