@@ -37,8 +37,14 @@ function Shift(me, newStateRaw)
 
     newState.EnterEx(me)
 
-    _G.eActor.shift(me.eActor, newState)
-    me.State = newState
+    if oldState == me.State then    -- there was no state shift in 'Enter'
+	_G.eActor.shift(me.eActor, newState)
+	me.State = newState
+
+	if (me.DumpState ~= nil) then
+	    _G.print(me.Env.Class .. " entered " .. newState.FullName)
+	end
+    end
 
     return 1
 end
