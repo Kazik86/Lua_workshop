@@ -25,10 +25,6 @@ function Shift(me, newStateRaw)
 	end
 
 	oldState.LeaveEx(me)
-
-	if (me.DumpState ~= nil) then
-	    _G.print(me.Env.Class .. " left " .. oldState.FullName)
-	end
     end
 
     if (me.DumpState ~= nil) then
