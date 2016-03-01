@@ -6,6 +6,7 @@
 
 class gMove;
 class gRotate;
+class gTransform;
 
 class gTexture: public eGadget, public eRenderable
 {
@@ -57,6 +58,8 @@ private:
     float iFadeDuration;
     float iFadeDelta;
     unsigned int iAlpha;
+
+    gTransform* iTransform;
 };
 
 #endif // G_TEXTURE_H

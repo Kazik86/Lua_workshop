@@ -39,13 +39,6 @@ namespace
 	return 0;
     }
 
-    int getY(lua_State* aLua)
-    {
-	const eActor* me = Script::getUdata<eActor>(aLua);
-	lua_pushnumber(aLua, me->getPos().y);
-	return 1;
-    }
-
     int enable(lua_State* aLua)
     {
         eActor* me = Script::getUdata<eActor>(aLua);
@@ -68,7 +61,6 @@ DEFINE_USERDATA_API(eActor)
     {"enable", ::enable},
     {"getScript", ::scriptName},
     {"getGadgetsNum", ::gadgetsNum},
-    {"getY", ::getY},
     {"shift", ::shift},
     {0, 0}
 };
@@ -81,8 +73,6 @@ eActor::eActor(const std::string& aScript, size_t aId, size_t aParentId):
     iParentId(aParentId),
     iFsm(*this),
     iScript(aScript),
-    iPos(0, 0),
-    iRot(0),
     iEnabled(true)
 {
 }

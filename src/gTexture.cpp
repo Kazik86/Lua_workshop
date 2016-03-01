@@ -2,6 +2,7 @@
 
 #include "gRotate.h"
 #include "gMove.h"
+#include "gTransform.h"
 #include "textureMgr.h"
 
 #include <glm/glm.hpp>
@@ -57,9 +58,11 @@ gTexture::gTexture():
     iFade(ENone),
     iFadeDuration(1),
     iFadeDelta(0),
-    iAlpha(1)
+    iAlpha(1),
+    iTransform(0)
 {
-
+    iTransform = static_cast<gTransform*>(getActor()->findGadgetByClass("gTransform"));
+    if (! iTransform) throw std::runtime_error(getActor()->getScript() + ", gTexture: 'gTransform' not found.");
 }
 
 gTexture::~gTexture()
@@ -103,7 +106,7 @@ void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
 {
     if (iIsEnabled) {
         if (iPosFromActor && i_gMove && i_gMove->isEnabled()) {
-            glm::vec2 pos = getActor()->getPos();
+            glm::vec2 pos = iTransform->getPos();
             const glm::vec2& dir = i_gMove->getDir();
             float speed =  i_gMove->getSpeed();
             pos += dir * speed * aDelta;
@@ -111,7 +114,7 @@ void gTexture::draw(SDL_Renderer* aRenderer, float aDelta)
             iSdlRect.y = pos.y + 0.5f;
         }
 
-        double angle = getActor()->getRotate();
+        double angle = iTransform->getRotate();
         if (iRotFromActor && i_gRotate && i_gRotate->isEnabled()) {
             int dir = i_gRotate->getDir();
             float speed =  i_gRotate->getOmega();

@@ -55,7 +55,8 @@ Super.DefState(This, {
     end,
 
     Update = function(me)
-	if (_G.eActor.getY(me.eActor) > 300) then
+	_, y = getPos(me)
+	if y > 300 then
 	    return Shift(me, state_sleep)
 	end
     end
@@ -66,7 +67,8 @@ Super.DefState(This, {
     Parent = state_moveDown_parent,
 
     Update = function(me)
-	if (_G.eActor.getY(me.eActor) > 600) then
+	_, y = getPos(me)
+	if y > 600 then
 	    return Shift(me, state_main)
 	end
     end

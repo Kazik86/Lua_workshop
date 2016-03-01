@@ -5,6 +5,8 @@
 
 #include <glm/glm.hpp>
 
+class gTransform;
+
 class gMove: public eGadget
 {
     DECLARE_GADGET_CLASS()
@@ -25,6 +27,7 @@ public:
 private:
     glm::vec2 iDir;
     float iSpeed;
+    gTransform* iTransform;
 };
 
 #endif // G_MOVE_H

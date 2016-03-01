@@ -3,6 +3,8 @@
 
 #include "gadget.h"
 
+class gTransform;
+
 class gRandomPos: public eGadget
 {
     DECLARE_GADGET_CLASS()
@@ -12,6 +14,9 @@ public:
     ~gRandomPos();
 
     int update(lua_State* aLua, float aDelta);
+
+private:
+    gTransform* iTransform;
 };
 
 #endif // G_RANDOM_POS_H

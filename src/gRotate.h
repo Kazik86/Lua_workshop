@@ -3,6 +3,8 @@
 
 #include "gadget.h"
 
+class gTransform;
+
 class gRotate: public eGadget
 {
     DECLARE_GADGET_CLASS()
@@ -22,6 +24,7 @@ public:
 private:
     int iDir;
     float iOmega;
+    gTransform* iTransform;
 };
 
 #endif // G_ROTATE_H

@@ -5,7 +5,6 @@
 #include "luaModule.h"
 #include "userdata.h"
 
-#include <glm/glm.hpp>
 #include <list>
 #include <string>
 
@@ -52,12 +51,6 @@ public:
     bool isEnabled() const { return iEnabled; }
     eGadget* findGadgetByClass(const char* aClass) const;
 
-    const glm::vec2& getPos() const { return iPos; }
-    void setPos(const glm::vec2& aPos) { iPos = aPos; }
-
-    double getRotate() const { return iRot; }
-    void setRotate(double aRot) { iRot = aRot; }
-
 private:
     eActor(const eActor& aOther);
     eActor& operator=(const eActor& aOther);
@@ -87,8 +80,6 @@ private:
     std::string iScript;
     const sModule* iModule;
     std::list<eGadget*> iGadgets;
-    glm::vec2 iPos;
-    double iRot;
     bool iEnabled;
 };
 
