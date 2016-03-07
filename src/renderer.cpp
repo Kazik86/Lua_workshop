@@ -2,10 +2,12 @@
 
 #include "actorMgr.h"
 
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
 
-eRenderable::eRenderable()
+eRenderable::eRenderable():
+    iZOrder(0)
 {
     eRenderer::getMe()->incRenderables();
 }
@@ -23,6 +25,7 @@ eRenderer::eRenderer():
     iWindow(0),
     iRenderer(0),
     iRenderables(eActorMgr::EActorsCapacity),
+    iRenderablesZOrder(16),
     iRenderablesNum(0)
 {
     if (iMe)
@@ -77,12 +80,19 @@ void eRenderer::render(float aDelta)
     for (eRenderable* r : iRenderables)
 	r->draw(iRenderer, aDelta);
 
+    std::sort(iRenderablesZOrder.begin(), iRenderablesZOrder.end(), [](eRenderable* aLhs, eRenderable* aRhs) {
+            return aLhs->iZOrder < aRhs->iZOrder;
+    });
+
+    for (eRenderable* r : iRenderablesZOrder)
+        r->draw(iRenderer, aDelta);
+    
     SDL_RenderPresent(iRenderer);
 }
 
 void eRenderer::addRenderable(eRenderable* aObj)
 {
-    iRenderables.push_back(aObj);
+    aObj->iZOrder ? iRenderablesZOrder.push_back(aObj) : iRenderables.push_back(aObj);
 }
 
 void eRenderer::incRenderables()

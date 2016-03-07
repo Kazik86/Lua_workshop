@@ -15,6 +15,12 @@ public:
     int update(lua_State* /* aLua */, float /* aDelta */);
     void draw(SDL_Renderer* aRenderer, float aDelta);
 
+    // methods
+    DECLARE_GADGET_METHOD(setZOrder)
+
+private:
+    void setZOrder(lua_State* aLua) { iText.setZOrder(Script::getVal<int>(aLua, 2)); }
+
 private:
     eText iText;
     int iFrameCntr;

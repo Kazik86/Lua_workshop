@@ -9,6 +9,7 @@ function Init(me)
     Connect(me.splashScreen, "finished", me, function(me) return Shift(me, state_idle) end)
 
     me.gFpsCounter = _G.gFpsCounter.create(me)
+    me.gFpsCounter:setZOrder(1)
     me.gFpsCounter:enable()
 
     me.gTimer = _G.gTimer.create(me)

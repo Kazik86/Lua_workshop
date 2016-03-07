@@ -1,7 +1,12 @@
 #include "gFpsCounter.h"
 
+// methods
+DEFINE_GADGET_METHOD_0(gFpsCounter, setZOrder)
+
 DEFINE_GADGET_API(gFpsCounter)
 {
+    // methods
+    REGISTER_GADGET_METHOD(setZOrder)
     {0, 0}
 };
 

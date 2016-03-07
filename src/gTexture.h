@@ -30,6 +30,7 @@ public:
     DECLARE_GADGET_WRITER(setMoveGadget)
     DECLARE_GADGET_WRITER(setRotFromActor)
     DECLARE_GADGET_WRITER(setRotateGadget)
+    DECLARE_GADGET_WRITER(setZOrder)
 
     DECLARE_GADGET_METHOD(fadeIn)
     DECLARE_GADGET_METHOD(fadeOut)

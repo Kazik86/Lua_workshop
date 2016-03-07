@@ -7,12 +7,18 @@
 
 class eRenderable
 {
+    friend class eRenderer;
+
 public:
     eRenderable();
     virtual ~eRenderable() {}
 
     virtual void draw(SDL_Renderer* aRenderer, float aDelta) = 0;
     void addToRenderingQueue();
+    void setZOrder(int aVal) { iZOrder = aVal; }
+
+protected:
+    int iZOrder;
 };
 
 class eRenderer
@@ -28,7 +34,7 @@ public:
     SDL_Renderer* getRaw() { return iRenderer; }
     void addRenderable(eRenderable* aObj);
     void incRenderables();
-    void clearRenderingQueue() { iRenderables.clear(); }
+    void clearRenderingQueue() { iRenderables.clear(); iRenderablesZOrder.clear(); }
 
 private:
     eRenderer(const eRenderer& aOther);
@@ -39,6 +45,7 @@ private:
     SDL_Window* iWindow;
     SDL_Renderer* iRenderer;
     std::vector<eRenderable*> iRenderables;
+    std::vector<eRenderable*> iRenderablesZOrder;
     decltype(iRenderables)::size_type iRenderablesNum;
 };
 
