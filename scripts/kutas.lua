@@ -1,5 +1,5 @@
 Class = "Kutas"
-Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
+Super = _G.eLuaModuleMgr.derive("scripts/transform.lua")
 
 
 function Init(me)
@@ -55,7 +55,7 @@ Super.DefState(This, {
     end,
 
     Update = function(me)
-	_, y = getPos(me)
+	_, y = me.gTransform:getPos()
 	if y > 300 then
 	    return Shift(me, state_sleep)
 	end
@@ -67,7 +67,7 @@ Super.DefState(This, {
     Parent = state_moveDown_parent,
 
     Update = function(me)
-	_, y = getPos(me)
+	_, y = me.gTransform:getPos()
 	if y > 600 then
 	    return Shift(me, state_main)
 	end

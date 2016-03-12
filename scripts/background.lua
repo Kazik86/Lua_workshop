@@ -1,5 +1,5 @@
 Class = "Background"
-Super = _G.eLuaModuleMgr.derive("scripts/Actor.lua")
+Super = _G.eLuaModuleMgr.derive("scripts/transform.lua")
 
 function Init(me)
     me.gTexture = _G.gTexture.create(me)

@@ -8,6 +8,11 @@ function Init(me)
     me.splashScreen = CreateActor(me, "scripts/splashScreen.lua")
     Connect(me.splashScreen, "finished", me, function(me) return Shift(me, state_idle) end)
 
+    CreateActor(me, "scripts/background.lua")
+    for i = 1, 50 do
+	CreateActor(me, "scripts/kutas.lua")
+    end
+
     me.gFpsCounter = _G.gFpsCounter.create(me)
     me.gFpsCounter:setZOrder(1)
     me.gFpsCounter:enable()
