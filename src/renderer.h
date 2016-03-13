@@ -5,20 +5,36 @@
 #include <string>
 #include <vector>
 
+struct sRenderCopyEx
+{
+    SDL_Texture* iTexture;
+    SDL_Rect iSrcRect;
+    SDL_Rect iDstRect;
+    float iAngle;
+    SDL_Point iCenter;
+    SDL_RendererFlip iFlip;
+};
+
 class eRenderable
 {
     friend class eRenderer;
 
 public:
-    eRenderable();
+    eRenderable(std::vector::size_type aNum);
     virtual ~eRenderable() {}
 
-    virtual void draw(SDL_Renderer* aRenderer, float aDelta) = 0;
+private:
+    eRenderable(const eRenderable& aOther);
+    eRenderable& operator=(const eRenderable& aOther);
+
+public:
+    virtual void draw() = 0;
     void addToRenderingQueue();
     void setZOrder(int aVal) { iZOrder = aVal; }
 
 protected:
     int iZOrder;
+    std::vector<sRenderCopyEx> iRCE;
 };
 
 class eRenderer
@@ -31,7 +47,7 @@ public:
 
     void init(const std::string& aCaption, int aX, int aY, int aWidth, int aHeight, int aFlags);
     void render(float aDelta);
-    SDL_Renderer* getRaw() { return iRenderer; }
+    //SDL_Renderer* getRaw() { return iRenderer; }
     void addRenderable(eRenderable* aObj);
     void incRenderables();
     void clearRenderingQueue() { iRenderables.clear(); iRenderablesZOrder.clear(); }
@@ -42,6 +58,9 @@ public:
 private:
     eRenderer(const eRenderer& aOther);
     eRenderer& operator=(const eRenderer& aOther);
+
+private:
+    void renderCopyEx(const std::vector<eRenderable*>& aCollection) const;
 
 private:
     static eRenderer* iMe;

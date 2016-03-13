@@ -94,6 +94,7 @@ void eGame::mainLoop()
 
                 renderer->clearRenderingQueue();
 		iResources->iActorMgr.update(iResources->iLua.getRaw(), KDelta);
+                renderer->draw();
 	    }
 
 	    iAccumulator -= KTimeStep;

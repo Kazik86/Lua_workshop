@@ -74,20 +74,32 @@ void eRenderer::init(const std::string& aCaption, int aX, int aY, int aWidth, in
     */
 }
 
+void eRenderer::draw()
+{
+    for (eRenderable* r : iRenderables)
+        r->draw();
+}
+
+void eRenderable::renderCopyEx(const std::vector<eRenderable*>& aCollection) const
+{
+    for (eRenderable* r : aCollection) {
+        for (const sRenderCopyEx& rce : r->iRCE)
+            SDL_RenderCopyEx(iRenderer, rce->iTexture, 0, &r->iSdlRect, r->iAngle, NULL, SDL_FLIP_NONE);
+    }
+}
+
 void eRenderer::render(float aDelta)
 {
     ++iFrameCntr;
     SDL_RenderClear(iRenderer);
 
-    for (eRenderable* r : iRenderables)
-	r->draw(iRenderer, aDelta);
+    renderCopyEx(iRenderables);
 
     std::sort(iRenderablesZOrder.begin(), iRenderablesZOrder.end(), [](eRenderable* aLhs, eRenderable* aRhs) {
             return aLhs->iZOrder < aRhs->iZOrder;
     });
 
-    for (eRenderable* r : iRenderablesZOrder)
-        r->draw(iRenderer, aDelta);
+    renderCopyEx(iRenderablesZOrder);
     
     SDL_RenderPresent(iRenderer);
 }
