@@ -26,7 +26,8 @@ eRenderer::eRenderer():
     iRenderer(0),
     iRenderables(eActorMgr::EActorsCapacity),
     iRenderablesZOrder(16),
-    iRenderablesNum(0)
+    iRenderablesNum(0),
+    iFrameCntr(0)
 {
     if (iMe)
 	throw std::runtime_error("eRenderer: multiple instances not allowed.");
@@ -75,6 +76,7 @@ void eRenderer::init(const std::string& aCaption, int aX, int aY, int aWidth, in
 
 void eRenderer::render(float aDelta)
 {
+    ++iFrameCntr;
     SDL_RenderClear(iRenderer);
 
     for (eRenderable* r : iRenderables)

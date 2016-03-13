@@ -36,6 +36,9 @@ public:
     void incRenderables();
     void clearRenderingQueue() { iRenderables.clear(); iRenderablesZOrder.clear(); }
 
+    unsigned getFrameCntr() const { return iFrameCntr; }
+    void resetFrameCntr() { iFrameCntr = 0; }
+
 private:
     eRenderer(const eRenderer& aOther);
     eRenderer& operator=(const eRenderer& aOther);
@@ -47,6 +50,7 @@ private:
     std::vector<eRenderable*> iRenderables;
     std::vector<eRenderable*> iRenderablesZOrder;
     decltype(iRenderables)::size_type iRenderablesNum;
+    unsigned iFrameCntr;
 };
 
 #endif // RENDERER_H

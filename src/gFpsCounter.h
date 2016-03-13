@@ -2,10 +2,9 @@
 #define G_FPS_COUNTER_H
 
 #include "gadget.h"
-#include "renderer.h"
 #include "text.h"
 
-class gFpsCounter: public eGadget, public eRenderable
+class gFpsCounter: public eGadget
 {
     DECLARE_GADGET_CLASS()
 
@@ -20,10 +19,10 @@ public:
 
 private:
     void setZOrder(lua_State* aLua) { iText.setZOrder(Script::getVal<int>(aLua, 2)); }
+    void enable();
 
 private:
     eText iText;
-    int iFrameCntr;
     float iDelta;
 };
 
